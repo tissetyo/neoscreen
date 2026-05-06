@@ -7,7 +7,7 @@ This repository is the Laravel + Inertia + React v2 application. Deploy the proj
 - PHP 8.2 or newer
 - Composer
 - MySQL or PostgreSQL
-- Node.js 18+ if building assets on the server
+- Node.js 18+ if building assets on the server. Hostinger shared SSH may not include `npm`, so this repository tracks `public/build` assets for deployment.
 - SSH access is recommended
 
 ## First Deploy
@@ -17,8 +17,6 @@ git clone https://github.com/tissetyo/neoscreen.git neoscreen
 cd neoscreen
 
 composer install --no-dev --optimize-autoloader
-npm ci
-npm run build
 
 cp .env.example .env
 php artisan key:generate
@@ -47,11 +45,18 @@ Then finish setup:
 
 ```bash
 php artisan migrate --force
-php artisan storage:link
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
+
+If `php artisan storage:link` fails because PHP `exec` is disabled, create the symlink directly:
+
+```bash
+ln -s ../storage/app/public public/storage
+```
+
+If `public/storage` already exists, skip that command.
 
 ## Hostinger Panel Setup
 
@@ -69,8 +74,6 @@ Do not point the domain to the repository root. Laravel must serve from `public`
 cd neoscreen
 git pull origin main
 composer install --no-dev --optimize-autoloader
-npm ci
-npm run build
 php artisan migrate --force
 php artisan config:cache
 php artisan route:cache
