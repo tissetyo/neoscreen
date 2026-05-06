@@ -1,0 +1,656 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-teal: #00a9c7;
+    --color-teal-light: #9ee8f3;
+    --color-teal-dark: #007a91;
+    --color-glass-bg: rgba(0, 116, 146, 0.42);
+    --color-glass-border: rgba(255, 255, 255, 0.88);
+    --color-sidebar-bg: #0a0c10;
+    --color-sidebar-hover: #161a22;
+    --color-content-bg: #f8fafc;
+    --color-border: #e2e8f0;
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-info: #3b82f6;
+    --color-neutral: #94a3b8;
+    --color-admin-accent: #f43f5e;
+    --shadow-widget: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.3);
+    --widget-gap: 12px;
+    --widget-pad: 8px;
+    --widget-radius: 16px;
+  }
+  
+  body {
+    font-family: 'Poppins', 'Montserrat', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Cinzel', serif;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   TILE SLOT — invisible background grid slots
+   Visible only in admin/edit mode, subtle dashed border
+   ═══════════════════════════════════════════ */
+.tv-tile {
+  border-radius: var(--widget-radius);
+  pointer-events: none;
+  z-index: 0;
+  min-width: 0;
+  min-height: 0;
+  /* Hidden by default — admin panel adds .tv-edit-mode to make them visible */
+}
+
+.tv-grid-widget {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  container-type: size;
+  position: relative;
+  border-radius: var(--widget-radius);
+  isolation: isolate;
+  transition: box-shadow 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+  font-family: 'Poppins', 'Montserrat', sans-serif;
+  letter-spacing: 0;
+}
+
+.tv-grid-widget .font-bold,
+.tv-grid-widget .font-semibold {
+  font-weight: 500;
+}
+
+.tv-widget-content {
+  min-width: 0;
+  min-height: 0;
+}
+
+.tv-icon-fallback {
+  display: none;
+}
+
+.tv-size-icon .tv-widget-content,
+.tv-size-fallback .tv-widget-content {
+  display: none;
+}
+
+.tv-size-icon .tv-icon-fallback,
+.tv-size-fallback .tv-icon-fallback {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: clamp(4px, 0.8cqh, 8px);
+  color: #fff;
+  border-radius: var(--widget-radius);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: var(--widget-bg, rgba(10, 12, 16, 0.64));
+  backdrop-filter: blur(18px) saturate(1.08);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
+}
+
+.tv-icon-fallback .tv-compact-label {
+  max-width: 92%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(8px, 6cqw, 13px);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.tv-size-icon .tv-compact-label {
+  display: none;
+}
+
+.tv-size-fallback .tv-icon-fallback svg,
+.tv-size-fallback .tv-icon-fallback img {
+  max-width: 38%;
+  max-height: 38%;
+}
+
+.tv-size-compact .tv-widget,
+.tv-size-compact .tv-widget-light,
+.tv-size-compact .tv-app-card {
+  padding: clamp(6px, 0.75cqw, 10px);
+}
+
+.tv-size-small .tv-widget,
+.tv-size-small .tv-widget-light,
+.tv-size-small .tv-app-card {
+  border-radius: var(--widget-radius);
+}
+
+.tv-size-compact .wifi-card {
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18);
+}
+
+.tv-size-compact .wifi-card-header {
+  justify-content: center;
+  padding-block: clamp(4px, 0.7cqh, 7px);
+}
+
+.tv-size-compact .wifi-card-title {
+  font-size: clamp(9px, 5.5cqw, 14px);
+  max-width: 100%;
+}
+
+.tv-size-compact .wifi-card-icon {
+  width: clamp(11px, 6cqw, 16px);
+  height: clamp(11px, 6cqw, 16px);
+}
+
+.tv-size-compact .wifi-card-body {
+  justify-content: center;
+  padding: clamp(5px, 3.2cqw, 9px);
+}
+
+.tv-size-compact .wifi-card-qr {
+  width: min(76cqw, 68cqh) !important;
+  height: min(76cqw, 68cqh) !important;
+  max-width: 86px;
+  max-height: 86px;
+}
+
+.tv-size-compact .wifi-card-details {
+  display: none;
+}
+
+.tv-size-compact .guest-card,
+.tv-size-small .guest-card {
+  justify-content: center;
+}
+
+.tv-size-compact .guest-card-greeting,
+.tv-size-small .guest-card-greeting {
+  display: none;
+}
+
+.tv-size-compact .guest-card-shell,
+.tv-size-small .guest-card-shell {
+  gap: clamp(6px, 3cqw, 12px);
+  padding: clamp(5px, 3cqw, 8px);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.tv-size-compact .guest-card-copy,
+.tv-size-small .guest-card-copy {
+  display: block;
+  max-width: 52cqw;
+}
+
+.tv-size-compact .guest-card-photo,
+.tv-size-small .guest-card-photo,
+.tv-size-small .guest-card-divider,
+.tv-size-compact .guest-card-divider {
+  display: none;
+}
+
+.tv-size-compact .guest-card-copy span:last-child,
+.tv-size-small .guest-card-copy span:last-child {
+  max-width: 100%;
+  font-size: clamp(9px, 7cqw, 16px);
+  line-height: 1.05;
+}
+
+.tv-size-compact .guest-card-room,
+.tv-size-small .guest-card-room {
+  gap: clamp(5px, 3cqw, 8px);
+}
+
+.tv-size-compact .guest-card-room span:first-child,
+.tv-size-small .guest-card-room span:first-child {
+  font-size: clamp(7px, 4.5cqw, 11px);
+  opacity: 0.75;
+}
+
+.tv-size-compact .guest-card-room span:last-child,
+.tv-size-small .guest-card-room span:last-child {
+  font-size: clamp(16px, 13cqw, 30px);
+}
+
+.tv-size-compact .digital-clock {
+  align-items: center;
+  text-align: center;
+}
+
+.tv-size-compact .digital-clock-weather,
+.tv-size-compact .digital-clock-date {
+  display: none;
+}
+
+.tv-size-compact .digital-clock-time {
+  gap: clamp(3px, 2cqw, 6px);
+}
+
+.tv-size-compact .digital-clock-time > span:first-child {
+  font-size: clamp(22px, 18cqw, 44px) !important;
+}
+
+.tv-size-compact .digital-clock-time > span:last-child {
+  font-size: clamp(8px, 5cqw, 13px) !important;
+}
+
+.slideshow-top-clock,
+.slideshow-guest-badge {
+  background: rgba(10, 12, 16, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px) saturate(1.05);
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.18);
+}
+
+.slideshow-widget-panel {
+  width: min(40vw, 760px);
+  height: min(24vh, 260px);
+  min-width: min(24vw, 460px);
+}
+
+.slideshow-widget-surface {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--widget-radius);
+}
+
+.slideshow-widget-clock {
+  width: min(34vw, 640px);
+  height: min(18vh, 190px);
+}
+
+.slideshow-widget-guest {
+  width: min(38vw, 720px);
+  height: min(14vh, 150px);
+}
+
+.slideshow-widget-wifi {
+  width: min(40vw, 760px);
+  height: min(24vh, 250px);
+}
+
+.slideshow-widget-flights {
+  width: min(54vw, 980px);
+  height: min(34vh, 360px);
+}
+
+.slideshow-widget-map {
+  width: min(34vw, 640px);
+  height: min(34vh, 360px);
+}
+
+.slideshow-widget-info,
+.slideshow-widget-deals {
+  width: min(30vw, 560px);
+  height: auto;
+  min-width: min(22vw, 420px);
+}
+
+.slideshow-info-card {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(10, 12, 16, 0.34);
+  padding: clamp(12px, 1vw, 20px) clamp(14px, 1.25vw, 24px);
+  backdrop-filter: blur(14px) saturate(1.04);
+  -webkit-backdrop-filter: blur(14px) saturate(1.04);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24);
+}
+
+.tv-grid-widget > * {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.tv-grid-widget::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 50;
+  transition: opacity 0.18s ease, box-shadow 0.18s ease;
+}
+
+.tv-grid-widget:focus-within {
+  z-index: 40;
+  filter: brightness(1.08);
+}
+
+.tv-grid-widget:focus-within::after {
+  opacity: 1;
+  box-shadow:
+    inset 0 0 0 4px var(--focus-color, #d4af37),
+    0 0 0 2px rgba(255, 255, 255, 0.85),
+    0 0 28px var(--focus-color, #d4af37),
+    0 0 56px color-mix(in srgb, var(--focus-color, #d4af37) 45%, transparent);
+}
+
+.tv-widget,
+.tv-widget-light,
+.tv-app-card {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.tv-edit-mode .tv-tile {
+  border: 1.5px dashed rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.03);
+}
+
+/* ═══════════════════════════════════════════
+   DARK CARD — Clocks, Flight, Deals, Map
+   Semi-opaque dark frosted glass
+   ═══════════════════════════════════════════ */
+.tv-widget {
+  background: var(--widget-bg, rgba(0, 85, 110, var(--widget-dark-opacity, 0.42)));
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: var(--widget-radius);
+  padding: var(--widget-pad);
+  position: relative;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+}
+
+[style*="--visual-style: luxury"] .tv-widget {
+  background: var(--widget-bg, rgba(10, 12, 16, var(--widget-dark-opacity, 0.65)));
+  backdrop-filter: blur(30px) saturate(1.1);
+  -webkit-backdrop-filter: blur(30px) saturate(1.1);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.tv-widget-fit {
+  width: 100%;
+  height: 100%;
+}
+
+.tv-responsive-title {
+  font-size: clamp(10px, min(1vw, 7cqh), 18px);
+}
+
+.tv-responsive-body {
+  font-size: clamp(9px, min(0.78vw, 5.5cqh), 14px);
+}
+
+.analog-clock-face {
+  width: clamp(34px, min(5.2vw, 58cqh), 112px);
+  height: clamp(34px, min(5.2vw, 58cqh), 112px);
+  flex: 0 1 auto;
+}
+
+/* ═══════════════════════════════════════════
+   WHITE GLASS CARD — Guest, WiFi, Notification,
+   Hotel Service, Hotel Info
+   Nearly opaque white frosted glass
+   ═══════════════════════════════════════════ */
+.tv-widget-light {
+  background: var(--widget-bg, rgba(255, 255, 255, var(--widget-light-opacity, 0.94)));
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: var(--widget-radius);
+  padding: var(--widget-pad);
+  position: relative;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+}
+
+[style*="--visual-style: luxury"] .tv-widget-light {
+  background: var(--widget-bg, rgba(255, 255, 255, var(--widget-light-opacity, 0.85)));
+  backdrop-filter: blur(30px) saturate(1.1);
+  -webkit-backdrop-filter: blur(30px) saturate(1.1);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+/* ═══════════════════════════════════════════
+   WHITE GRADIENT THIN STROKE FOR ALL CARDS
+   ═══════════════════════════════════════════ */
+.tv-widget::before,
+.tv-widget-light::before,
+.tv-app-card::before {
+  content: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.5) 0%, rgba(212, 175, 55, 0.05) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 10;
+}
+
+[style*="--visual-style: luxury"] .tv-widget::before,
+[style*="--visual-style: luxury"] .tv-widget-light::before,
+[style*="--visual-style: luxury"] .tv-app-card::before {
+  content: '';
+}
+
+.tv-text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 3px rgba(0, 0, 0, 0.4);
+}
+
+/* ═══════════════════════════════════════════
+   FOCUS STATES — driven by --focus-color and --focus-style
+   ═══════════════════════════════════════════ */
+.tv-focusable,
+.alarm-focusable,
+.chat-focusable,
+.service-focusable,
+.app-launcher-focusable {
+  transition: all 0.25s ease;
+}
+
+/* ── Style: outline ── */
+.tv-focusable:focus,
+.tv-focusable:focus-visible {
+  outline: 3px solid var(--focus-color, #d4af37);
+  outline-offset: -3px;
+}
+
+/* ── Style: glow ── */
+[style*="--focus-style: glow"] .tv-focusable:focus,
+[style*="--focus-style: glow"] .tv-focusable:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 4px var(--focus-color, #14b8a6), 0 0 28px var(--focus-color, #14b8a6), 0 0 56px color-mix(in srgb, var(--focus-color, #14b8a6) 45%, transparent);
+}
+
+/* ── Style: scale ── */
+[style*="--focus-style: scale"] .tv-focusable:focus,
+[style*="--focus-style: scale"] .tv-focusable:focus-visible {
+  outline: 3px solid var(--focus-color, #14b8a6);
+  outline-offset: 4px;
+  transform: scale(1.06);
+  z-index: 10;
+}
+
+/* ── Style: glow-scale ── */
+[style*="--focus-style: glow-scale"] .tv-focusable:focus,
+[style*="--focus-style: glow-scale"] .tv-focusable:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-color, #14b8a6), 0 0 24px var(--focus-color, #14b8a6);
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+/* ── Style: ring-pulse ── */
+@keyframes ringPulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--focus-color, #14b8a6); }
+  50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--focus-color, #14b8a6) 50%, transparent); }
+}
+[style*="--focus-style: ring-pulse"] .tv-focusable:focus,
+[style*="--focus-style: ring-pulse"] .tv-focusable:focus-visible {
+  outline: none;
+  animation: ringPulse 1.5s ease-in-out infinite;
+}
+
+/* ── Style: underline ── */
+[style*="--focus-style: underline"] .tv-focusable:focus,
+[style*="--focus-style: underline"] .tv-focusable:focus-visible {
+  outline: none;
+  border-bottom: 4px solid var(--focus-color, #14b8a6);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--focus-color, #14b8a6) 40%, transparent);
+}
+
+/* ── Style: inset ── */
+[style*="--focus-style: inset"] .tv-focusable:focus,
+[style*="--focus-style: inset"] .tv-focusable:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--focus-color, #14b8a6), inset 0 0 16px color-mix(in srgb, var(--focus-color, #14b8a6) 20%, transparent);
+}
+
+/* ═══════════════════════════════════════════
+   APP CARD — Dark Base + Brand glow + Gradient Stroke
+   ═══════════════════════════════════════════ */
+
+.tv-app-card {
+  --app-color: rgba(255, 255, 255, 0.15);
+  position: relative;
+  background: var(--widget-bg, rgba(0, 85, 110, 0.42));
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  transition: all 0.3s ease;
+}
+
+[style*="--visual-style: luxury"] .tv-app-card {
+  background: var(--widget-bg, rgba(20, 30, 50, 0.55));
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 0;
+}
+
+[style*="--visual-style: luxury"] .tv-app-card::after {
+  content: '';
+}
+
+/* Inner brand color glow from bottom-right corner */
+.tv-app-card::after {
+  content: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at bottom right, var(--app-color) 0%, transparent 70%);
+  opacity: 0.18;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+}
+
+.tv-app-card:hover::after {
+  opacity: 0.35;
+}
+
+.tv-app-card.tv-focusable:focus::after {
+  opacity: 0.4;
+}
+
+/* ═══════════════════════════════════════════
+   BADGES / STATUS
+   ═══════════════════════════════════════════ */
+.glass-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.tv-badge-red {
+  background: #ec241a;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: clamp(10px, 0.8vw, 16px);
+  font-weight: 500;
+}
+
+.status-on-schedule { color: #ffffff; font-weight: 700; }
+.status-delay { color: #fbbf24; font-weight: 700; }
+.status-last-call { color: #f87171; font-weight: 700; }
+.status-closed { color: #dc2626; font-weight: 700; }
+.status-gate-open { color: #4ade80; font-weight: 700; }
+.status-check-in { color: #86efac; font-weight: 700; }
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+@keyframes marquee {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+.animate-marquee {
+  animation: marquee linear infinite;
+}
+
+@keyframes widgetMount {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.widget-animate {
+  animation: widgetMount 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+/* ═══════════════════════════════════════════
+   UTILITY
+   ═══════════════════════════════════════════ */
+.sidebar-active {
+  border-left: 4px solid var(--color-teal);
+  background: var(--color-sidebar-hover);
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   KIOSK MODE — Hide cursor on TV dashboard (Disabled for now to allow logout)
+   ═══════════════════════════════════════════ */
+/* .tv-kiosk-mode,
+.tv-kiosk-mode * {
+  cursor: none !important;
+} */
+
+/* Lock Android text zooming out */
+.tv-kiosk-mode {
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+}
