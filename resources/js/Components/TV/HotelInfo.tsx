@@ -10,7 +10,7 @@ interface Props {
 export default function HotelInfo({ hotelName, featuredImageUrl }: Props) {
   return (
     <div
-      className="flex-1 tv-focusable flex flex-row items-center gap-[0.6vw] overflow-hidden relative"
+      className="hotel-info-card flex-1 tv-focusable flex flex-row items-center gap-[clamp(8px,1cqw,22px)] overflow-hidden relative"
       tabIndex={0}
       style={{
         borderRadius: 'var(--widget-radius)',
@@ -50,25 +50,25 @@ export default function HotelInfo({ hotelName, featuredImageUrl }: Props) {
       )}
 
       {/* Content */}
-      <div className="relative z-10 flex flex-row items-center gap-[0.6vw] w-full">
+      <div className="relative z-10 flex w-full flex-row items-center gap-[clamp(8px,1cqw,22px)]">
         {!featuredImageUrl && (
           <div
-            className="w-[3.5vw] h-[3.5vw] rounded-xl flex-shrink-0 flex items-center justify-center"
+            className="hotel-info-icon w-[clamp(32px,min(8cqw,42cqh),96px)] h-[clamp(32px,min(8cqw,42cqh),96px)] rounded-xl flex-shrink-0 flex items-center justify-center"
             style={{ background: 'rgba(148, 163, 184, 0.15)' }}
           >
-            <Building2 className="w-[1.5vw] h-[1.5vw] text-slate-400" />
+            <Building2 className="w-[48%] h-[48%] text-slate-400" />
           </div>
         )}
         <div className="min-w-0">
           <p
-            className={`text-[0.55vw] font-bold mb-[0.1vh] uppercase tracking-wide ${
+            className={`hotel-info-label text-[clamp(8px,0.9cqw,16px)] font-medium mb-[0.1vh] uppercase tracking-wide ${
               featuredImageUrl ? 'text-white/70' : 'text-slate-500'
             }`}
           >
             Hotel Info
           </p>
           <p
-            className={`text-[0.8vw] font-bold truncate ${
+            className={`hotel-info-name text-[clamp(10px,1.55cqw,30px)] font-medium truncate ${
               featuredImageUrl ? 'text-white' : 'text-slate-900'
             }`}
           >

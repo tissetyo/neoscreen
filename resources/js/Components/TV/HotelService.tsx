@@ -53,28 +53,28 @@ export default function HotelService({ onOpenServices }: Props) {
       tabIndex={0}
       onClick={onOpenServices}
     >
-      <span className="text-white text-[clamp(16px,min(1.45vw,16cqh),27px)] font-normal tracking-normal truncate max-w-full">
+      <span className="hotel-service-title text-white text-[clamp(16px,min(2.1cqw,18cqh),42px)] font-normal tracking-normal truncate max-w-full">
         Hotel Service
       </span>
 
-      <div className="mt-[min(1.4vh,1vw)] flex max-w-full items-center gap-[clamp(12px,1.25vw,24px)] overflow-hidden text-[#ffa62a]">
+      <div className="hotel-service-icons mt-[min(1.8vh,1.2vw)] flex max-w-full items-center gap-[clamp(12px,1.6cqw,34px)] overflow-hidden text-[#ffa62a]">
         {visibleServices.length > 0 ? (
           visibleServices.map((service) => (
             <div
               key={service.id}
-              className="h-[clamp(22px,min(2vw,28cqh),40px)] w-[clamp(22px,min(2vw,28cqh),40px)] shrink-0"
+              className="hotel-service-icon h-[clamp(22px,min(3.2cqw,34cqh),74px)] w-[clamp(22px,min(3.2cqw,34cqh),74px)] shrink-0"
               title={service.name}
             >
               {renderIcon(service.icon)}
             </div>
           ))
         ) : (
-          <div className="h-[clamp(22px,min(2vw,28cqh),40px)] w-[clamp(22px,min(2vw,28cqh),40px)] shrink-0">
+          <div className="hotel-service-icon h-[clamp(22px,min(3.2cqw,34cqh),74px)] w-[clamp(22px,min(3.2cqw,34cqh),74px)] shrink-0">
             <ConciergeBell className="w-full h-full" />
           </div>
         )}
         {services && services.length > visibleServices.length && (
-          <span className="text-[clamp(10px,0.8vw,14px)] font-semibold text-white/75">
+          <span className="text-[clamp(10px,1.1cqw,20px)] font-semibold text-white/75">
             +{services.length - visibleServices.length}
           </span>
         )}

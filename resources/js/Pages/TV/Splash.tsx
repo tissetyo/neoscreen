@@ -106,6 +106,10 @@ export default function Splash({ hotel, room }: SplashProps) {
         }
     };
 
+    const appendPinDigit = (digit: string) => {
+        setPin((current) => current.length < 6 ? `${current}${digit}` : current);
+    };
+
     const bg = hotel.featured_image_url
         || 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1920&auto=format&fit=crop';
 
@@ -249,6 +253,77 @@ export default function Splash({ hotel, room }: SplashProps) {
                                     {pin[i] ? '•' : ''}
                                 </div>
                             ))}
+                        </div>
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                            gap: '0.65vw',
+                            margin: '0 auto 1.4vw',
+                            maxWidth: '14vw',
+                        }}>
+                            {['1','2','3','4','5','6','7','8','9'].map((digit) => (
+                                <button
+                                    key={digit}
+                                    type="button"
+                                    onClick={() => appendPinDigit(digit)}
+                                    style={{
+                                        height: '2.7vw',
+                                        borderRadius: '12px',
+                                        border: '1px solid rgba(212,175,55,0.24)',
+                                        background: 'rgba(255,255,255,0.08)',
+                                        color: '#fff',
+                                        fontSize: '1.15vw',
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    {digit}
+                                </button>
+                            ))}
+                            <button
+                                type="button"
+                                onClick={() => setPin(prev => prev.slice(0, -1))}
+                                style={{
+                                    height: '2.7vw',
+                                    borderRadius: '12px',
+                                    border: '1px solid rgba(255,255,255,0.14)',
+                                    background: 'rgba(255,255,255,0.06)',
+                                    color: '#cbd5e1',
+                                    fontSize: '0.85vw',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                Clear
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => appendPinDigit('0')}
+                                style={{
+                                    height: '2.7vw',
+                                    borderRadius: '12px',
+                                    border: '1px solid rgba(212,175,55,0.24)',
+                                    background: 'rgba(255,255,255,0.08)',
+                                    color: '#fff',
+                                    fontSize: '1.15vw',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                0
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setPin('')}
+                                style={{
+                                    height: '2.7vw',
+                                    borderRadius: '12px',
+                                    border: '1px solid rgba(255,255,255,0.14)',
+                                    background: 'rgba(255,255,255,0.06)',
+                                    color: '#cbd5e1',
+                                    fontSize: '0.85vw',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                Reset
+                            </button>
                         </div>
                         {error && <p style={{ color: '#f87171', marginBottom: '1vw', fontSize: '0.8vw' }}>{error}</p>}
                         <button

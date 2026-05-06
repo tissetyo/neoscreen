@@ -1,23 +1,9 @@
-import { useEffect, FormEventHandler } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import { Head, usePage } from '@inertiajs/react';
 
-export default function Login({ status }: { status?: string }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
-        remember: false,
-    });
-
-    useEffect(() => {
-        return () => {
-            reset('password');
-        };
-    }, []);
-
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
-        post('/login');
-    };
+export default function Login({ status, csrfToken }: { status?: string; csrfToken: string }) {
+    const { errors = {} } = usePage<any>().props;
+    const [remember, setRemember] = useState(false);
 
     return (
         <div className="min-h-screen bg-[#0a0c10] flex flex-col items-center justify-center p-6 relative overflow-hidden">
@@ -42,7 +28,8 @@ export default function Login({ status }: { status?: string }) {
                     </div>
                 )}
 
-                <form onSubmit={submit} className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
+                <form action="/login" method="post" className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
+                    <input type="hidden" name="_token" value={csrfToken} />
                     <div className="space-y-6">
                         {/* Email */}
                         <div>
@@ -53,12 +40,11 @@ export default function Login({ status }: { status?: string }) {
                                 id="email"
                                 type="email"
                                 name="email"
-                                value={data.email}
                                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#d4af37]/50 focus:border-[#d4af37]/50 transition-all"
                                 placeholder="name@hotel.com"
                                 autoComplete="username"
                                 autoFocus
-                                onChange={(e) => setData('email', e.target.value)}
+                                required
                             />
                             {errors.email && <p className="mt-2 text-xs text-red-500 ml-1">{errors.email}</p>}
                         </div>
@@ -72,11 +58,10 @@ export default function Login({ status }: { status?: string }) {
                                 id="password"
                                 type="password"
                                 name="password"
-                                value={data.password}
                                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#d4af37]/50 focus:border-[#d4af37]/50 transition-all"
                                 placeholder="••••••••"
                                 autoComplete="current-password"
-                                onChange={(e) => setData('password', e.target.value)}
+                                required
                             />
                             {errors.password && <p className="mt-2 text-xs text-red-500 ml-1">{errors.password}</p>}
                         </div>
@@ -88,12 +73,13 @@ export default function Login({ status }: { status?: string }) {
                                     <input
                                         type="checkbox"
                                         name="remember"
-                                        checked={data.remember}
-                                        onChange={(e) => setData('remember', e.target.checked)}
+                                        value="1"
+                                        checked={remember}
+                                        onChange={(e) => setRemember(e.target.checked)}
                                         className="sr-only"
                                     />
-                                    <div className={`w-5 h-5 border rounded-md transition-all ${data.remember ? 'bg-[#d4af37] border-[#d4af37]' : 'bg-transparent border-white/20'}`}>
-                                        {data.remember && (
+                                    <div className={`w-5 h-5 border rounded-md transition-all ${remember ? 'bg-[#d4af37] border-[#d4af37]' : 'bg-transparent border-white/20'}`}>
+                                        {remember && (
                                             <svg className="w-3.5 h-3.5 text-black absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                             </svg>
@@ -107,10 +93,9 @@ export default function Login({ status }: { status?: string }) {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            disabled={processing}
                             className="w-full bg-gradient-to-r from-[#d4af37] to-[#f3e5ab] text-black font-bold py-4 rounded-2xl shadow-lg hover:shadow-[#d4af37]/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none uppercase tracking-widest text-xs"
                         >
-                            {processing ? 'Authenticating...' : 'Sign In'}
+                            Sign In
                         </button>
                     </div>
                 </form>

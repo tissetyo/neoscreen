@@ -224,6 +224,88 @@
   font-size: clamp(16px, 13cqw, 30px);
 }
 
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="3"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="4"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="5"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="6"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="7"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="8"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="9"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="10"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="11"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="12"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="13"] .guest-card-photo,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="14"] .guest-card-photo {
+  width: clamp(64px, min(13cqw, 62cqh), 160px) !important;
+  height: clamp(64px, min(13cqw, 62cqh), 160px) !important;
+}
+
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="3"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="4"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="5"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="6"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="7"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="8"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="9"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="10"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="11"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="12"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="13"] .guest-card-name,
+.tv-grid-widget[data-widget-key="guestCard"][data-row-span="14"] .guest-card-name {
+  font-size: clamp(18px, 2.2cqw, 44px);
+}
+
+.tv-size-compact .hotel-service-title,
+.tv-size-small .hotel-service-title,
+.tv-size-compact .hotel-info-label,
+.tv-size-small .hotel-info-label,
+.tv-size-compact .notification-card-header,
+.tv-size-small .notification-card-header {
+  display: none;
+}
+
+.tv-size-compact .hotel-service-icons,
+.tv-size-small .hotel-service-icons {
+  margin-top: 0;
+  justify-content: center;
+  gap: clamp(7px, 5cqw, 14px);
+}
+
+.tv-size-compact .hotel-service-icon,
+.tv-size-small .hotel-service-icon {
+  width: clamp(24px, min(18cqw, 44cqh), 48px) !important;
+  height: clamp(24px, min(18cqw, 44cqh), 48px) !important;
+}
+
+.tv-size-compact .hotel-info-card,
+.tv-size-small .hotel-info-card {
+  justify-content: center;
+  text-align: center;
+}
+
+.tv-size-compact .hotel-info-name,
+.tv-size-small .hotel-info-name {
+  font-size: clamp(10px, 7cqw, 18px);
+  max-width: 100%;
+}
+
+.tv-size-compact .hotel-info-icon,
+.tv-size-small .hotel-info-icon {
+  display: none;
+}
+
+.tv-size-compact .notification-card-body,
+.tv-size-small .notification-card-body {
+  justify-content: center;
+  text-align: center;
+  padding: clamp(7px, 4cqw, 12px);
+}
+
+.tv-size-compact .notification-card-title,
+.tv-size-small .notification-card-title {
+  font-size: clamp(10px, 6cqw, 16px);
+}
+
 .tv-size-compact .digital-clock {
   align-items: center;
   text-align: center;

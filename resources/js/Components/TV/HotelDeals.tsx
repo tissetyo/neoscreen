@@ -43,13 +43,13 @@ export default function HotelDeals({ onOpenPromos }: Props) {
       onClick={hasPromos ? onOpenPromos : undefined}
       style={{ cursor: hasPromos ? 'pointer' : 'default' }}
     >
-      <div className="flex items-center justify-between mb-3 z-10 relative">
+      <div className="hotel-deals-header flex items-center justify-between mb-[clamp(8px,1.6cqh,18px)] z-10 relative">
         <div className="flex items-center gap-2">
-          <span className="text-[1.2vw]">✨</span>
-          <span className="text-white text-[1vw] font-semibold">Hotel Deals</span>
+          <span className="hotel-deals-icon text-[clamp(14px,1.6cqw,30px)]">✨</span>
+          <span className="hotel-deals-title text-white text-[clamp(12px,1.45cqw,28px)] font-semibold">Hotel Deals</span>
         </div>
         {hasPromos && (
-          <span className="text-white/50 text-[0.7vw]">→</span>
+          <span className="text-white/50 text-[clamp(10px,1.1cqw,20px)]">→</span>
         )}
       </div>
       <div className="flex-1 overflow-hidden rounded-xl relative">
@@ -72,8 +72,8 @@ export default function HotelDeals({ onOpenPromos }: Props) {
               className="w-full h-full absolute inset-0 rounded-xl flex flex-col items-center justify-center"
               style={{ background: 'rgba(255,255,255,0.06)' }}
             >
-              <Sparkles className="w-[2vw] h-[2vw] text-white/20 mb-[0.5vh]" />
-              <span className="text-white/30 text-[0.8vw] font-medium">No deals available</span>
+              <Sparkles className="w-[clamp(28px,5cqw,76px)] h-[clamp(28px,5cqw,76px)] text-white/20 mb-[0.8vh]" />
+              <span className="text-white/30 text-[clamp(10px,1.2cqw,22px)] font-medium">No deals available</span>
             </motion.div>
           )}
         </AnimatePresence>
