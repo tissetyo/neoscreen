@@ -246,6 +246,77 @@
   font-size: clamp(8px, 5cqw, 13px) !important;
 }
 
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="8"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="9"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="10"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="11"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="12"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="13"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="14"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="15"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="16"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="17"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="18"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="19"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="20"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="21"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="22"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="23"] .wifi-card-body,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="24"] .wifi-card-body {
+  justify-content: center;
+}
+
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="4"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="5"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="6"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="7"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="8"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="9"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="10"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="11"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="12"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="13"] .wifi-card-qr,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="14"] .wifi-card-qr {
+  width: clamp(90px, min(34cqw, 74cqh), 320px) !important;
+  height: clamp(90px, min(34cqw, 74cqh), 320px) !important;
+}
+
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="4"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="5"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="6"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="7"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="8"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="9"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="10"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="11"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="12"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="13"] .wifi-card-details,
+.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="14"] .wifi-card-details {
+  gap: clamp(8px, 2cqh, 18px);
+}
+
+.tv-size-compact .wifi-card-header {
+  padding: clamp(5px, 4cqh, 8px) clamp(7px, 3cqw, 10px);
+}
+
+.tv-size-compact .wifi-card-title {
+  font-size: clamp(9px, 5cqw, 14px);
+}
+
+.tv-size-compact .wifi-card-body {
+  justify-content: center;
+  padding: clamp(6px, 3cqw, 10px);
+}
+
+.tv-size-compact .wifi-card-qr {
+  width: clamp(54px, min(44cqw, 66cqh), 94px) !important;
+  height: clamp(54px, min(44cqw, 66cqh), 94px) !important;
+}
+
+.tv-size-compact .wifi-card-details {
+  display: none;
+}
+
 .slideshow-top-clock,
 .slideshow-guest-badge {
   background: rgba(10, 12, 16, 0.28);
