@@ -24,6 +24,9 @@ export default function Welcome() {
             : '/login';
 
     const staffHref = hotelSlug ? `/${hotelSlug}/frontoffice` : '/login';
+    const demoHotelSlug = hotelSlug || 'grand-neoscreen';
+    const demoRoomCode = '101';
+    const demoRoomPin = '1234';
     const guideHref = user?.role === 'superadmin'
         ? '/admin/guide'
         : hotelSlug
@@ -49,10 +52,11 @@ export default function Welcome() {
         },
         {
             title: 'Room TV',
-            description: 'Guest-facing TV dashboard. Use a hotel slug and room code, for example /d/grand-neoscreen/101.',
-            href: hotelSlug ? `/d/${hotelSlug}/preview` : '/setup-stb',
+            description: `Guest-facing TV dashboard. Demo path: /d/${demoHotelSlug}/${demoRoomCode}. Enter room PIN ${demoRoomPin} to continue.`,
+            href: `/d/${demoHotelSlug}/${demoRoomCode}`,
             icon: Tv,
             badge: 'Guest Room',
+            helper: `Room ${demoRoomCode} · PIN ${demoRoomPin}`,
         },
         {
             title: 'STB Setup',
@@ -60,6 +64,7 @@ export default function Welcome() {
             href: '/setup-stb',
             icon: MonitorCog,
             badge: 'Hardware',
+            helper: 'Use after installing the Android wrapper',
         },
         {
             title: 'Guest Mobile Portal',
@@ -67,6 +72,7 @@ export default function Welcome() {
             href: guideHref,
             icon: Smartphone,
             badge: 'Mobile',
+            helper: 'Open from the QR shown on TV',
         },
         {
             title: 'Docs & Install Guide',
@@ -152,6 +158,11 @@ export default function Welcome() {
                                     </div>
                                     <h2 className="mt-5 text-lg font-bold">{portal.title}</h2>
                                     <p className="mt-2 min-h-[56px] text-sm leading-6 text-slate-400">{portal.description}</p>
+                                    {'helper' in portal && portal.helper && (
+                                        <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 font-mono text-xs text-slate-200">
+                                            {portal.helper}
+                                        </div>
+                                    )}
                                     <p className="mt-4 text-xs font-bold text-teal-200 group-hover:text-teal-100">Open portal</p>
                                 </Link>
                             ))}
