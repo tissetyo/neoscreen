@@ -1,7 +1,10 @@
 import StaffLayout from '@/Layouts/StaffLayout';
 import { Head, router, Link } from '@inertiajs/react';
 import { useState, useRef } from 'react';
-import { ArrowLeft, Save, RotateCcw, Monitor, Palette, Play, Eye } from 'lucide-react';
+import {
+    ArrowLeft, Save, RotateCcw, Monitor, Palette, Play, Eye, Plus,
+    Trash2, Upload, Power, Link as LinkIcon,
+} from 'lucide-react';
 
 // Matches the real TV Dashboard 24×14 grid exactly
 const DEFAULT_LAYOUT: Record<string, any> = {
@@ -27,6 +30,27 @@ const WIDGET_LABELS: Record<string, string> = {
     hotelDeals: 'Promos/Deals', notificationCard: 'Notifications', hotelInfo: 'Hotel Info',
     alarmWidget: 'Alarm', chatWidget: 'Chat', notifWidget: 'Notifications Shortcut',
     displayWidget: 'Settings Shortcut',
+};
+
+const DEFAULT_APPS = [
+    { id: 'netflix', name: 'Netflix', url: 'com.netflix.ninja', icon: '', subtitle: 'Streaming', brandColor: '#e50914', iconScale: 1, enabled: true, embeddable: false },
+    { id: 'youtube', name: 'YouTube', url: 'com.google.android.youtube.tv', icon: '', subtitle: 'Video', brandColor: '#ff0000', iconScale: 1, enabled: true, embeddable: false },
+    { id: 'disney', name: 'Disney+', url: 'com.disney.disneyplus', icon: '', subtitle: 'Streaming', brandColor: '#113ccf', iconScale: 1, enabled: true, embeddable: false },
+    { id: 'prime', name: 'Prime Video', url: 'com.amazon.amazonvideo.livingroom', icon: '', subtitle: 'Streaming', brandColor: '#00a8e1', iconScale: 1, enabled: true, embeddable: false },
+    { id: 'spotify', name: 'Spotify', url: 'com.spotify.tv.android', icon: '', subtitle: 'Music', brandColor: '#1db954', iconScale: 1, enabled: true, embeddable: false },
+];
+
+const defaultAppLayout = (app: any, index: number, savedLayout: Record<string, any> = {}) => {
+    const key = `app-${app.id}`;
+    return {
+        colStart: 15 + ((index % 5) * 2),
+        rowStart: 11 + (Math.floor(index / 5) * 2),
+        colSpan: 2,
+        rowSpan: 2,
+        visible: true,
+        bgColor: app.brandColor || '#334155',
+        ...(savedLayout?.[key] ?? {}),
+    };
 };
 
 const COLS = 24;
@@ -68,18 +92,10 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
         const savedLayout = { ...(saved.layout ?? {}) };
         delete savedLayout.appGrid;
 
-        const apps = Array.isArray(saved.apps) ? saved.apps : [];
+        const apps = Array.isArray(saved.apps) ? saved.apps : DEFAULT_APPS;
         const appLayout = apps.reduce((layout: Record<string, any>, app: any, index: number) => {
             const key = `app-${app.id}`;
-            layout[key] = {
-                colStart: 15 + ((index % 5) * 2),
-                rowStart: 11 + (Math.floor(index / 5) * 2),
-                colSpan: 2,
-                rowSpan: 2,
-                visible: true,
-                bgColor: app.brandColor || '#334155',
-                ...(saved.layout?.[key] ?? {}),
-            };
+            layout[key] = defaultAppLayout(app, index, saved.layout ?? {});
             return layout;
         }, {});
 
@@ -105,8 +121,11 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
 
     const [config, setConfig] = useState(initConfig);
     const [saving, setSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<'canvas' | 'theme' | 'slideshow'>('canvas');
+    const [uploadingIcon, setUploadingIcon] = useState(false);
+    const [activeAppIndex, setActiveAppIndex] = useState<number | null>(null);
+    const [activeTab, setActiveTab] = useState<'canvas' | 'apps' | 'theme' | 'slideshow'>('canvas');
     const gridRef = useRef<HTMLDivElement>(null);
+    const iconInputRef = useRef<HTMLInputElement>(null);
 
     const minSpanFor = (key: string) => {
         if (key.startsWith('app-')) return { colSpan: 1, rowSpan: 1 };
@@ -123,6 +142,79 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
 
     const updateLayout = (key: string, patch: Record<string, any>) =>
         setConfig(c => ({ ...c, layout: { ...c.layout, [key]: { ...c.layout[key], ...patch } } }));
+
+    const updateApp = (index: number, patch: Record<string, any>) => {
+        setConfig(c => {
+            const apps = [...(c.apps ?? [])];
+            apps[index] = { ...apps[index], ...patch };
+            const layoutKey = apps[index]?.id ? `app-${apps[index].id}` : null;
+            const layout = layoutKey && patch.brandColor
+                ? { ...c.layout, [layoutKey]: { ...c.layout[layoutKey], bgColor: patch.brandColor } }
+                : c.layout;
+            return { ...c, apps, layout };
+        });
+    };
+
+    const addApp = () => {
+        const newId = `custom-${Date.now()}`;
+        const newApp = {
+            id: newId,
+            name: 'Custom App',
+            subtitle: 'STB App',
+            url: '',
+            icon: '',
+            brandColor: '#334155',
+            iconScale: 1,
+            enabled: true,
+            embeddable: false,
+        };
+        setConfig(c => ({
+            ...c,
+            apps: [...(c.apps ?? []), newApp],
+            layout: {
+                ...c.layout,
+                [`app-${newId}`]: defaultAppLayout(newApp, c.apps?.length ?? 0, c.layout),
+            },
+        }));
+    };
+
+    const removeApp = (index: number) => {
+        if (!confirm('Remove this app from the TV launcher?')) return;
+        setConfig(c => {
+            const removedAppId = c.apps?.[index]?.id;
+            const apps = [...(c.apps ?? [])];
+            apps.splice(index, 1);
+            const layout = { ...c.layout };
+            if (removedAppId) delete layout[`app-${removedAppId}`];
+            return { ...c, apps, layout };
+        });
+    };
+
+    const handleIconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        const targetIdx = activeAppIndex;
+        if (iconInputRef.current) iconInputRef.current.value = '';
+        if (!file || targetIdx === null || targetIdx >= (config.apps?.length ?? 0)) {
+            setActiveAppIndex(null);
+            return;
+        }
+
+        setUploadingIcon(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/api/upload/tv-app-icon', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+            updateApp(targetIdx, { icon: `${data.url}?t=${Date.now()}` });
+        } catch (error: any) {
+            alert(error?.message || 'Upload failed');
+        } finally {
+            setUploadingIcon(false);
+            setActiveAppIndex(null);
+        }
+    };
 
     const startDrag = (e: React.PointerEvent, key: string) => {
         if ((e.target as HTMLElement).classList.contains('rh')) return;
@@ -180,6 +272,7 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
 
     const tabs = [
         { key: 'canvas', label: 'Layout Canvas', icon: Monitor },
+        { key: 'apps', label: 'Apps', icon: Power },
         { key: 'theme', label: 'Theme', icon: Palette },
         { key: 'slideshow', label: 'Slideshow', icon: Play },
     ] as const;
@@ -253,10 +346,13 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                 }}>
                                 {Object.entries(config.layout).map(([key, w]) => {
                                     if (!w.visible) return null;
+                                    const app = key.startsWith('app-')
+                                        ? config.apps?.find((item: any) => `app-${item.id}` === key)
+                                        : null;
                                     return (
                                         <div key={key}
                                             onPointerDown={e => startDrag(e, key)}
-                                            className="rounded-md border border-white/20 relative group select-none touch-none cursor-grab active:cursor-grabbing flex flex-col items-center justify-center overflow-hidden hover:border-teal-400 transition-colors"
+                                            className={`rounded-md border border-white/20 relative group select-none touch-none cursor-grab active:cursor-grabbing flex flex-col items-center justify-center overflow-hidden hover:border-teal-400 transition-colors ${app?.enabled === false ? 'grayscale opacity-45' : ''}`}
                                             style={{
                                                 gridColumn: `${w.colStart ?? 1} / span ${w.colSpan ?? 1}`,
                                                 gridRow: `${w.rowStart ?? 1} / span ${w.rowSpan ?? 1}`,
@@ -266,6 +362,7 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                             <span className="text-[9px] font-medium text-white/80 text-center px-1 leading-tight pointer-events-none">
                                                 {widgetLabel(key)}
                                             </span>
+                                            {app?.enabled === false && <span className="text-[7px] text-white/50 pointer-events-none">Off</span>}
                                             <span className="text-[7px] text-white/30 pointer-events-none">{w.colSpan}×{w.rowSpan}</span>
                                             <div className="rh absolute bottom-0 right-0 w-3 h-3 opacity-0 group-hover:opacity-100 cursor-se-resize flex items-end justify-end transition-opacity"
                                                 onPointerDown={e => startResize(e, key)}>
@@ -310,6 +407,140 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── APPS TAB ── */}
+                {activeTab === 'apps' && (
+                    <div className="grid grid-cols-[1fr_340px] gap-5">
+                        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-5">
+                                <div>
+                                    <h3 className="font-medium text-slate-800">STB App Launcher</h3>
+                                    <p className="text-sm text-slate-500 mt-1">Use Android TV package names, intent URLs, or web URLs. Enabled apps appear on the canvas and slideshow carousel.</p>
+                                </div>
+                                <button type="button" onClick={addApp} className="flex items-center gap-2 px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-medium transition-colors">
+                                    <Plus size={15} /> Add App
+                                </button>
+                            </div>
+
+                            <input
+                                ref={iconInputRef}
+                                type="file"
+                                className="hidden"
+                                accept="image/png, image/jpeg, image/webp, image/svg+xml"
+                                onChange={handleIconUpload}
+                            />
+
+                            <div className="divide-y divide-slate-100">
+                                {(config.apps ?? []).map((app: any, index: number) => {
+                                    const layoutKey = `app-${app.id}`;
+                                    const layout = config.layout?.[layoutKey] ?? {};
+                                    return (
+                                        <div key={app.id || index} className="grid grid-cols-[72px_1fr_148px] gap-4 p-5">
+                                            <div className="flex flex-col items-center gap-2">
+                                                <div className="w-14 h-14 rounded-2xl border border-slate-200 flex items-center justify-center overflow-hidden p-2 text-white font-semibold shadow-sm"
+                                                    style={{ backgroundColor: app.brandColor || '#334155' }}>
+                                                    {app.icon ? (
+                                                        <img src={app.icon} alt="" className="w-full h-full object-contain" />
+                                                    ) : (
+                                                        <span className="text-lg">{(app.name || 'A').slice(0, 2).toUpperCase()}</span>
+                                                    )}
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    disabled={uploadingIcon}
+                                                    onClick={() => { setActiveAppIndex(index); iconInputRef.current?.click(); }}
+                                                    className="flex items-center gap-1 text-[11px] font-medium text-slate-500 hover:text-teal-600 disabled:opacity-50"
+                                                >
+                                                    <Upload size={11} /> Icon
+                                                </button>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label className="block text-xs font-medium text-slate-500 mb-1">App Name</label>
+                                                    <input value={app.name ?? ''} onChange={e => updateApp(index, { name: e.target.value })}
+                                                        placeholder="Netflix"
+                                                        className={inp} />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-slate-500 mb-1">Subtitle</label>
+                                                    <input value={app.subtitle ?? ''} onChange={e => updateApp(index, { subtitle: e.target.value })}
+                                                        placeholder="Streaming"
+                                                        className={inp} />
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <label className="block text-xs font-medium text-slate-500 mb-1">Package, Intent, or URL</label>
+                                                    <div className="relative">
+                                                        <LinkIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                        <input value={app.url ?? ''} onChange={e => updateApp(index, { url: e.target.value })}
+                                                            placeholder="com.netflix.ninja, intent://..., or https://..."
+                                                            className={inp + ' pl-9 font-mono'} />
+                                                    </div>
+                                                </div>
+                                                <label className="flex items-center gap-2 text-sm text-slate-600">
+                                                    <input type="checkbox" checked={app.embeddable === true} onChange={e => updateApp(index, { embeddable: e.target.checked })}
+                                                        className="w-4 h-4 rounded accent-teal-500" />
+                                                    Open web URL in iframe
+                                                </label>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-xs text-slate-500">Color</span>
+                                                    <input type="color" value={app.brandColor || '#334155'} onChange={e => updateApp(index, { brandColor: e.target.value })}
+                                                        className="w-9 h-9 rounded-lg cursor-pointer border-0 p-0 bg-transparent" />
+                                                    <span className="text-xs font-mono text-slate-500">{app.brandColor || '#334155'}</span>
+                                                </div>
+                                                <div className="col-span-2 flex items-center gap-3">
+                                                    <span className="text-xs text-slate-500 w-20">Icon scale</span>
+                                                    <input type="range" min={0.5} max={2} step={0.1} value={app.iconScale ?? 1}
+                                                        onChange={e => updateApp(index, { iconScale: parseFloat(e.target.value) })}
+                                                        className="flex-1 accent-teal-500" />
+                                                    <span className="text-xs font-mono text-slate-500 w-10 text-right">{Math.round((app.iconScale ?? 1) * 100)}%</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-col justify-between gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => updateApp(index, { enabled: app.enabled === false })}
+                                                    className={`flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                                                        app.enabled === false
+                                                            ? 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                                            : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                                    }`}
+                                                >
+                                                    <Power size={14} /> {app.enabled === false ? 'Off' : 'On'}
+                                                </button>
+                                                <label className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-600">
+                                                    <input type="checkbox" checked={layout.visible !== false}
+                                                        onChange={e => updateLayout(layoutKey, { visible: e.target.checked })}
+                                                        className="w-4 h-4 rounded accent-teal-500" />
+                                                    Canvas visible
+                                                </label>
+                                                <button type="button" onClick={() => removeApp(index)}
+                                                    className="flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+                                                    <Trash2 size={14} /> Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-900 rounded-2xl p-5 text-slate-300 shadow-sm">
+                            <h3 className="font-medium text-white">Origin STB Launch Rules</h3>
+                            <div className="mt-4 space-y-4 text-sm leading-relaxed">
+                                <p>Native Android TV apps should use the package name. The TV dashboard passes that package to the STB bridge when available.</p>
+                                <div className="rounded-xl bg-white/5 p-3 font-mono text-xs text-slate-400">
+                                    com.netflix.ninja<br />
+                                    com.google.android.youtube.tv<br />
+                                    com.disney.disneyplus
+                                </div>
+                                <p>Use an `intent://` deep link when the app needs a specific route. Use `https://` only for web apps; enable iframe only when the provider allows embedding.</p>
+                                <p className="text-slate-500">Disabled apps stay saved for later but are hidden from the TV grid and slideshow launcher.</p>
                             </div>
                         </div>
                     </div>

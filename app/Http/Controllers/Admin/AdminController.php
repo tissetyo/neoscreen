@@ -74,7 +74,10 @@ class AdminController extends Controller
             'location' => $data['location'] ?? null,
             'timezone' => $data['timezone'] ?? 'Asia/Jakarta',
             'is_active' => true,
-            'tv_layout_config' => ['screenMode' => 'grid'],
+            'tv_layout_config' => [
+                'screenMode' => 'grid',
+                'apps' => $this->defaultTvApps(),
+            ],
         ]);
 
         // Seed default services
@@ -342,5 +345,16 @@ class AdminController extends Controller
         };
 
         return ($hotel->billing_cycle ?? 'monthly') === 'annual' ? round($amount / 12, 2) : round($amount, 2);
+    }
+
+    private function defaultTvApps(): array
+    {
+        return [
+            ['id' => 'netflix', 'name' => 'Netflix', 'url' => 'com.netflix.ninja', 'icon' => '', 'subtitle' => 'Streaming', 'brandColor' => '#e50914', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
+            ['id' => 'youtube', 'name' => 'YouTube', 'url' => 'com.google.android.youtube.tv', 'icon' => '', 'subtitle' => 'Video', 'brandColor' => '#ff0000', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
+            ['id' => 'disney', 'name' => 'Disney+', 'url' => 'com.disney.disneyplus', 'icon' => '', 'subtitle' => 'Streaming', 'brandColor' => '#113ccf', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
+            ['id' => 'prime', 'name' => 'Prime Video', 'url' => 'com.amazon.amazonvideo.livingroom', 'icon' => '', 'subtitle' => 'Streaming', 'brandColor' => '#00a8e1', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
+            ['id' => 'spotify', 'name' => 'Spotify', 'url' => 'com.spotify.tv.android', 'icon' => '', 'subtitle' => 'Music', 'brandColor' => '#1db954', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
+        ];
     }
 }

@@ -34,6 +34,14 @@ import {
   ConciergeBell, Info, MapPin, User, Wifi, MonitorCog,
 } from 'lucide-react';
 
+const DEFAULT_APPS = [
+  { id: 'netflix', name: 'Netflix', url: 'com.netflix.ninja', icon: '', subtitle: 'Streaming', brandColor: '#e50914', iconScale: 1, enabled: true, embeddable: false },
+  { id: 'youtube', name: 'YouTube', url: 'com.google.android.youtube.tv', icon: '', subtitle: 'Video', brandColor: '#ff0000', iconScale: 1, enabled: true, embeddable: false },
+  { id: 'disney', name: 'Disney+', url: 'com.disney.disneyplus', icon: '', subtitle: 'Streaming', brandColor: '#113ccf', iconScale: 1, enabled: true, embeddable: false },
+  { id: 'prime', name: 'Prime Video', url: 'com.amazon.amazonvideo.livingroom', icon: '', subtitle: 'Streaming', brandColor: '#00a8e1', iconScale: 1, enabled: true, embeddable: false },
+  { id: 'spotify', name: 'Spotify', url: 'com.spotify.tv.android', icon: '', subtitle: 'Music', brandColor: '#1db954', iconScale: 1, enabled: true, embeddable: false },
+];
+
 interface Hotel {
     id: string;
     name: string;
@@ -269,7 +277,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
 
   const defaultConfig = {
     theme: { visualStyle: 'luxury', opacityLight: 0.88, opacityDark: 0.55 },
-    apps: [],
+    apps: DEFAULT_APPS,
     // 24-col × 14-row grid: each "tile" is 2×2 cells.
     // Widget sizes: 1 tile (2×2), 2h tiles (4×2), 2v tiles (2×4), 4 tiles (4×4)
     layout: {
@@ -307,12 +315,13 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
   }, {});
   const savedLayout = { ...(savedConfig.layout ?? {}) };
   delete savedLayout.appGrid;
+  const activeApps = ((savedConfig.apps ?? defaultConfig.apps) || []).filter((app: any) => app.enabled !== false);
   const config = {
     ...defaultConfig,
     ...savedConfig,
     theme: { ...defaultConfig.theme, ...(savedConfig.theme ?? {}) },
     layout: { ...defaultConfig.layout, ...appLayout, ...savedLayout },
-    apps: savedConfig.apps ?? defaultConfig.apps,
+    apps: activeApps,
   } as any;
   
   // Safe widget style getter with strict validation
@@ -373,7 +382,14 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
     }
   };
 
-  const isWidgetVisible = (key: string) => getWidgetLayout(key)?.visible !== false;
+  const isWidgetVisible = (key: string) => {
+    if (key.startsWith('app-')) {
+      const appId = key.replace('app-', '');
+      const app = (config.apps || []).find((item: any) => item.id === appId);
+      if (!app) return false;
+    }
+    return getWidgetLayout(key)?.visible !== false;
+  };
 
   const widgetIconMeta = (key: string) => {
     const app = key.startsWith('app-')
@@ -731,7 +747,9 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
                      style={{ width: `${2.5 * (app.iconScale || 1)}vw`, height: `${2.5 * (app.iconScale || 1)}vw` }}>
                    {app.icon && typeof app.icon === 'string' && (app.icon.startsWith('/') || app.icon.startsWith('http')) ? (
                       <img src={app.icon} alt={app.name} className="w-full h-full object-contain" />
-                   ) : null}
+                   ) : (
+                      <span className="text-[clamp(14px,1.5vw,28px)] font-semibold leading-none">{(app.name || 'App').slice(0, 2).toUpperCase()}</span>
+                   )}
                 </div>
                 <span className="text-[clamp(8px,0.58vw,12px)] font-medium tracking-normal relative z-10 truncate px-1 w-full text-center">{app.name}</span>
                 {app.subtitle && <span className="text-[clamp(7px,0.4vw,10px)] opacity-40 relative z-10 truncate px-1 w-full text-center">{app.subtitle}</span>}

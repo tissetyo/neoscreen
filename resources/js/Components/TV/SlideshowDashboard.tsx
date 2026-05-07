@@ -75,7 +75,7 @@ export default function SlideshowDashboard({
 
   const allDockItems = [
     ...DOCK_WIDGETS,
-    ...(config.apps || []).map((app: any) => ({
+    ...(config.apps || []).filter((app: any) => app.enabled !== false).map((app: any) => ({
       id: `app-${app.id}`, label: app.name, icon: null, app,
     })),
   ];
@@ -378,7 +378,18 @@ export default function SlideshowDashboard({
                         style={{ width: isCenter ? '3vw' : '2vw', height: isCenter ? '3vw' : '2vw', objectFit: 'contain' }}
                       />
                     ) : (
-                      <div style={{ width: '2vw', height: '2vw', borderRadius: '0.5vw', background: 'rgba(255,255,255,0.2)' }} />
+                      <div
+                        className="flex items-center justify-center font-semibold text-white"
+                        style={{
+                          width: isCenter ? '3vw' : '2vw',
+                          height: isCenter ? '3vw' : '2vw',
+                          borderRadius: '0.6vw',
+                          background: item.app?.brandColor || 'rgba(255,255,255,0.2)',
+                          fontSize: isCenter ? '1.05vw' : '0.75vw',
+                        }}
+                      >
+                        {(item.label || 'A').slice(0, 2).toUpperCase()}
+                      </div>
                     )}
                   </motion.button>
                 );
