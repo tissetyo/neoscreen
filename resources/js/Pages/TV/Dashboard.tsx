@@ -301,6 +301,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
       chatWidget:       { colStart: 17, colSpan: 2,  rowStart: 9, rowSpan: 2, visible: true },
       notifWidget:      { colStart: 19, colSpan: 2,  rowStart: 9, rowSpan: 2, visible: true },
       displayWidget:    { colStart: 21, colSpan: 4,  rowStart: 9, rowSpan: 2, visible: true },
+      brandLogo:        { colStart: 1, colSpan: 3, rowStart: 1, rowSpan: 1, visible: false, followGlobalStyle: false, bgOpacity: 0 },
     }
   };
   const savedConfig = (store.tvLayoutConfig && typeof store.tvLayoutConfig === 'object' ? store.tvLayoutConfig : {}) as any;
@@ -353,7 +354,8 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
       const colSpan = Math.min(dbW.colSpan, 24 - colStart + 1);
       const rowStart = dbW.rowStart;
       const rowSpan = Math.min(dbW.rowSpan, 14 - rowStart + 1);
-      const bgColor = dbW?.bgColor;
+      const useGlobalSurface = key !== 'brandLogo' && dbW?.followGlobalStyle !== false;
+      const bgColor = useGlobalSurface ? (config.theme?.widgetSurface || '#1e293b') : dbW?.bgColor;
       const bgOpacity = dbW?.bgOpacity !== undefined ? dbW.bgOpacity : 0.6;
       const textColor = dbW?.textColor || '#ffffff';
 
@@ -377,7 +379,10 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
         color: textColor,
         '--widget-col-span': colSpan,
         '--widget-row-span': rowSpan,
-        ...(finalBgColor ? { '--widget-bg': finalBgColor } : {})
+        ...(finalBgColor ? { '--widget-bg': finalBgColor } : {}),
+        ...(useGlobalSurface && config.theme?.widgetGradientEnabled ? {
+          '--widget-bg': `linear-gradient(135deg, ${config.theme.widgetGradientFrom || '#111827'}, ${config.theme.widgetGradientTo || '#334155'})`,
+        } : {}),
       } as React.CSSProperties;
     } catch (err) {
       console.error(`Layout Error for ${key}:`, err);
@@ -423,6 +428,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
       chatWidget: { label: 'Chat', icon: MessageCircle, onClick: () => handleAction('chat') },
       notifWidget: { label: 'Notifs', icon: Bell, onClick: () => handleAction('notif') },
       displayWidget: { label: 'Settings', icon: MonitorCog, onClick: () => handleAction('settings') },
+      brandLogo: { label: 'Logo', icon: Info },
     };
     return meta[key] || { label: key, icon: Info };
   };
@@ -489,9 +495,10 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
   const scale = overrides.scale ?? config.theme?.scale ?? 1;
   const displayFilter = `brightness(${brightness}) contrast(${contrast}) saturate(${saturate})`;
 
-  const renderBrandLogo = () => {
+  const renderBrandLogo = (forceFloating = false) => {
     const theme = config.theme ?? {};
     if (!theme.showLogo || !theme.logoUrl) return null;
+    if (!forceFloating && config.layout?.brandLogo?.visible === true) return null;
 
     const position = theme.logoPosition ?? 'top-left';
     const placement: Record<string, React.CSSProperties> = {
@@ -593,6 +600,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
       <div className="fixed inset-0 w-full h-full overflow-hidden bg-slate-900 tv-kiosk-mode"
         style={{ 
           '--visual-style': config.theme?.visualStyle ?? 'luxury',
+          '--widget-blur': `${config.theme?.widgetBlur ?? 18}px`,
           '--focus-color': config.theme?.focusColor ?? '#d4af37',
           '--focus-style': config.theme?.focusStyle ?? 'glow',
         } as React.CSSProperties}>
@@ -604,7 +612,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
           onOpenPromos={() => handleAction('promo')}
           onOpenServices={() => handleAction('service')}
         />
-        {renderBrandLogo()}
+        {renderBrandLogo(true)}
         {/* Modals — same as grid mode */}
         {launchApp && <AppLauncher app={launchApp} isOpen={!!launchApp} onClose={() => setLaunchApp(null)} />}
         <ChatModal isOpen={activeModal === 'chat'} onClose={() => setActiveModal(null)} />
@@ -628,6 +636,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
           '--visual-style': config.theme?.visualStyle ?? 'luxury',
           '--widget-dark-opacity': config.theme?.opacityDark ?? 0.55,
           '--widget-light-opacity': config.theme?.opacityLight ?? 0.88,
+          '--widget-blur': `${config.theme?.widgetBlur ?? 18}px`,
           '--focus-color': config.theme?.focusColor ?? '#d4af37',
           '--focus-style': config.theme?.focusStyle ?? 'glow'
         } as React.CSSProperties}>
@@ -672,6 +681,14 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
             />
           );
         })}
+
+        {isWidgetVisible('brandLogo') && config.theme?.logoUrl && (
+          <WidgetFrame widgetKey="brandLogo" delay="0ms" className="pointer-events-none">
+            <div className="tv-widget-fit flex h-full w-full items-center justify-center p-[0.5vw]">
+              <img src={config.theme.logoUrl} alt="" className="max-h-full max-w-full object-contain drop-shadow-[0_8px_22px_rgba(0,0,0,0.45)]" />
+            </div>
+          </WidgetFrame>
+        )}
 
         {/* ════════════════ LEFT COLUMN ════════════════ */}
         {/* ROW 1-2: Analog Clocks */}
