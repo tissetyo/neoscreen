@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Models\Hotel;
 use App\Models\Announcement;
+use App\Models\HotelMedia;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -26,6 +28,13 @@ class SettingsController extends Controller
             'slug' => $slug,
             'hotel' => $hotel,
             'announcements' => $announcements,
+            'rooms' => Room::where('hotel_id', $hotel->id)
+                ->orderBy('room_code')
+                ->get(['id', 'room_code', 'guest_name']),
+            'mediaItems' => HotelMedia::where('hotel_id', $hotel->id)
+                ->orderBy('sort_order')
+                ->orderBy('created_at', 'desc')
+                ->get(),
         ]);
     }
 
@@ -55,13 +64,76 @@ class SettingsController extends Controller
     public function updateTv(Request $request, string $slug)
     {
         $hotel = $this->getHotel($slug);
-        $data = $request->validate(['screenMode' => 'required|in:grid,slideshow']);
+        $data = $request->validate([
+            'screenMode' => 'required|in:grid,slideshow',
+            'slideshow' => 'nullable|array',
+            'slideshow.autoAdvanceSeconds' => 'nullable|integer|min:5|max:120',
+            'slideshow.widgetDismissSeconds' => 'nullable|integer|min:3|max:60',
+            'slideshow.transition' => 'nullable|string|in:crossfade,slide,zoom',
+            'slideshow.showFloatingClock' => 'nullable|boolean',
+            'startup_video_url' => 'nullable|string|max:1000',
+        ]);
 
         $config = $hotel->tv_layout_config ?? [];
         $config['screenMode'] = $data['screenMode'];
-        $hotel->update(['tv_layout_config' => $config]);
+        if (isset($data['slideshow'])) {
+            $config['slideshow'] = array_merge($config['slideshow'] ?? [], $data['slideshow']);
+        }
+
+        $hotel->update([
+            'tv_layout_config' => $config,
+            'startup_video_url' => $data['startup_video_url'] ?? $hotel->startup_video_url,
+        ]);
 
         return back()->with('success', 'TV settings saved.');
+    }
+
+    public function storeMedia(Request $request, string $slug)
+    {
+        $hotel = $this->getHotel($slug);
+        $data = $this->validateMedia($request, $hotel);
+
+        HotelMedia::create([
+            ...$data,
+            'hotel_id' => $hotel->id,
+        ]);
+
+        return back()->with('success', 'Media added.');
+    }
+
+    public function updateMedia(Request $request, string $slug, string $mediaId)
+    {
+        $hotel = $this->getHotel($slug);
+        $media = HotelMedia::where('hotel_id', $hotel->id)->findOrFail($mediaId);
+        $media->update($this->validateMedia($request, $hotel));
+
+        return back()->with('success', 'Media updated.');
+    }
+
+    public function deleteMedia(string $slug, string $mediaId)
+    {
+        $hotel = $this->getHotel($slug);
+        HotelMedia::where('hotel_id', $hotel->id)->findOrFail($mediaId)->delete();
+
+        return back()->with('success', 'Media deleted.');
+    }
+
+    private function validateMedia(Request $request, Hotel $hotel): array
+    {
+        $roomIds = Room::where('hotel_id', $hotel->id)->pluck('id')->all();
+
+        return $request->validate([
+            'title' => 'nullable|string|max:255',
+            'type' => 'required|in:image,video',
+            'url' => 'required|string|max:1000',
+            'source_type' => 'required|in:upload,youtube,url',
+            'room_ids' => 'nullable|array',
+            'room_ids.*' => ['string', 'in:' . implode(',', $roomIds)],
+            'tags' => 'nullable|array',
+            'tags.*' => 'string|max:50',
+            'is_slideshow' => 'boolean',
+            'sort_order' => 'nullable|integer|min:0|max:10000',
+        ]);
     }
 
     public function addAnnouncement(Request $request, string $slug)

@@ -81,13 +81,36 @@ class TVConfigController extends Controller
                 'clock_label_1' => $hotel->clock_label_1,
                 'clock_label_2' => $hotel->clock_label_2,
                 'clock_label_3' => $hotel->clock_label_3,
-                'tv_layout_config' => $hotel->tv_layout_config,
+                'tv_layout_config' => $this->tvConfigForRoom($hotel, $room),
             ],
-            'tvLayoutConfig' => $hotel->tv_layout_config,
+            'tvLayoutConfig' => $this->tvConfigForRoom($hotel, $room),
             'featuredImageUrl' => $hotel->featured_image_url,
             'promos' => $promos,
             'services' => $services,
             'announcements' => $announcements,
         ]);
+    }
+
+    private function tvConfigForRoom(Hotel $hotel, Room $room): array
+    {
+        $config = $hotel->tv_layout_config ?? [];
+        $slideshowImages = $hotel->media()
+            ->where('type', 'image')
+            ->where('is_slideshow', true)
+            ->orderBy('sort_order')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->filter(fn ($media) => $media->appliesToRoom((string) $room->id))
+            ->pluck('url')
+            ->values()
+            ->all();
+
+        if (count($slideshowImages) > 0) {
+            $config['slideshow'] = array_merge($config['slideshow'] ?? [], [
+                'images' => $slideshowImages,
+            ]);
+        }
+
+        return $config;
     }
 }

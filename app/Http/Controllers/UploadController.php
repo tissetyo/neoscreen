@@ -14,6 +14,8 @@ class UploadController extends Controller
         'hotel-background' => ['maxSize' => 5120, 'mimes' => 'jpeg,jpg,png,webp', 'directory' => 'hotel-backgrounds'],
         'hotel-featured' => ['maxSize' => 5120, 'mimes' => 'jpeg,jpg,png,webp', 'directory' => 'hotel-featured'],
         'hotel-video' => ['maxSize' => 51200, 'mimes' => 'mp4,webm', 'directory' => 'hotel-videos'],
+        'media-image' => ['maxSize' => 5120, 'mimes' => 'jpeg,jpg,png,webp', 'directory' => 'media-images'],
+        'media-video' => ['maxSize' => 51200, 'mimes' => 'mp4,webm', 'directory' => 'media-videos'],
         'promo-poster' => ['maxSize' => 5120, 'mimes' => 'jpeg,jpg,png,webp', 'directory' => 'promo-posters'],
         'tv-app-icon' => ['maxSize' => 2048, 'mimes' => 'jpeg,jpg,png,webp,svg', 'directory' => 'tv-app-icons'],
     ];

@@ -75,6 +75,11 @@ class Hotel extends Model
         return $this->hasMany(ServiceRequest::class);
     }
 
+    public function media(): HasMany
+    {
+        return $this->hasMany(HotelMedia::class);
+    }
+
     public function activityLogs(): HasMany
     {
         return $this->hasMany(ActivityLog::class);

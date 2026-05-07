@@ -97,6 +97,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
             Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
             Route::patch('/settings/tv', [SettingsController::class, 'updateTv'])->name('settings.tv');
+            Route::post('/settings/media', [SettingsController::class, 'storeMedia'])->name('settings.media.store');
+            Route::patch('/settings/media/{mediaId}', [SettingsController::class, 'updateMedia'])->name('settings.media.update');
+            Route::delete('/settings/media/{mediaId}', [SettingsController::class, 'deleteMedia'])->name('settings.media.delete');
             Route::post('/settings/announcements', [SettingsController::class, 'addAnnouncement'])->name('settings.announcements.store');
             Route::delete('/settings/announcements/{id}', [SettingsController::class, 'deleteAnnouncement'])->name('settings.announcements.delete');
             Route::get('/team', [TeamController::class, 'index'])->name('team');

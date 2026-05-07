@@ -18,6 +18,12 @@ interface SplashProps {
 
 type Phase = 'video' | 'welcome' | 'pin';
 
+const youtubeEmbedUrl = (url: string | null) => {
+    if (!url) return null;
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{6,})/);
+    return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1&mute=1&loop=1&playlist=${match[1]}&controls=0&rel=0&modestbranding=1` : null;
+};
+
 export default function Splash({ hotel, room }: SplashProps) {
     // We start with null and set it in useEffect to avoid hydration mismatch
     const [phase, setPhase] = useState<Phase | null>(null);
@@ -112,6 +118,7 @@ export default function Splash({ hotel, room }: SplashProps) {
 
     const bg = hotel.featured_image_url
         || 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1920&auto=format&fit=crop';
+    const startupYoutubeUrl = youtubeEmbedUrl(hotel.startup_video_url);
 
     if (!phase) return <div style={{ width: '100vw', height: '100vh', background: '#000' }} />;
 
@@ -121,11 +128,20 @@ export default function Splash({ hotel, room }: SplashProps) {
             {/* ═══════ PHASE 1: LOOPING STARTUP VIDEO ═══════ */}
             {phase === 'video' && hotel.startup_video_url && (
                 <div style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
-                    <video
-                        src={hotel.startup_video_url}
-                        autoPlay loop muted playsInline
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
+                    {startupYoutubeUrl ? (
+                        <iframe
+                            src={startupYoutubeUrl}
+                            title="Startup video"
+                            allow="autoplay; fullscreen; encrypted-media"
+                            style={{ width: '100%', height: '100%', border: 0 }}
+                        />
+                    ) : (
+                        <video
+                            src={hotel.startup_video_url}
+                            autoPlay loop muted playsInline
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    )}
                     {/* Skip hint */}
                     <div style={{
                         position: 'absolute', bottom: '4vh', left: '50%', transform: 'translateX(-50%)',

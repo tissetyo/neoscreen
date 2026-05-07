@@ -59,7 +59,7 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        $tvConfig = $hotel->tv_layout_config ?? [];
+        $tvConfig = $this->tvConfigForRoom($hotel, $room);
 
         return Inertia::render('TV/Dashboard', [
             'hotel' => $hotel,
@@ -103,7 +103,7 @@ class DashboardController extends Controller
         $promos = $hotel->promos()->where('is_active', true)->get();
         $services = $hotel->services()->where('is_active', true)->with('options')->get();
         $announcements = $hotel->announcements()->where('is_active', true)->pluck('text');
-        $tvConfig = $hotel->tv_layout_config ?? [];
+        $tvConfig = $this->tvConfigForRoom($hotel, $room);
 
         return Inertia::render('TV/Dashboard', [
             'hotel' => $hotel,
@@ -115,5 +115,28 @@ class DashboardController extends Controller
             'screenMode' => $tvConfig['screenMode'] ?? 'grid',
             'slideshowConfig' => $tvConfig['slideshow'] ?? null,
         ]);
+    }
+
+    private function tvConfigForRoom(Hotel $hotel, Room $room): array
+    {
+        $config = $hotel->tv_layout_config ?? [];
+        $slideshowImages = $hotel->media()
+            ->where('type', 'image')
+            ->where('is_slideshow', true)
+            ->orderBy('sort_order')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->filter(fn ($media) => $media->appliesToRoom((string) $room->id))
+            ->pluck('url')
+            ->values()
+            ->all();
+
+        if (count($slideshowImages) > 0) {
+            $config['slideshow'] = array_merge($config['slideshow'] ?? [], [
+                'images' => $slideshowImages,
+            ]);
+        }
+
+        return $config;
     }
 }
