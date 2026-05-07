@@ -9,7 +9,9 @@ use App\Models\ServiceOption;
 use App\Models\ServiceRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class ProductReadinessTest extends TestCase
@@ -118,6 +120,35 @@ class ProductReadinessTest extends TestCase
         $this->actingAs($manager)
             ->get("/{$hotel->slug}/frontoffice/guide")
             ->assertOk();
+    }
+
+    public function test_superadmin_login_persists_session_and_opens_admin_dashboard(): void
+    {
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('secret123'),
+            'role' => 'superadmin',
+        ]);
+
+        $this->post('/login', [
+            'email' => 'admin@example.com',
+            'password' => 'secret123',
+        ])->assertRedirect('/admin');
+
+        $this->assertTrue(Auth::check());
+
+        $this->get('/admin')
+            ->assertOk();
+    }
+
+    public function test_sessions_table_uses_uuid_compatible_user_id(): void
+    {
+        $userIdColumn = collect(Schema::getColumns('sessions'))
+            ->firstWhere('name', 'user_id');
+
+        $this->assertNotNull($userIdColumn);
+        $this->assertStringContainsString('char', strtolower($userIdColumn['type_name'] ?? $userIdColumn['type'] ?? ''));
     }
 
     public function test_superadmin_can_save_canvas_with_tiny_responsive_widget_layouts(): void
