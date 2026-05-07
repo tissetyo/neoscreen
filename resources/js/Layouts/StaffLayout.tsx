@@ -10,9 +10,10 @@ import {
 
 interface StaffLayoutProps {
     header?: ReactNode;
+    fullBleed?: boolean;
 }
 
-export default function StaffLayout({ children, header }: PropsWithChildren<StaffLayoutProps>) {
+export default function StaffLayout({ children, header, fullBleed = false }: PropsWithChildren<StaffLayoutProps>) {
     const { auth, hotel, slug, flash, errors } = usePage<any>().props;
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -226,9 +227,11 @@ export default function StaffLayout({ children, header }: PropsWithChildren<Staf
 
                 {/* Page Body */}
                 <main className="flex-1 overflow-y-auto bg-slate-50">
-                    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-                        {children}
-                    </div>
+                    {fullBleed ? children : (
+                        <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+                            {children}
+                        </div>
+                    )}
                 </main>
             </div>
         </div>

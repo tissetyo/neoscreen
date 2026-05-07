@@ -376,12 +376,12 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     const renderInventoryPanel = () => {
         const widgets = Object.keys(WIDGET_LABELS);
         return (
-            <div className="w-80 shrink-0 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col overflow-hidden self-start sticky top-4 max-h-[calc(100vh-120px)]">
-                <div className="p-4 border-b border-slate-100 bg-slate-50">
+            <aside className="hidden xl:flex fixed right-0 top-16 bottom-0 z-30 w-[340px] 2xl:w-[360px] flex-col overflow-hidden border-l border-slate-200 bg-white shadow-[-12px_0_28px_rgba(15,23,42,0.06)]">
+                <div className="p-5 border-b border-slate-100 bg-white">
                     <h3 className="font-medium text-slate-800">Canvas Library</h3>
                     <p className="text-xs text-slate-500 mt-0.5">Add, hide, and select every widget or app from one place.</p>
                 </div>
-                <div className="flex-1 overflow-y-auto p-3 space-y-4">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     <div>
                         <p className="text-[10px] font-medium uppercase tracking-widest text-slate-400 px-1 mb-2">Widgets</p>
                         <div className="space-y-2">
@@ -436,7 +436,7 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </aside>
         );
     };
 
@@ -469,7 +469,7 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     };
 
     return (
-        <StaffLayout header="TV Dashboard Canvas">
+        <StaffLayout header="TV Dashboard Canvas" fullBleed>
             <Head title={`TV Canvas — ${hotel.name}`} />
             {localToast && (
                 <div className={`fixed right-5 top-20 z-[110] flex max-w-md items-start gap-3 rounded-2xl border px-4 py-3 shadow-xl ${
@@ -479,7 +479,8 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                     <p className="text-sm font-medium leading-relaxed">{localToast.message}</p>
                 </div>
             )}
-            <div className="flex flex-col gap-5">
+            {renderInventoryPanel()}
+            <div className="min-h-full p-6 lg:p-8 xl:pr-[380px] 2xl:pr-[400px] flex flex-col gap-5">
 
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -524,9 +525,6 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                         </button>
                     ))}
                 </div>
-
-                <div className="flex items-start gap-5">
-                    <div className="min-w-0 flex-1">
 
                 {/* ── CANVAS TAB ── */}
                 {activeTab === 'canvas' && (
@@ -1093,9 +1091,6 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                         </div>
                     </div>
                 )}
-                    </div>
-                    {renderInventoryPanel()}
-                </div>
             </div>
         </StaffLayout>
     );
