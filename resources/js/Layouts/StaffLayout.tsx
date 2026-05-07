@@ -1,11 +1,11 @@
-import { useState, PropsWithChildren, ReactNode } from 'react';
+import { useEffect, useMemo, useState, PropsWithChildren, ReactNode } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { 
     LayoutDashboard, BedDouble, Bell, MessageSquare, 
     Clock, ChefHat, Tag, Settings, Users, LogOut,
     ChevronLeft, ChevronRight, Building2, Megaphone,
     ShieldCheck, Menu, X, BarChart3, Wrench, BookOpen, ClipboardList, DoorOpen,
-    CreditCard, Router
+    CreditCard, Router, CheckCircle2, AlertTriangle, Info
 } from 'lucide-react';
 
 interface StaffLayoutProps {
@@ -13,9 +13,10 @@ interface StaffLayoutProps {
 }
 
 export default function StaffLayout({ children, header }: PropsWithChildren<StaffLayoutProps>) {
-    const { auth, hotel, slug } = usePage<any>().props;
+    const { auth, hotel, slug, flash, errors } = usePage<any>().props;
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [toast, setToast] = useState<{ type: 'success' | 'error' | 'warning' | 'info'; message: string } | null>(null);
     const user = auth?.user;
     const isAdmin = user?.role === 'superadmin';
     const isManager = user?.role === 'manager' || isAdmin;
@@ -49,6 +50,35 @@ export default function StaffLayout({ children, header }: PropsWithChildren<Staf
     const navItems = isAdmin ? adminNav : staffNav;
     const accentColor = isAdmin ? 'from-rose-500 to-rose-600' : 'from-teal-500 to-teal-600';
     const accentText = isAdmin ? 'text-rose-400' : 'text-teal-400';
+
+    const formErrorMessage = useMemo(() => {
+        const first = errors && typeof errors === 'object' ? Object.values(errors)[0] : null;
+        return typeof first === 'string' ? first : null;
+    }, [errors]);
+
+    useEffect(() => {
+        const next =
+            flash?.success ? { type: 'success' as const, message: flash.success } :
+            flash?.error ? { type: 'error' as const, message: flash.error } :
+            flash?.warning ? { type: 'warning' as const, message: flash.warning } :
+            flash?.info ? { type: 'info' as const, message: flash.info } :
+            formErrorMessage ? { type: 'error' as const, message: formErrorMessage } :
+            null;
+
+        if (!next) return;
+        setToast(next);
+        const timer = window.setTimeout(() => setToast(null), 4200);
+        return () => window.clearTimeout(timer);
+    }, [flash?.success, flash?.error, flash?.warning, flash?.info, formErrorMessage]);
+
+    const ToastIcon = toast?.type === 'success' ? CheckCircle2 : toast?.type === 'warning' ? AlertTriangle : toast?.type === 'info' ? Info : AlertTriangle;
+    const toastTone = toast?.type === 'success'
+        ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+        : toast?.type === 'info'
+            ? 'border-blue-200 bg-blue-50 text-blue-800'
+            : toast?.type === 'warning'
+                ? 'border-amber-200 bg-amber-50 text-amber-800'
+                : 'border-red-200 bg-red-50 text-red-800';
 
     const NavLink = ({ item }: { item: typeof navItems[0] }) => {
         const active = currentPath === item.href || 
@@ -140,6 +170,15 @@ export default function StaffLayout({ children, header }: PropsWithChildren<Staf
 
     return (
         <div className="flex h-screen bg-slate-50">
+            {toast && (
+                <div className={`fixed right-5 top-5 z-[100] flex max-w-md items-start gap-3 rounded-2xl border px-4 py-3 shadow-xl ${toastTone}`}>
+                    <ToastIcon size={18} className="mt-0.5 shrink-0" />
+                    <p className="text-sm font-medium leading-relaxed">{toast.message}</p>
+                    <button type="button" onClick={() => setToast(null)} className="ml-1 opacity-60 hover:opacity-100">
+                        <X size={16} />
+                    </button>
+                </div>
+            )}
             {/* Desktop Sidebar */}
             <aside 
                 className={`hidden lg:flex flex-col bg-[#0B1120] transition-all duration-300 shrink-0 shadow-xl ${collapsed ? 'w-[72px]' : 'w-[260px]'}`}

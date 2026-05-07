@@ -78,7 +78,18 @@ export default function SlideshowDashboard({
     ...(config.apps || []).filter((app: any) => app.enabled !== false).map((app: any) => ({
       id: `app-${app.id}`, label: app.name, icon: null, app,
     })),
-  ];
+  ].sort((a, b) => {
+    const order = Array.isArray(config.slideshow?.sliderOrder) ? config.slideshow.sliderOrder : [];
+    const ai = order.indexOf(a.id);
+    const bi = order.indexOf(b.id);
+    if (ai === -1 && bi === -1) return 0;
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  }).filter(item => {
+    const order = config.slideshow?.sliderOrder;
+    return !Array.isArray(order) || order.length === 0 || order.includes(item.id) || item.id.startsWith('app-');
+  });
 
   // Background auto-advance
   useEffect(() => {
@@ -239,7 +250,20 @@ export default function SlideshowDashboard({
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
           <motion.div key={bgIndex}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            initial={{
+              opacity: 0,
+              scale: config.slideshow?.transition === 'zoom' || config.slideshow?.transition === 'kenburns' ? 1.06 : 1,
+              x: config.slideshow?.transition === 'slide' ? 80 : 0,
+            }}
+            animate={{
+              opacity: 1,
+              scale: config.slideshow?.transition === 'kenburns' ? 1.1 : 1,
+              x: 0,
+            }}
+            exit={{
+              opacity: 0,
+              x: config.slideshow?.transition === 'slide' ? -80 : 0,
+            }}
             transition={{ duration: 1.4, ease: 'easeInOut' }}
             className="absolute inset-0"
             style={{ backgroundImage: `url(${slideshowImages[bgIndex]})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: displayFilter }}
@@ -296,7 +320,13 @@ export default function SlideshowDashboard({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="absolute bottom-[3.5vw] left-0 right-0 z-30 flex flex-col items-center"
+            className={`absolute z-30 flex ${config.slideshow?.sliderOrientation === 'vertical' ? 'flex-row' : 'flex-col'} items-center ${
+              config.slideshow?.sliderPlacement === 'center' ? 'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2' :
+              config.slideshow?.sliderPlacement === 'top' ? 'left-0 right-0 top-[3.5vw]' :
+              config.slideshow?.sliderPlacement === 'left' ? 'left-[3.5vw] top-0 bottom-0 justify-center' :
+              config.slideshow?.sliderPlacement === 'right' ? 'right-[3.5vw] top-0 bottom-0 justify-center' :
+              'bottom-[3.5vw] left-0 right-0'
+            }`}
           >
             {/* Label for center item */}
             <motion.p
@@ -309,7 +339,7 @@ export default function SlideshowDashboard({
             </motion.p>
 
             {/* Carousel row */}
-            <div className="flex items-center justify-center gap-[1.5vw] w-full" style={{ height: '8vw' }}>
+            <div className={`flex ${config.slideshow?.sliderOrientation === 'vertical' ? 'flex-col' : 'flex-row'} items-center justify-center gap-[1.5vw] w-full`} style={{ minHeight: '8vw' }}>
               {/* Left arrow */}
               <button
                 onClick={() => { setCenterIdx(p => (p - 1 + allDockItems.length) % allDockItems.length); resetDismissTimer(); }}

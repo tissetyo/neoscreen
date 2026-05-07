@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import {
     ArrowLeft, Save, RotateCcw, Monitor, Palette, Play, Eye, Plus,
     Trash2, Upload, Power, Link as LinkIcon, Image as ImageIcon,
+    ChevronDown, GripVertical, EyeOff, CheckCircle2, AlertTriangle,
 } from 'lucide-react';
 
 // Matches the real TV Dashboard 24×14 grid exactly
@@ -22,6 +23,7 @@ const DEFAULT_LAYOUT: Record<string, any> = {
     chatWidget:       { colStart: 17, rowStart: 9,  colSpan: 2,  rowSpan: 2,  visible: true, bgColor: '#14b8a6' },
     notifWidget:      { colStart: 19, rowStart: 9,  colSpan: 2,  rowSpan: 2,  visible: true, bgColor: '#f43f5e' },
     displayWidget:    { colStart: 21, rowStart: 9,  colSpan: 4,  rowSpan: 2,  visible: true, bgColor: '#6366f1' },
+    brandLogo:        { colStart: 1,  rowStart: 1,  colSpan: 3,  rowSpan: 1,  visible: false, followGlobalStyle: false, bgOpacity: 0 },
 };
 
 const WIDGET_LABELS: Record<string, string> = {
@@ -29,7 +31,7 @@ const WIDGET_LABELS: Record<string, string> = {
     wifiCard: 'WiFi', flightSchedule: 'Flights', mapWidget: 'Map', hotelService: 'Services',
     hotelDeals: 'Promos/Deals', notificationCard: 'Notifications', hotelInfo: 'Hotel Info',
     alarmWidget: 'Alarm', chatWidget: 'Chat', notifWidget: 'Notifications Shortcut',
-    displayWidget: 'Settings Shortcut',
+    displayWidget: 'Settings Shortcut', brandLogo: 'Brand Logo',
 };
 
 const DEFAULT_APPS = [
@@ -67,6 +69,21 @@ const THEME_PRESETS = {
         values: { visualStyle: 'figma', opacityLight: 0.94, opacityDark: 0.42, focusColor: '#ffffff', focusStyle: 'outline', clockStyle: 'classic' },
     },
 } as const;
+
+const SLIDER_ITEMS = [
+    { id: 'clock', label: 'Clocks' },
+    { id: 'guest', label: 'Guest' },
+    { id: 'wifi', label: 'WiFi' },
+    { id: 'flights', label: 'Flights' },
+    { id: 'notif', label: 'Notifications' },
+    { id: 'deals', label: 'Deals' },
+    { id: 'services', label: 'Services' },
+    { id: 'map', label: 'Map' },
+    { id: 'info', label: 'Hotel Info' },
+    { id: 'alarm', label: 'Alarm' },
+    { id: 'chat', label: 'Chat' },
+    { id: 'settings', label: 'Settings' },
+];
 const MIN_WIDGET_SPANS: Record<string, { colSpan: number; rowSpan: number }> = {
     analogClocks: { colSpan: 1, rowSpan: 1 },
     flightSchedule: { colSpan: 1, rowSpan: 1 },
@@ -108,7 +125,9 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                 marqueeSpeed: 20, focusColor: '#14b8a6',
                 focusStyle: 'outline', clockStyle: 'minimal',
                 showLogo: false, logoUrl: '', logoPosition: 'top-left',
-                logoSize: 110,
+                logoSize: 110, widgetSurface: '#1e293b',
+                widgetGradientFrom: '#111827', widgetGradientTo: '#334155',
+                widgetGradientEnabled: false, widgetBlur: 18,
                 ...(saved.theme ?? {}),
             },
             apps,
@@ -116,6 +135,8 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
             slideshow: {
                 autoAdvanceSeconds: 10, widgetDismissSeconds: 10,
                 transition: 'crossfade', showFloatingClock: true,
+                sliderPlacement: 'bottom', sliderOrientation: 'horizontal',
+                sliderOrder: SLIDER_ITEMS.map(item => item.id),
                 ...(saved.slideshow ?? {}),
             },
         };
@@ -126,10 +147,17 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     const [uploadingIcon, setUploadingIcon] = useState(false);
     const [uploadingLogo, setUploadingLogo] = useState(false);
     const [activeAppIndex, setActiveAppIndex] = useState<number | null>(null);
+    const [expandedAppId, setExpandedAppId] = useState<string | null>(null);
+    const [localToast, setLocalToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [activeTab, setActiveTab] = useState<'canvas' | 'apps' | 'theme' | 'slideshow'>('canvas');
     const gridRef = useRef<HTMLDivElement>(null);
     const iconInputRef = useRef<HTMLInputElement>(null);
     const logoInputRef = useRef<HTMLInputElement>(null);
+
+    const notify = (type: 'success' | 'error', message: string) => {
+        setLocalToast({ type, message });
+        window.setTimeout(() => setLocalToast(null), 3600);
+    };
 
     const minSpanFor = (key: string) => {
         if (key.startsWith('app-')) return { colSpan: 1, rowSpan: 1 };
@@ -146,6 +174,11 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
 
     const updateLayout = (key: string, patch: Record<string, any>) =>
         setConfig(c => ({ ...c, layout: { ...c.layout, [key]: { ...c.layout[key], ...patch } } }));
+
+    const addWidgetToCanvas = (key: string) => {
+        updateLayout(key, { visible: true });
+        notify('success', `${widgetLabel(key)} is visible on the canvas.`);
+    };
 
     const updateApp = (index: number, patch: Record<string, any>) => {
         setConfig(c => {
@@ -180,6 +213,8 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                 [`app-${newId}`]: defaultAppLayout(newApp, c.apps?.length ?? 0, c.layout),
             },
         }));
+        setExpandedAppId(newId);
+        notify('success', 'Custom app added to the canvas.');
     };
 
     const removeApp = (index: number) => {
@@ -212,8 +247,9 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
             const data = await res.json();
             if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
             updateApp(targetIdx, { icon: `${data.url}?t=${Date.now()}` });
+            notify('success', 'App icon uploaded.');
         } catch (error: any) {
-            alert(error?.message || 'Upload failed');
+            notify('error', error?.message || 'Upload failed');
         } finally {
             setUploadingIcon(false);
             setActiveAppIndex(null);
@@ -240,9 +276,14 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                     showLogo: true,
                     logoUrl: `${data.url}?t=${Date.now()}`,
                 },
+                layout: {
+                    ...c.layout,
+                    brandLogo: { ...(c.layout.brandLogo ?? DEFAULT_LAYOUT.brandLogo), visible: true },
+                },
             }));
+            notify('success', 'Brand logo uploaded and added to the canvas.');
         } catch (error: any) {
-            alert(error?.message || 'Upload failed');
+            notify('error', error?.message || 'Upload failed');
         } finally {
             setUploadingLogo(false);
         }
@@ -291,8 +332,8 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     const save = () => {
         setSaving(true);
         router.put(`/admin/hotels/${hotel.id}/tv-canvas`, { tv_layout_config: config }, {
-            onSuccess: () => setSaving(false),
-            onError: () => setSaving(false),
+            onSuccess: () => { setSaving(false); notify('success', 'TV canvas saved. TVs will pick up the change on the next poll.'); },
+            onError: () => { setSaving(false); notify('error', 'TV canvas could not be saved. Check the required fields.'); },
             preserveScroll: true,
         });
     };
@@ -310,10 +351,134 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     ] as const;
 
     const inp = 'w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-400';
+    const sliderOrder = Array.isArray(config.slideshow.sliderOrder) && config.slideshow.sliderOrder.length
+        ? config.slideshow.sliderOrder
+        : SLIDER_ITEMS.map(item => item.id);
+    const visibleSliderItems = sliderOrder
+        .map((id: string) => SLIDER_ITEMS.find(item => item.id === id))
+        .filter(Boolean) as typeof SLIDER_ITEMS;
+
+    const moveSliderItem = (id: string, direction: -1 | 1) => {
+        const order = [...sliderOrder];
+        const index = order.indexOf(id);
+        const next = index + direction;
+        if (index < 0 || next < 0 || next >= order.length) return;
+        [order[index], order[next]] = [order[next], order[index]];
+        setConfig(c => ({ ...c, slideshow: { ...c.slideshow, sliderOrder: order } }));
+    };
+
+    const toggleSliderItem = (id: string, enabled: boolean) => {
+        const order = sliderOrder.filter((item: string) => item !== id);
+        const next = enabled ? [...order, id] : order;
+        setConfig(c => ({ ...c, slideshow: { ...c.slideshow, sliderOrder: next } }));
+    };
+
+    const renderInventoryPanel = () => {
+        const widgets = Object.keys(WIDGET_LABELS);
+        return (
+            <div className="w-80 shrink-0 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col overflow-hidden self-start sticky top-4 max-h-[calc(100vh-120px)]">
+                <div className="p-4 border-b border-slate-100 bg-slate-50">
+                    <h3 className="font-medium text-slate-800">Canvas Library</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">Add, hide, and select every widget or app from one place.</p>
+                </div>
+                <div className="flex-1 overflow-y-auto p-3 space-y-4">
+                    <div>
+                        <p className="text-[10px] font-medium uppercase tracking-widest text-slate-400 px-1 mb-2">Widgets</p>
+                        <div className="space-y-2">
+                            {widgets.map(key => {
+                                const layout = config.layout[key] ?? {};
+                                return (
+                                    <div key={key} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="min-w-0">
+                                                <p className="truncate text-sm font-medium text-slate-700">{widgetLabel(key)}</p>
+                                                <p className="text-[11px] text-slate-400">{layout.visible === false ? 'Hidden' : `${layout.colSpan ?? 1}×${layout.rowSpan ?? 1}`}</p>
+                                            </div>
+                                            <button type="button"
+                                                onClick={() => updateLayout(key, { visible: layout.visible === false })}
+                                                className={`rounded-lg px-2.5 py-1.5 text-xs font-medium ${layout.visible === false ? 'bg-slate-200 text-slate-600' : 'bg-teal-50 text-teal-700'}`}>
+                                                {layout.visible === false ? 'Add' : 'Shown'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div>
+                        <div className="mb-2 flex items-center justify-between px-1">
+                            <p className="text-[10px] font-medium uppercase tracking-widest text-slate-400">Apps</p>
+                            <button type="button" onClick={addApp} className="text-xs font-medium text-teal-600 hover:text-teal-700">Add app</button>
+                        </div>
+                        <div className="space-y-2">
+                            {(config.apps ?? []).map((app: any, index: number) => {
+                                const key = `app-${app.id}`;
+                                const layout = config.layout[key] ?? {};
+                                return (
+                                    <div key={app.id || index} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-9 w-9 rounded-xl bg-slate-900 flex items-center justify-center overflow-hidden p-1.5 text-xs font-semibold text-white">
+                                                {app.icon ? <img src={app.icon} alt="" className="h-full w-full object-contain" /> : (app.name || 'App').slice(0, 2).toUpperCase()}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="truncate text-sm font-medium text-slate-700">{app.name || 'App'}</p>
+                                                <p className="truncate text-[11px] text-slate-400">{app.enabled === false ? 'Disabled' : app.subtitle || 'App tile'}</p>
+                                            </div>
+                                            <button type="button"
+                                                onClick={() => updateLayout(key, { visible: layout.visible === false })}
+                                                className={`rounded-lg px-2.5 py-1.5 text-xs font-medium ${layout.visible === false ? 'bg-slate-200 text-slate-600' : 'bg-teal-50 text-teal-700'}`}>
+                                                {layout.visible === false ? 'Add' : 'Shown'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderSlideshowPreview = () => {
+        const vertical = config.slideshow.sliderOrientation === 'vertical';
+        const center = config.slideshow.sliderPlacement === 'center';
+        return (
+            <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-950 shadow-inner">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-950 to-teal-950" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_28%),radial-gradient(circle_at_70%_80%,rgba(20,184,166,0.2),transparent_30%)]" />
+                <div className="absolute left-5 top-5 rounded-2xl bg-black/35 px-4 py-3 text-white backdrop-blur-md">
+                    <p className="text-xs uppercase text-white/50">Preview</p>
+                    <p className="text-lg font-medium">{config.screenMode === 'slideshow' ? 'Slideshow mode' : 'Grid mode selected'}</p>
+                </div>
+                <div className={`absolute flex ${vertical ? 'flex-col' : 'flex-row'} items-center gap-2 ${
+                    center ? 'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2' :
+                    config.slideshow.sliderPlacement === 'top' ? 'left-1/2 top-6 -translate-x-1/2' :
+                    config.slideshow.sliderPlacement === 'left' ? 'left-6 top-1/2 -translate-y-1/2' :
+                    config.slideshow.sliderPlacement === 'right' ? 'right-6 top-1/2 -translate-y-1/2' :
+                    'bottom-6 left-1/2 -translate-x-1/2'
+                }`}>
+                    {visibleSliderItems.slice(0, 7).map((item, index) => (
+                        <div key={item.id} className={`${index === 0 ? 'h-16 w-16 border-[#d4af37] bg-[#d4af37]/35' : 'h-11 w-11 border-white/20 bg-white/10'} flex items-center justify-center rounded-2xl border text-[10px] font-medium text-white backdrop-blur-md`}>
+                            {item.label.slice(0, 2)}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <StaffLayout header="TV Dashboard Canvas">
             <Head title={`TV Canvas — ${hotel.name}`} />
+            {localToast && (
+                <div className={`fixed right-5 top-20 z-[110] flex max-w-md items-start gap-3 rounded-2xl border px-4 py-3 shadow-xl ${
+                    localToast.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-red-200 bg-red-50 text-red-800'
+                }`}>
+                    {localToast.type === 'success' ? <CheckCircle2 size={18} className="mt-0.5 shrink-0" /> : <AlertTriangle size={18} className="mt-0.5 shrink-0" />}
+                    <p className="text-sm font-medium leading-relaxed">{localToast.message}</p>
+                </div>
+            )}
             <div className="flex flex-col gap-5">
 
                 {/* Header */}
@@ -359,6 +524,9 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                         </button>
                     ))}
                 </div>
+
+                <div className="flex items-start gap-5">
+                    <div className="min-w-0 flex-1">
 
                 {/* ── CANVAS TAB ── */}
                 {activeTab === 'canvas' && (
@@ -407,7 +575,7 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                         </div>
 
                         {/* Widget Panel */}
-                        <div className="w-72 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col overflow-hidden">
+                        <div className="hidden">
                             <div className="p-4 border-b border-slate-100 bg-slate-50">
                                 <h3 className="font-medium text-slate-800">Widget Visibility</h3>
                                 <p className="text-xs text-slate-500 mt-0.5">Toggle, tint, and adjust opacity</p>
@@ -470,11 +638,36 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                 {(config.apps ?? []).map((app: any, index: number) => {
                                     const layoutKey = `app-${app.id}`;
                                     const layout = config.layout?.[layoutKey] ?? {};
+                                    const expanded = expandedAppId === app.id;
                                     return (
-                                        <div key={app.id || index} className="grid grid-cols-[72px_1fr_148px] gap-4 p-5">
+                                        <div key={app.id || index} className="p-4">
+                                            <button type="button"
+                                                onClick={() => setExpandedAppId(expanded ? null : app.id)}
+                                                className="flex w-full items-center gap-4 text-left">
+                                                <div className="w-14 h-14 rounded-2xl border border-slate-200 bg-slate-900 flex items-center justify-center overflow-hidden p-2 text-white font-semibold shadow-sm">
+                                                    {app.icon ? (
+                                                        <img src={app.icon} alt="" className="w-full h-full object-contain" />
+                                                    ) : (
+                                                        <span className="text-lg">{(app.name || 'A').slice(0, 2).toUpperCase()}</span>
+                                                    )}
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate text-sm font-semibold text-slate-800">{app.name || 'Custom App'}</p>
+                                                    <p className="truncate text-xs text-slate-500">{app.url || 'No package or URL yet'}</p>
+                                                </div>
+                                                <span className={`rounded-full px-3 py-1 text-xs font-medium ${app.enabled === false ? 'bg-slate-100 text-slate-500' : 'bg-emerald-50 text-emerald-700'}`}>
+                                                    {app.enabled === false ? 'Off' : 'On'}
+                                                </span>
+                                                <span className={`rounded-full px-3 py-1 text-xs font-medium ${layout.visible === false ? 'bg-slate-100 text-slate-500' : 'bg-teal-50 text-teal-700'}`}>
+                                                    {layout.visible === false ? 'Hidden' : 'Canvas'}
+                                                </span>
+                                                <ChevronDown size={18} className={`text-slate-400 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+                                            </button>
+
+                                            {expanded && (
+                                            <div className="mt-4 grid grid-cols-[72px_1fr_148px] gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
                                             <div className="flex flex-col items-center gap-2">
-                                                <div className="w-14 h-14 rounded-2xl border border-slate-200 flex items-center justify-center overflow-hidden p-2 text-white font-semibold shadow-sm"
-                                                    style={{ backgroundColor: app.brandColor || '#334155' }}>
+                                                <div className="w-14 h-14 rounded-2xl border border-slate-200 bg-slate-900 flex items-center justify-center overflow-hidden p-2 text-white font-semibold shadow-sm">
                                                     {app.icon ? (
                                                         <img src={app.icon} alt="" className="w-full h-full object-contain" />
                                                     ) : (
@@ -527,12 +720,7 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                                         className="w-4 h-4 rounded accent-teal-500" />
                                                     Open web URL in iframe
                                                 </label>
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-xs text-slate-500">Color</span>
-                                                    <input type="color" value={app.brandColor || '#334155'} onChange={e => updateApp(index, { brandColor: e.target.value })}
-                                                        className="w-9 h-9 rounded-lg cursor-pointer border-0 p-0 bg-transparent" />
-                                                    <span className="text-xs font-mono text-slate-500">{app.brandColor || '#334155'}</span>
-                                                </div>
+                                                <p className="text-xs text-slate-400">Tile color follows the global theme. Use Canvas → Appearance for per-widget overrides.</p>
                                                 <div className="col-span-2 flex items-center gap-3">
                                                     <span className="text-xs text-slate-500 w-20">Icon scale</span>
                                                     <input type="range" min={0.5} max={2} step={0.1} value={app.iconScale ?? 1}
@@ -565,6 +753,8 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                                     <Trash2 size={14} /> Remove
                                                 </button>
                                             </div>
+                                            </div>
+                                            )}
                                         </div>
                                     );
                                 })}
@@ -628,6 +818,46 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                     onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, opacityDark: parseFloat(e.target.value) } }))}
                                     className="w-full accent-teal-500" />
                             </div>
+                            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-4">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-800">Widget Surface</p>
+                                        <p className="text-xs text-slate-500">One global surface for app tiles and widgets.</p>
+                                    </div>
+                                    <label className="flex items-center gap-2 text-sm text-slate-600">
+                                        <input type="checkbox" checked={config.theme.widgetGradientEnabled === true}
+                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, widgetGradientEnabled: e.target.checked } }))}
+                                            className="h-4 w-4 rounded accent-teal-500" />
+                                        Gradient
+                                    </label>
+                                </div>
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-500 mb-1">Base</label>
+                                        <input type="color" value={config.theme.widgetSurface ?? '#1e293b'}
+                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, widgetSurface: e.target.value } }))}
+                                            className="h-10 w-full rounded-xl border-0 p-0" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-500 mb-1">From</label>
+                                        <input type="color" value={config.theme.widgetGradientFrom ?? '#111827'}
+                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, widgetGradientFrom: e.target.value } }))}
+                                            className="h-10 w-full rounded-xl border-0 p-0" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-500 mb-1">To</label>
+                                        <input type="color" value={config.theme.widgetGradientTo ?? '#334155'}
+                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, widgetGradientTo: e.target.value } }))}
+                                            className="h-10 w-full rounded-xl border-0 p-0" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Blur intensity: {config.theme.widgetBlur ?? 18}px</label>
+                                    <input type="range" min={0} max={40} step={1} value={config.theme.widgetBlur ?? 18}
+                                        onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, widgetBlur: parseInt(e.target.value) } }))}
+                                        className="w-full accent-teal-500" />
+                                </div>
+                            </div>
                             <div>
                                 <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Marquee Running Text</label>
                                 <textarea rows={2} value={config.theme.marqueeText}
@@ -679,7 +909,14 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                             <Upload size={14} /> {uploadingLogo ? 'Uploading…' : 'Upload Logo'}
                                         </button>
                                         <input value={config.theme.logoUrl ?? ''}
-                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, logoUrl: e.target.value, showLogo: !!e.target.value || c.theme.showLogo } }))}
+                                            onChange={e => setConfig(c => ({
+                                                ...c,
+                                                theme: { ...c.theme, logoUrl: e.target.value, showLogo: !!e.target.value || c.theme.showLogo },
+                                                layout: {
+                                                    ...c.layout,
+                                                    brandLogo: { ...(c.layout.brandLogo ?? DEFAULT_LAYOUT.brandLogo), visible: !!e.target.value || c.layout.brandLogo?.visible === true },
+                                                },
+                                            }))}
                                             placeholder="Or paste logo URL"
                                             className={inp} />
                                     </div>
@@ -781,7 +1018,34 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                     <option value="crossfade">Crossfade</option>
                                     <option value="slide">Slide</option>
                                     <option value="zoom">Zoom</option>
+                                    <option value="kenburns">Ken Burns</option>
+                                    <option value="wipe">Soft Wipe</option>
+                                    <option value="fade-through">Fade Through</option>
                                 </select>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Slider Placement</label>
+                                    <select value={config.slideshow.sliderPlacement ?? 'bottom'}
+                                        onChange={e => setConfig(c => ({ ...c, slideshow: { ...c.slideshow, sliderPlacement: e.target.value } }))}
+                                        className={inp}>
+                                        <option value="bottom">Bottom</option>
+                                        <option value="center">Center</option>
+                                        <option value="top">Top</option>
+                                        <option value="left">Left</option>
+                                        <option value="right">Right</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Slider Direction</label>
+                                    <select value={config.slideshow.sliderOrientation ?? 'horizontal'}
+                                        onChange={e => setConfig(c => ({ ...c, slideshow: { ...c.slideshow, sliderOrientation: e.target.value } }))}
+                                        className={inp}>
+                                        <option value="horizontal">Horizontal</option>
+                                        <option value="vertical">Vertical</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <label className="flex items-center gap-3 cursor-pointer p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -796,34 +1060,42 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                         </div>
 
                         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
-                            <h3 className="font-medium text-slate-800">How Slideshow Works</h3>
-                            <div className="space-y-4">
-                                {[
-                                    { step: '1', title: 'Ambient Background', desc: 'The TV displays a rotating background image (or the hotel\'s featured image) in full screen.' },
-                                    { step: '2', title: 'Floating Clock', desc: 'If enabled, a minimal clock with date is always visible over the background.' },
-                                    { step: '3', title: 'Widget On-Demand', desc: 'Guests press the D-pad to trigger widgets (WiFi, Services, Chat) which slide in and auto-dismiss.' },
-                                    { step: '4', title: 'Bottom Icons', desc: 'A row of icons (Alarm, Chat, Notifications, Settings) is always accessible at the bottom.' },
-                                ].map(item => (
-                                    <div key={item.step} className="flex gap-4">
-                                        <div className="w-8 h-8 rounded-full bg-teal-500 text-white flex items-center justify-center font-semibold text-sm shrink-0">
-                                            {item.step}
-                                        </div>
-                                        <div>
-                                            <p className="font-medium text-slate-800 text-sm">{item.title}</p>
-                                            <p className="text-xs text-slate-500 mt-0.5">{item.desc}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div>
+                                <h3 className="font-medium text-slate-800">Slideshow Preview</h3>
+                                <p className="text-sm text-slate-500 mt-1">Shows placement, direction, and the first visible items.</p>
                             </div>
-                            <div className="p-4 bg-slate-900 rounded-xl mt-4">
-                                <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Background Images</p>
-                                <p className="text-xs text-slate-500">
-                                    Upload background images via <strong className="text-slate-300">Front Office → Settings → TV Experience</strong>. Each image cycles automatically on the interval you set above.
-                                </p>
+                            {renderSlideshowPreview()}
+                            <div>
+                                <h3 className="font-medium text-slate-800">Slider Order</h3>
+                                <p className="text-sm text-slate-500 mt-1">Only checked items appear in the TV slideshow carousel.</p>
+                            </div>
+                            <div className="space-y-2">
+                                {SLIDER_ITEMS.map(item => {
+                                    const enabled = sliderOrder.includes(item.id);
+                                    const position = sliderOrder.indexOf(item.id);
+                                    return (
+                                        <div key={item.id} className={`flex items-center gap-3 rounded-xl border p-3 ${enabled ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50 opacity-70'}`}>
+                                            <GripVertical size={15} className="text-slate-300" />
+                                            <input type="checkbox" checked={enabled}
+                                                onChange={e => toggleSliderItem(item.id, e.target.checked)}
+                                                className="h-4 w-4 rounded accent-teal-500" />
+                                            <span className="min-w-0 flex-1 text-sm font-medium text-slate-700">{item.label}</span>
+                                            <button type="button" disabled={!enabled || position <= 0}
+                                                onClick={() => moveSliderItem(item.id, -1)}
+                                                className="rounded-lg px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 disabled:opacity-30">Up</button>
+                                            <button type="button" disabled={!enabled || position === sliderOrder.length - 1}
+                                                onClick={() => moveSliderItem(item.id, 1)}
+                                                className="rounded-lg px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 disabled:opacity-30">Down</button>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
                 )}
+                    </div>
+                    {renderInventoryPanel()}
+                </div>
             </div>
         </StaffLayout>
     );

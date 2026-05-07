@@ -53,6 +53,12 @@ class HandleInertiaRequests extends Middleware
                 return null;
             },
             'slug' => $request->route('slug'),
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'warning' => fn () => $request->session()->get('warning'),
+                'info' => fn () => $request->session()->get('info'),
+            ],
         ];
     }
 }
