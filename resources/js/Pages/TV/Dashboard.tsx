@@ -263,7 +263,10 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
       name: app.name, 
       url: app.url, 
       embeddable: app.embeddable || false, 
-      icon: typeof app.icon === 'string' ? app.icon : '' 
+      icon: typeof app.icon === 'string' ? app.icon : '',
+      subtitle: app.subtitle,
+      brandColor: app.brandColor,
+      iconScale: app.iconScale,
     });
   }, []);
 
@@ -486,6 +489,32 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
   const scale = overrides.scale ?? config.theme?.scale ?? 1;
   const displayFilter = `brightness(${brightness}) contrast(${contrast}) saturate(${saturate})`;
 
+  const renderBrandLogo = () => {
+    const theme = config.theme ?? {};
+    if (!theme.showLogo || !theme.logoUrl) return null;
+
+    const position = theme.logoPosition ?? 'top-left';
+    const placement: Record<string, React.CSSProperties> = {
+      'top-left': { top: '1.3vw', left: '1.3vw' },
+      'top-center': { top: '1.3vw', left: '50%', transform: 'translateX(-50%)' },
+      'top-right': { top: '1.3vw', right: '1.3vw' },
+      'bottom-left': { bottom: '3.2vw', left: '1.3vw' },
+      'bottom-right': { bottom: '3.2vw', right: '1.3vw' },
+    };
+    const size = Math.max(48, Math.min(Number(theme.logoSize ?? 110), 260));
+
+    return (
+      <div className="absolute z-20 pointer-events-none" style={placement[position] ?? placement['top-left']}>
+        <img
+          src={theme.logoUrl}
+          alt=""
+          className="max-h-[11vh] max-w-[18vw] object-contain drop-shadow-[0_8px_22px_rgba(0,0,0,0.45)]"
+          style={{ width: `${size}px` }}
+        />
+      </div>
+    );
+  };
+
   // ===== SCREEN MODE: check local override first =====
   const screenModeOverride = (store.tvDisplayOverrides as any)?.screenMode;
   const screenMode = screenModeOverride || config.screenMode || 'grid';
@@ -575,6 +604,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
           onOpenPromos={() => handleAction('promo')}
           onOpenServices={() => handleAction('service')}
         />
+        {renderBrandLogo()}
         {/* Modals — same as grid mode */}
         {launchApp && <AppLauncher app={launchApp} isOpen={!!launchApp} onClose={() => setLaunchApp(null)} />}
         <ChatModal isOpen={activeModal === 'chat'} onClose={() => setActiveModal(null)} />
@@ -617,6 +647,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
       {/* ===== SCALABLE CONTENT WRAPPER FOR OVERSCAN/RATIO CONTROL ===== */}
       <div className="absolute inset-0 transition-transform duration-300 pointer-events-none" style={{ transform: `scale(${scale})`, transformOrigin: 'center center' }}>
         <div className="w-full h-full relative pointer-events-auto">
+      {renderBrandLogo()}
 
       {/* ===== BENTO GRID — 24×14 flexible tile system ===== */}
       <div className="absolute inset-0 grid gap-[0.35vw]" style={{
@@ -744,7 +775,10 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
                 tabIndex={0}
               >
                 <div className="mb-[0.3vh] group-hover:scale-110 transition-transform duration-300 relative z-10 flex items-center justify-center"
-                     style={{ width: `${2.5 * (app.iconScale || 1)}vw`, height: `${2.5 * (app.iconScale || 1)}vw` }}>
+                     style={{
+                       width: `calc(clamp(24px, min(30cqw, 42cqh), 92px) * ${app.iconScale || 1})`,
+                       height: `calc(clamp(24px, min(30cqw, 42cqh), 92px) * ${app.iconScale || 1})`,
+                     }}>
                    {app.icon && typeof app.icon === 'string' && (app.icon.startsWith('/') || app.icon.startsWith('http')) ? (
                       <img src={app.icon} alt={app.name} className="w-full h-full object-contain" />
                    ) : (

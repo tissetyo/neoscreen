@@ -6,10 +6,14 @@ import { QRCode } from 'react-qr-code';
 import { useDpadNavigation } from '@/lib/hooks/useDpadNavigation';
 
 export interface AppConfig {
+  id?: string;
   name: string;
   icon: string;
   url: string;
   embeddable: boolean; // false = show QR code instead
+  subtitle?: string;
+  brandColor?: string;
+  iconScale?: number;
 }
 
 export const TV_APPS: AppConfig[] = [
@@ -72,6 +76,8 @@ export default function AppLauncher({ app, isOpen, onClose }: AppLauncherProps) 
   };
 
   if (!app) return null;
+  const iconIsImage = typeof app.icon === 'string' && (app.icon.startsWith('/') || app.icon.startsWith('http'));
+  const appInitials = (app.name || 'App').slice(0, 2).toUpperCase();
 
   return (
     <AnimatePresence>
@@ -134,7 +140,16 @@ export default function AppLauncher({ app, isOpen, onClose }: AppLauncherProps) 
                 animate={{ scale: 1, opacity: 1 }}
                 className="glass-card p-12 text-center max-w-md"
               >
-                <div className="text-5xl mb-4">{app.icon}</div>
+                <div
+                  className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl text-2xl font-semibold text-white"
+                  style={{ background: app.brandColor || 'rgba(255,255,255,0.12)' }}
+                >
+                  {iconIsImage ? (
+                    <img src={app.icon} alt="" className="h-14 w-14 object-contain" />
+                  ) : (
+                    <span>{app.icon || appInitials}</span>
+                  )}
+                </div>
                 <h2 className="text-white text-2xl font-bold mb-2">{app.name}</h2>
                 <p className="text-white/50 mb-6">
                   Scan the QR code below to open {app.name} on your phone

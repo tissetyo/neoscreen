@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class UploadController extends Controller
@@ -18,6 +17,7 @@ class UploadController extends Controller
         'media-video' => ['maxSize' => 51200, 'mimes' => 'mp4,webm', 'directory' => 'media-videos'],
         'promo-poster' => ['maxSize' => 5120, 'mimes' => 'jpeg,jpg,png,webp', 'directory' => 'promo-posters'],
         'tv-app-icon' => ['maxSize' => 2048, 'mimes' => 'jpeg,jpg,png,webp,svg', 'directory' => 'tv-app-icons'],
+        'tv-brand-logo' => ['maxSize' => 2048, 'mimes' => 'jpeg,jpg,png,webp,svg', 'directory' => 'tv-brand-logos'],
     ];
 
     public function store(Request $request, string $type): JsonResponse
@@ -33,11 +33,19 @@ class UploadController extends Controller
 
         $file = $request->file('file');
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $path = $file->storeAs($config['directory'], $filename, 'public');
+        $path = "uploads/{$config['directory']}";
+        $destination = public_path($path);
+
+        if (!is_dir($destination)) {
+            mkdir($destination, 0755, true);
+        }
+
+        $file->move($destination, $filename);
+        $storedPath = "{$path}/{$filename}";
 
         return response()->json([
-            'url' => Storage::disk('public')->url($path),
-            'path' => $path,
+            'url' => asset($storedPath),
+            'path' => $storedPath,
         ]);
     }
 }

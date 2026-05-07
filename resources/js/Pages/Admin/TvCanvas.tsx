@@ -3,7 +3,7 @@ import { Head, router, Link } from '@inertiajs/react';
 import { useState, useRef } from 'react';
 import {
     ArrowLeft, Save, RotateCcw, Monitor, Palette, Play, Eye, Plus,
-    Trash2, Upload, Power, Link as LinkIcon,
+    Trash2, Upload, Power, Link as LinkIcon, Image as ImageIcon,
 } from 'lucide-react';
 
 // Matches the real TV Dashboard 24×14 grid exactly
@@ -107,6 +107,8 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                 marqueeText: 'Welcome to our hotel. Enjoy your stay!',
                 marqueeSpeed: 20, focusColor: '#14b8a6',
                 focusStyle: 'outline', clockStyle: 'minimal',
+                showLogo: false, logoUrl: '', logoPosition: 'top-left',
+                logoSize: 110,
                 ...(saved.theme ?? {}),
             },
             apps,
@@ -122,10 +124,12 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     const [config, setConfig] = useState(initConfig);
     const [saving, setSaving] = useState(false);
     const [uploadingIcon, setUploadingIcon] = useState(false);
+    const [uploadingLogo, setUploadingLogo] = useState(false);
     const [activeAppIndex, setActiveAppIndex] = useState<number | null>(null);
     const [activeTab, setActiveTab] = useState<'canvas' | 'apps' | 'theme' | 'slideshow'>('canvas');
     const gridRef = useRef<HTMLDivElement>(null);
     const iconInputRef = useRef<HTMLInputElement>(null);
+    const logoInputRef = useRef<HTMLInputElement>(null);
 
     const minSpanFor = (key: string) => {
         if (key.startsWith('app-')) return { colSpan: 1, rowSpan: 1 };
@@ -213,6 +217,34 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
         } finally {
             setUploadingIcon(false);
             setActiveAppIndex(null);
+        }
+    };
+
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (logoInputRef.current) logoInputRef.current.value = '';
+        if (!file) return;
+
+        setUploadingLogo(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/api/upload/tv-brand-logo', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+            setConfig(c => ({
+                ...c,
+                theme: {
+                    ...c.theme,
+                    showLogo: true,
+                    logoUrl: `${data.url}?t=${Date.now()}`,
+                },
+            }));
+        } catch (error: any) {
+            alert(error?.message || 'Upload failed');
+        } finally {
+            setUploadingLogo(false);
         }
     };
 
@@ -481,6 +513,15 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                                             className={inp + ' pl-9 font-mono'} />
                                                     </div>
                                                 </div>
+                                                <div className="col-span-2">
+                                                    <label className="block text-xs font-medium text-slate-500 mb-1">Icon URL</label>
+                                                    <div className="relative">
+                                                        <ImageIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                        <input value={app.icon ?? ''} onChange={e => updateApp(index, { icon: e.target.value })}
+                                                            placeholder="https://.../logo.svg or upload an icon"
+                                                            className={inp + ' pl-9'} />
+                                                    </div>
+                                                </div>
                                                 <label className="flex items-center gap-2 text-sm text-slate-600">
                                                     <input type="checkbox" checked={app.embeddable === true} onChange={e => updateApp(index, { embeddable: e.target.checked })}
                                                         className="w-4 h-4 rounded accent-teal-500" />
@@ -603,6 +644,67 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                             </div>
                         </div>
                         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+                            <input
+                                ref={logoInputRef}
+                                type="file"
+                                className="hidden"
+                                accept="image/png, image/jpeg, image/webp, image/svg+xml"
+                                onChange={handleLogoUpload}
+                            />
+                            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <h3 className="font-medium text-slate-800">TV Brand Logo</h3>
+                                        <p className="text-xs text-slate-500 mt-0.5">Optional overlay shown above the dashboard and slideshow.</p>
+                                    </div>
+                                    <label className="flex items-center gap-2 text-sm text-slate-700">
+                                        <input type="checkbox" checked={config.theme.showLogo === true}
+                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, showLogo: e.target.checked } }))}
+                                            className="w-4 h-4 rounded accent-teal-500" />
+                                        Show
+                                    </label>
+                                </div>
+                                <div className="mt-4 flex items-start gap-4">
+                                    <div className="w-28 h-20 rounded-2xl bg-slate-900 border border-slate-200 flex items-center justify-center overflow-hidden p-3">
+                                        {config.theme.logoUrl ? (
+                                            <img src={config.theme.logoUrl} alt="" className="max-w-full max-h-full object-contain" />
+                                        ) : (
+                                            <ImageIcon size={26} className="text-slate-500" />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 space-y-3">
+                                        <button type="button" disabled={uploadingLogo}
+                                            onClick={() => logoInputRef.current?.click()}
+                                            className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl text-sm font-medium text-slate-700 disabled:opacity-50">
+                                            <Upload size={14} /> {uploadingLogo ? 'Uploading…' : 'Upload Logo'}
+                                        </button>
+                                        <input value={config.theme.logoUrl ?? ''}
+                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, logoUrl: e.target.value, showLogo: !!e.target.value || c.theme.showLogo } }))}
+                                            placeholder="Or paste logo URL"
+                                            className={inp} />
+                                    </div>
+                                </div>
+                                <div className="mt-4 grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-500 mb-1">Position</label>
+                                        <select value={config.theme.logoPosition ?? 'top-left'}
+                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, logoPosition: e.target.value } }))}
+                                            className={inp}>
+                                            <option value="top-left">Top left</option>
+                                            <option value="top-center">Top center</option>
+                                            <option value="top-right">Top right</option>
+                                            <option value="bottom-left">Bottom left</option>
+                                            <option value="bottom-right">Bottom right</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-500 mb-1">Size: {config.theme.logoSize ?? 110}px</label>
+                                        <input type="range" min={48} max={260} step={4} value={config.theme.logoSize ?? 110}
+                                            onChange={e => setConfig(c => ({ ...c, theme: { ...c.theme, logoSize: parseInt(e.target.value) } }))}
+                                            className="w-full accent-teal-500" />
+                                    </div>
+                                </div>
+                            </div>
                             <h3 className="font-medium text-slate-800">Focus &amp; Interaction</h3>
                             <div>
                                 <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Focus Color</label>
