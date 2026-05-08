@@ -16,7 +16,7 @@ export default function MapWidget({ location, hotelName }: Props) {
     : `https://maps.google.com/maps?q=${query}&z=15&output=embed`;
 
   return (
-    <div className="w-full h-full min-h-0 tv-focusable rounded-[var(--widget-radius)] overflow-hidden bg-slate-100 relative flex items-center justify-center" tabIndex={0}>
+    <div className="map-card tv-widget h-full min-h-0 tv-focusable rounded-[var(--widget-radius)] overflow-hidden relative flex items-center justify-center !p-0 [transform:translateZ(0)]" tabIndex={0}>
       <iframe
         src={mapSrc}
         title={`${placeLabel} map`}
@@ -26,11 +26,11 @@ export default function MapWidget({ location, hotelName }: Props) {
         allowFullScreen
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
-        className="pointer-events-none absolute inset-0 h-full w-full"
+        className="pointer-events-none absolute inset-0 h-full w-full rounded-[inherit]"
       />
-      <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center gap-[clamp(5px,0.45vw,9px)] bg-white/95 px-[clamp(7px,0.65vw,13px)] py-[clamp(5px,0.45vw,9px)] text-slate-950 shadow-[0_-8px_22px_rgba(15,23,42,0.08)]">
-        <MapPin className="h-[clamp(12px,0.9vw,18px)] w-[clamp(12px,0.9vw,18px)] shrink-0 fill-slate-950 text-slate-950" strokeWidth={2.5} />
-        <span className="truncate text-[clamp(9px,0.65vw,13px)] font-medium leading-none">{hotelName || location || 'Hotel'}</span>
+      <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center gap-[clamp(5px,0.9cqw,16px)] border-t border-white/40 bg-white/95 px-[clamp(7px,1.1cqw,22px)] py-[clamp(5px,0.9cqh,14px)] text-slate-950 shadow-[0_-8px_22px_rgba(15,23,42,0.08)] backdrop-blur-md">
+        <MapPin className="h-[clamp(12px,1.45cqw,28px)] w-[clamp(12px,1.45cqw,28px)] shrink-0 fill-slate-950 text-slate-950" strokeWidth={2.5} />
+        <span className="truncate text-[clamp(9px,1.25cqw,24px)] font-medium leading-none">{hotelName || location || 'Hotel'}</span>
       </div>
     </div>
   );

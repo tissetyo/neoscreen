@@ -73,22 +73,23 @@ export default function SlideshowDashboard({
     ? new Date(`${store.checkoutDate}T00:00:00`).toDateString() === new Date().toDateString()
     : false;
 
+  const sliderOrder = Array.isArray(config.slideshow?.sliderOrder) ? config.slideshow.sliderOrder : [];
+  const sliderEnabled = Array.isArray(config.slideshow?.sliderEnabled) ? config.slideshow.sliderEnabled : sliderOrder;
+
   const allDockItems = [
     ...DOCK_WIDGETS,
     ...(config.apps || []).filter((app: any) => app.enabled !== false).map((app: any) => ({
       id: `app-${app.id}`, label: app.name, icon: null, app,
     })),
   ].sort((a, b) => {
-    const order = Array.isArray(config.slideshow?.sliderOrder) ? config.slideshow.sliderOrder : [];
-    const ai = order.indexOf(a.id);
-    const bi = order.indexOf(b.id);
+    const ai = sliderOrder.indexOf(a.id);
+    const bi = sliderOrder.indexOf(b.id);
     if (ai === -1 && bi === -1) return 0;
     if (ai === -1) return 1;
     if (bi === -1) return -1;
     return ai - bi;
   }).filter(item => {
-    const order = config.slideshow?.sliderOrder;
-    return !Array.isArray(order) || order.length === 0 || order.includes(item.id) || item.id.startsWith('app-');
+    return !Array.isArray(sliderEnabled) || sliderEnabled.length === 0 || sliderEnabled.includes(item.id) || item.id.startsWith('app-');
   });
 
   // Background auto-advance
@@ -175,6 +176,27 @@ export default function SlideshowDashboard({
     return () => window.removeEventListener('keydown', handler);
   }, [isModalOpen, carouselVisible, activeWidget, centerIdx, allDockItems.length, selectCenterItem, resetDismissTimer]);
 
+  const sliderPlacement = config.slideshow?.sliderPlacement ?? 'bottom';
+  const sliderOrientation = config.slideshow?.sliderOrientation ?? 'horizontal';
+  const widgetPanelPosition = (() => {
+    if (!carouselVisible) return { left: 0, bottom: '16.5vw', width: '100%' };
+    if (sliderPlacement === 'top') return { left: 0, top: '16vw', width: '100%' };
+    if (sliderPlacement === 'left') return { right: '5vw', top: '22vh', width: '58vw' };
+    if (sliderPlacement === 'right') return { left: '5vw', top: '22vh', width: '58vw' };
+    if (sliderPlacement === 'center') return { left: 0, top: '5vw', width: '100%' };
+    return { left: 0, bottom: '17vw', width: '100%' };
+  })();
+  const carouselPositionClass =
+    sliderPlacement === 'center' ? 'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2' :
+    sliderPlacement === 'top' ? 'left-0 right-0 top-[6.5vw]' :
+    sliderPlacement === 'left' ? 'left-[3.5vw] top-[8vw] bottom-[4.2vw] justify-center' :
+    sliderPlacement === 'right' ? 'right-[3.5vw] top-[8vw] bottom-[4.2vw] justify-center' :
+    'bottom-[4.8vw] left-0 right-0';
+  const centerCardSize = 'clamp(112px, 9vw, 178px)';
+  const sideCardSize = 'clamp(78px, 6vw, 118px)';
+  const centerIconSize = 'clamp(42px, 3vw, 68px)';
+  const sideIconSize = 'clamp(24px, 1.75vw, 38px)';
+
   // Render expanded widget panel
   const renderWidget = () => {
     if (!activeWidget) return null;
@@ -219,7 +241,7 @@ export default function SlideshowDashboard({
           exit={{ opacity: 0, y: 30, scale: 0.92 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
           className="absolute z-20 flex justify-center w-full pointer-events-none"
-          style={{ bottom: '16.5vw', left: 0 }}
+          style={widgetPanelPosition}
         >
           <div className={`slideshow-widget-panel slideshow-widget-${activeWidget} relative pointer-events-auto`}>
             <div className="slideshow-widget-surface">{content}</div>
@@ -320,26 +342,20 @@ export default function SlideshowDashboard({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className={`absolute z-30 flex ${config.slideshow?.sliderOrientation === 'vertical' ? 'flex-row' : 'flex-col'} items-center ${
-              config.slideshow?.sliderPlacement === 'center' ? 'left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2' :
-              config.slideshow?.sliderPlacement === 'top' ? 'left-0 right-0 top-[3.5vw]' :
-              config.slideshow?.sliderPlacement === 'left' ? 'left-[3.5vw] top-0 bottom-0 justify-center' :
-              config.slideshow?.sliderPlacement === 'right' ? 'right-[3.5vw] top-0 bottom-0 justify-center' :
-              'bottom-[3.5vw] left-0 right-0'
-            }`}
+            className={`absolute z-30 flex ${sliderOrientation === 'vertical' ? 'flex-row' : 'flex-col'} items-center ${carouselPositionClass}`}
           >
             {/* Label for center item */}
             <motion.p
               key={centerIdx}
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-white text-[clamp(18px,2vw,38px)] font-medium mb-[1.2vw] tracking-normal drop-shadow-lg"
+              className="text-white text-[clamp(22px,2.4vw,48px)] font-medium mb-[1.4vw] tracking-normal drop-shadow-lg"
             >
               {allDockItems[centerIdx]?.label}
             </motion.p>
 
             {/* Carousel row */}
-            <div className={`flex ${config.slideshow?.sliderOrientation === 'vertical' ? 'flex-col' : 'flex-row'} items-center justify-center gap-[1.5vw] w-full`} style={{ minHeight: '8vw' }}>
+            <div className={`flex ${sliderOrientation === 'vertical' ? 'flex-col' : 'flex-row'} items-center justify-center gap-[clamp(18px,1.8vw,36px)] w-full`} style={{ minHeight: 'clamp(130px, 10vw, 190px)' }}>
               {/* Left arrow */}
               <button
                 onClick={() => { setCenterIdx(p => (p - 1 + allDockItems.length) % allDockItems.length); resetDismissTimer(); }}
@@ -383,9 +399,9 @@ export default function SlideshowDashboard({
                     }}
                     className="flex flex-col items-center justify-center rounded-2xl transition-colors relative"
                     style={{
-                      width: isCenter ? '7vw' : '5vw',
-                      height: isCenter ? '7vw' : '5vw',
-                      minWidth: isCenter ? '7vw' : '5vw',
+                      width: isCenter ? centerCardSize : sideCardSize,
+                      height: isCenter ? centerCardSize : sideCardSize,
+                      minWidth: isCenter ? centerCardSize : sideCardSize,
                       background: isCenter
                         ? (isActive ? 'rgba(212,175,55,0.35)' : 'rgba(255,255,255,0.18)')
                         : 'rgba(255,255,255,0.08)',
@@ -399,23 +415,23 @@ export default function SlideshowDashboard({
                   >
                     {Icon ? (
                       <Icon
-                        style={{ width: isCenter ? '2.5vw' : '1.6vw', height: isCenter ? '2.5vw' : '1.6vw' }}
+                        style={{ width: isCenter ? centerIconSize : sideIconSize, height: isCenter ? centerIconSize : sideIconSize }}
                         className={isCenter ? 'text-white' : 'text-white/70'}
                         strokeWidth={isCenter ? 1.5 : 1.5}
                       />
                     ) : item.app?.icon ? (
                       <img src={item.app.icon} alt={item.label}
-                        style={{ width: isCenter ? '3vw' : '2vw', height: isCenter ? '3vw' : '2vw', objectFit: 'contain' }}
+                        style={{ width: isCenter ? centerIconSize : sideIconSize, height: isCenter ? centerIconSize : sideIconSize, objectFit: 'contain' }}
                       />
                     ) : (
                       <div
                         className="flex items-center justify-center font-semibold text-white"
                         style={{
-                          width: isCenter ? '3vw' : '2vw',
-                          height: isCenter ? '3vw' : '2vw',
+                          width: isCenter ? centerIconSize : sideIconSize,
+                          height: isCenter ? centerIconSize : sideIconSize,
                           borderRadius: '0.6vw',
                           background: item.app?.brandColor || 'rgba(255,255,255,0.2)',
-                          fontSize: isCenter ? '1.05vw' : '0.75vw',
+                          fontSize: isCenter ? 'clamp(18px,1.2vw,24px)' : 'clamp(11px,0.8vw,16px)',
                         }}
                       >
                         {(item.label || 'A').slice(0, 2).toUpperCase()}

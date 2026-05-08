@@ -172,20 +172,14 @@
   justify-content: center;
 }
 
-.tv-size-compact .guest-card-greeting,
-.tv-size-small .guest-card-greeting {
+.tv-size-compact .guest-card-greeting {
   display: none;
 }
 
 .tv-size-compact .guest-card-shell,
 .tv-size-small .guest-card-shell {
-  gap: clamp(6px, 3cqw, 12px);
-  padding: clamp(5px, 3cqw, 8px);
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  gap: clamp(6px, 2.3cqw, 12px);
+  padding: clamp(6px, 2.2cqw, 12px);
 }
 
 .tv-size-compact .guest-card-copy,
@@ -195,16 +189,24 @@
 }
 
 .tv-size-compact .guest-card-photo,
-.tv-size-small .guest-card-photo,
-.tv-size-small .guest-card-divider,
 .tv-size-compact .guest-card-divider {
   display: none;
+}
+
+.tv-size-small .guest-card-photo {
+  display: block;
+  width: clamp(32px, min(13cqw, 48cqh), 62px) !important;
+  height: clamp(32px, min(13cqw, 48cqh), 62px) !important;
+}
+
+.tv-size-small .guest-card-divider {
+  display: block;
 }
 
 .tv-size-compact .guest-card-copy span:last-child,
 .tv-size-small .guest-card-copy span:last-child {
   max-width: 100%;
-  font-size: clamp(9px, 7cqw, 16px);
+  font-size: clamp(9px, 4.3cqw, 15px);
   line-height: 1.05;
 }
 
@@ -215,13 +217,13 @@
 
 .tv-size-compact .guest-card-room span:first-child,
 .tv-size-small .guest-card-room span:first-child {
-  font-size: clamp(7px, 4.5cqw, 11px);
+  font-size: clamp(7px, 3.6cqw, 10px);
   opacity: 0.75;
 }
 
 .tv-size-compact .guest-card-room span:last-child,
 .tv-size-small .guest-card-room span:last-child {
-  font-size: clamp(16px, 13cqw, 30px);
+  font-size: clamp(14px, 8cqw, 26px);
 }
 
 .tv-grid-widget[data-widget-key="guestCard"][data-row-span="3"] .guest-card-photo,
@@ -256,9 +258,7 @@
 }
 
 .tv-size-compact .hotel-service-title,
-.tv-size-small .hotel-service-title,
 .tv-size-compact .hotel-info-label,
-.tv-size-small .hotel-info-label,
 .tv-size-compact .notification-card-header,
 .tv-size-small .notification-card-header {
   display: none;
@@ -279,13 +279,18 @@
 
 .tv-size-compact .hotel-info-card,
 .tv-size-small .hotel-info-card {
-  justify-content: center;
-  text-align: center;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.tv-size-small .hotel-info-label {
+  display: block;
+  font-size: clamp(7px, 3.4cqw, 12px);
 }
 
 .tv-size-compact .hotel-info-name,
 .tv-size-small .hotel-info-name {
-  font-size: clamp(10px, 7cqw, 18px);
+  font-size: clamp(10px, 5.8cqw, 18px);
   max-width: 100%;
 }
 
@@ -348,33 +353,18 @@
   justify-content: center;
 }
 
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="4"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="5"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="6"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="7"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="8"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="9"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="10"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="11"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="12"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="13"] .wifi-card-qr,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="14"] .wifi-card-qr {
-  width: clamp(90px, min(34cqw, 74cqh), 320px) !important;
-  height: clamp(90px, min(34cqw, 74cqh), 320px) !important;
+.tv-grid-widget[data-widget-key="wifiCard"] .wifi-card-qr {
+  width: clamp(48px, min(28cqw, 70cqh), 340px) !important;
+  height: clamp(48px, min(28cqw, 70cqh), 340px) !important;
 }
 
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="4"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="5"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="6"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="7"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="8"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="9"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="10"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="11"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="12"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="13"] .wifi-card-details,
-.tv-grid-widget[data-widget-key="wifiCard"][data-row-span="14"] .wifi-card-details {
-  gap: clamp(8px, 2cqh, 18px);
+.tv-grid-widget[data-widget-key="wifiCard"] .wifi-card-details {
+  gap: clamp(4px, 1.4cqh, 18px);
+}
+
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="2"] .wifi-card-title,
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="3"] .wifi-card-title {
+  font-size: clamp(9px, 5cqw, 15px);
 }
 
 .tv-size-compact .wifi-card-header {
@@ -397,6 +387,108 @@
 
 .tv-size-compact .wifi-card-details {
   display: none;
+}
+
+.tv-size-small .wifi-card-body {
+  justify-content: center;
+  padding: clamp(4px, 1.6cqw, 10px);
+  gap: clamp(5px, 1.5cqw, 12px);
+}
+
+.tv-size-small .wifi-card-details {
+  max-width: 52cqw;
+}
+
+.tv-size-small .wifi-card-value {
+  font-size: clamp(9px, 4.4cqw, 17px);
+}
+
+.tv-size-small .wifi-card-label {
+  font-size: clamp(7px, 3.2cqw, 12px);
+}
+
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="4"][data-row-span="2"] .wifi-card-header {
+  padding: clamp(4px, 2.8cqh, 8px) clamp(8px, 2.4cqw, 12px);
+}
+
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="4"][data-row-span="2"] .wifi-card-body {
+  padding: clamp(3px, 0.9cqw, 6px);
+  gap: clamp(6px, 1.4cqw, 12px);
+}
+
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="4"][data-row-span="2"] .wifi-card-qr {
+  width: clamp(70px, min(34cqw, 70cqh), 150px) !important;
+  height: clamp(70px, min(34cqw, 70cqh), 150px) !important;
+}
+
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="4"][data-row-span="2"] .wifi-card-value {
+  font-size: clamp(10px, 4.7cqw, 19px);
+}
+
+.tv-grid-widget[data-widget-key="wifiCard"][data-col-span="4"][data-row-span="2"] .wifi-card-label {
+  font-size: clamp(7px, 3.3cqw, 12px);
+}
+
+.tv-grid-widget[data-widget-key="hotelInfo"] .hotel-info-card,
+.tv-grid-widget[data-widget-key="hotelService"] .tv-widget,
+.tv-grid-widget[data-widget-key="wifiCard"] .wifi-card-body {
+  --tv-card-pad: clamp(8px, min(1.5cqw, 2.1cqh), 28px);
+}
+
+.tv-grid-widget[data-widget-key="hotelInfo"] .hotel-info-card {
+  padding: var(--tv-card-pad) !important;
+}
+
+.tv-size-compact .hotel-info-icon,
+.tv-size-small .hotel-info-icon {
+  display: none;
+}
+
+.tv-size-compact .hotel-info-label,
+.tv-size-small .hotel-info-label {
+  font-size: clamp(7px, 3.2cqw, 12px);
+}
+
+.tv-size-compact .hotel-info-name,
+.tv-size-small .hotel-info-name {
+  font-size: clamp(10px, 5cqw, 18px);
+}
+
+.tv-grid-widget[data-widget-key="hotelService"] .tv-widget {
+  padding: var(--tv-card-pad);
+}
+
+.tv-size-compact .hotel-service-title,
+.tv-size-small .hotel-service-title {
+  font-size: clamp(10px, 4.5cqw, 17px);
+}
+
+.tv-size-compact .hotel-service-icons,
+.tv-size-small .hotel-service-icons {
+  gap: clamp(6px, 3cqw, 12px);
+  margin-top: clamp(5px, 2cqh, 10px);
+}
+
+.tv-size-compact .hotel-service-icon,
+.tv-size-small .hotel-service-icon {
+  width: clamp(16px, 6cqw, 26px);
+  height: clamp(16px, 6cqw, 26px);
+}
+
+.tv-grid-widget[data-widget-key="hotelService"][data-col-span="4"][data-row-span="2"] .hotel-service-icon {
+  width: clamp(22px, min(9cqw, 24cqh), 42px) !important;
+  height: clamp(22px, min(9cqw, 24cqh), 42px) !important;
+}
+
+.tv-grid-widget[data-widget-key="hotelService"][data-col-span="4"][data-row-span="2"] .hotel-service-icons {
+  gap: clamp(8px, 2.4cqw, 16px);
+}
+
+
+
+.tv-size-compact .map-card iframe,
+.tv-size-small .map-card iframe {
+  filter: saturate(0.95) contrast(0.96);
 }
 
 .slideshow-top-clock,
@@ -532,7 +624,7 @@
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  border: none;
 }
 
 .tv-widget-fit {
@@ -577,7 +669,7 @@
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.25);
+  border: none;
 }
 
 /* ═══════════════════════════════════════════
@@ -590,11 +682,11 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1.5px;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.5) 0%, rgba(212, 175, 55, 0.05) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  border: 1.5px solid transparent;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.5) 0%, rgba(212, 175, 55, 0.05) 100%) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   pointer-events: none;
   z-index: 10;
