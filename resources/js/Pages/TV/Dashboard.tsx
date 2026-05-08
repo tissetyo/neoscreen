@@ -88,7 +88,7 @@ interface DashboardProps {
     slideshowConfig: any;
 }
 
-export default function Dashboard({ hotel, room }: DashboardProps) {
+export default function Dashboard({ hotel, room, services }: DashboardProps) {
   const hotelSlug = hotel.slug;
   const roomCode = room.room_code;
 
@@ -552,7 +552,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
         case 'hotelDeals':
           return <HotelDeals onOpenPromos={() => { setDetailWidget(null); setActiveModal('promos'); }} />;
         case 'hotelService':
-          return <HotelService onOpenServices={() => { setDetailWidget(null); setActiveModal('services'); }} />;
+          return <HotelService services={services} onOpenServices={() => { setDetailWidget(null); setActiveModal('services'); }} />;
         case 'hotelInfo':
           return <HotelInfo hotelName={store.hotelName} featuredImageUrl={store.hotelFeaturedImageUrl} />;
         case 'mapWidget':
@@ -732,7 +732,7 @@ export default function Dashboard({ hotel, room }: DashboardProps) {
         {/* ROW 8-10: Hotel Service */}
         {isWidgetVisible('hotelService') && (
           <WidgetFrame widgetKey="hotelService" delay="350ms" className="flex flex-col">
-            <HotelService onOpenServices={() => setActiveModal('services')} />
+            <HotelService services={services} onOpenServices={() => setActiveModal('services')} />
           </WidgetFrame>
         )}
 

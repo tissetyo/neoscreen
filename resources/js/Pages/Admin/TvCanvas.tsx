@@ -116,6 +116,19 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
             return layout;
         }, {});
 
+        const defaultSliderOrder = SLIDER_ITEMS.map(item => item.id);
+        const savedSlideshow = saved.slideshow ?? {};
+        const savedSliderOrder = Array.isArray(savedSlideshow.sliderOrder)
+            ? savedSlideshow.sliderOrder.filter((id: string) => defaultSliderOrder.includes(id))
+            : defaultSliderOrder;
+        const sliderOrder = [
+            ...savedSliderOrder,
+            ...defaultSliderOrder.filter(id => !savedSliderOrder.includes(id)),
+        ];
+        const sliderEnabled = Array.isArray(savedSlideshow.sliderEnabled)
+            ? savedSlideshow.sliderEnabled.filter((id: string) => defaultSliderOrder.includes(id))
+            : savedSliderOrder;
+
         return {
             screenMode: saved.screenMode ?? 'grid',
             theme: {
@@ -136,8 +149,9 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                 autoAdvanceSeconds: 10, widgetDismissSeconds: 10,
                 transition: 'crossfade', showFloatingClock: true,
                 sliderPlacement: 'bottom', sliderOrientation: 'horizontal',
-                sliderOrder: SLIDER_ITEMS.map(item => item.id),
-                ...(saved.slideshow ?? {}),
+                ...savedSlideshow,
+                sliderOrder,
+                sliderEnabled,
             },
         };
     };
@@ -150,6 +164,7 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     const [expandedAppId, setExpandedAppId] = useState<string | null>(null);
     const [localToast, setLocalToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [activeTab, setActiveTab] = useState<'canvas' | 'apps' | 'theme' | 'slideshow'>('canvas');
+    const [dragSliderId, setDragSliderId] = useState<string | null>(null);
     const gridRef = useRef<HTMLDivElement>(null);
     const iconInputRef = useRef<HTMLInputElement>(null);
     const logoInputRef = useRef<HTMLInputElement>(null);
@@ -351,12 +366,20 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     ] as const;
 
     const inp = 'w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-400';
+    const defaultSliderOrder = SLIDER_ITEMS.map(item => item.id);
     const sliderOrder = Array.isArray(config.slideshow.sliderOrder) && config.slideshow.sliderOrder.length
-        ? config.slideshow.sliderOrder
-        : SLIDER_ITEMS.map(item => item.id);
-    const visibleSliderItems = sliderOrder
+        ? [
+            ...config.slideshow.sliderOrder.filter((id: string) => defaultSliderOrder.includes(id)),
+            ...defaultSliderOrder.filter(id => !config.slideshow.sliderOrder.includes(id)),
+        ]
+        : defaultSliderOrder;
+    const sliderEnabled = Array.isArray(config.slideshow.sliderEnabled)
+        ? config.slideshow.sliderEnabled.filter((id: string) => defaultSliderOrder.includes(id))
+        : sliderOrder;
+    const orderedSliderItems = sliderOrder
         .map((id: string) => SLIDER_ITEMS.find(item => item.id === id))
         .filter(Boolean) as typeof SLIDER_ITEMS;
+    const visibleSliderItems = orderedSliderItems.filter(item => sliderEnabled.includes(item.id));
 
     const moveSliderItem = (id: string, direction: -1 | 1) => {
         const order = [...sliderOrder];
@@ -367,10 +390,21 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
         setConfig(c => ({ ...c, slideshow: { ...c.slideshow, sliderOrder: order } }));
     };
 
+    const moveSliderItemTo = (id: string, targetId: string) => {
+        const order = [...sliderOrder];
+        const from = order.indexOf(id);
+        const to = order.indexOf(targetId);
+        if (from < 0 || to < 0 || from === to) return;
+        const [item] = order.splice(from, 1);
+        order.splice(to, 0, item);
+        setConfig(c => ({ ...c, slideshow: { ...c.slideshow, sliderOrder: order } }));
+    };
+
     const toggleSliderItem = (id: string, enabled: boolean) => {
-        const order = sliderOrder.filter((item: string) => item !== id);
-        const next = enabled ? [...order, id] : order;
-        setConfig(c => ({ ...c, slideshow: { ...c.slideshow, sliderOrder: next } }));
+        const next = enabled
+            ? sliderOrder.filter((item: string) => item === id || sliderEnabled.includes(item))
+            : sliderEnabled.filter((item: string) => item !== id);
+        setConfig(c => ({ ...c, slideshow: { ...c.slideshow, sliderEnabled: next } }));
     };
 
     const renderInventoryPanel = () => {
@@ -495,9 +529,9 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                         <button onClick={reset} className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium transition-colors">
                             <RotateCcw size={15} /> Reset
                         </button>
-                        <a href={`/d/${hotel.slug}/preview`} target="_blank" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-medium transition-colors">
+                        <Link href={`/d/${hotel.slug}/preview`} className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-medium transition-colors">
                             <Eye size={15} /> Preview TV
-                        </a>
+                        </Link>
                         <button onClick={save} disabled={saving} className="flex items-center gap-2 px-5 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-medium transition-colors disabled:opacity-50">
                             <Save size={15} /> {saving ? 'Saving…' : 'Save Config'}
                         </button>
@@ -1068,20 +1102,30 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                 <p className="text-sm text-slate-500 mt-1">Only checked items appear in the TV slideshow carousel.</p>
                             </div>
                             <div className="space-y-2">
-                                {SLIDER_ITEMS.map(item => {
-                                    const enabled = sliderOrder.includes(item.id);
+                                {orderedSliderItems.map(item => {
+                                    const enabled = sliderEnabled.includes(item.id);
                                     const position = sliderOrder.indexOf(item.id);
                                     return (
-                                        <div key={item.id} className={`flex items-center gap-3 rounded-xl border p-3 ${enabled ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50 opacity-70'}`}>
-                                            <GripVertical size={15} className="text-slate-300" />
+                                        <div key={item.id}
+                                            draggable
+                                            onDragStart={() => setDragSliderId(item.id)}
+                                            onDragOver={e => e.preventDefault()}
+                                            onDrop={e => {
+                                                e.preventDefault();
+                                                if (dragSliderId) moveSliderItemTo(dragSliderId, item.id);
+                                                setDragSliderId(null);
+                                            }}
+                                            onDragEnd={() => setDragSliderId(null)}
+                                            className={`flex items-center gap-3 rounded-xl border p-3 transition-colors ${enabled ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50'} ${dragSliderId === item.id ? 'opacity-50' : ''}`}>
+                                            <GripVertical size={15} className="cursor-grab text-slate-300 active:cursor-grabbing" />
                                             <input type="checkbox" checked={enabled}
                                                 onChange={e => toggleSliderItem(item.id, e.target.checked)}
                                                 className="h-4 w-4 rounded accent-teal-500" />
-                                            <span className="min-w-0 flex-1 text-sm font-medium text-slate-700">{item.label}</span>
-                                            <button type="button" disabled={!enabled || position <= 0}
+                                            <span className={`min-w-0 flex-1 text-sm font-medium ${enabled ? 'text-slate-700' : 'text-slate-400'}`}>{item.label}</span>
+                                            <button type="button" disabled={position <= 0}
                                                 onClick={() => moveSliderItem(item.id, -1)}
                                                 className="rounded-lg px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 disabled:opacity-30">Up</button>
-                                            <button type="button" disabled={!enabled || position === sliderOrder.length - 1}
+                                            <button type="button" disabled={position === sliderOrder.length - 1}
                                                 onClick={() => moveSliderItem(item.id, 1)}
                                                 className="rounded-lg px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-100 disabled:opacity-30">Down</button>
                                         </div>
