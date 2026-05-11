@@ -3,10 +3,10 @@ import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { Settings, User, X, Save, Monitor, Plus, Trash2 } from 'lucide-react';
 
-interface Room { id: string; room_code: string; guest_name: string | null; custom_welcome_message: string | null; checkin_date: string | null; checkout_date: string | null; pin: string | null; is_occupied: boolean; room_type: { name: string } | null; }
-interface Props { slug: string; rooms: Room[]; }
+interface Room { id: string; room_code: string; guest_name: string | null; guest_country_code: string | null; custom_welcome_message: string | null; checkin_date: string | null; checkout_date: string | null; pin: string | null; is_occupied: boolean; room_type: { name: string } | null; }
+interface Props { slug: string; rooms: Room[]; iptvCountries: { code: string; name: string }[]; }
 
-export default function Rooms({ slug, rooms: initialRooms }: Props) {
+export default function Rooms({ slug, rooms: initialRooms, iptvCountries }: Props) {
     const [rooms, setRooms] = useState(initialRooms);
     const [filter, setFilter] = useState<'all' | 'occupied' | 'vacant'>('all');
     const [search, setSearch] = useState('');
@@ -32,6 +32,7 @@ export default function Rooms({ slug, rooms: initialRooms }: Props) {
         setSaving(true);
         router.put(`/${slug}/frontoffice/rooms/${editingRoom.id}`, {
             guest_name: editingRoom.guest_name || null,
+            guest_country_code: editingRoom.guest_country_code || null,
             custom_welcome_message: editingRoom.custom_welcome_message || null,
             checkin_date: editingRoom.checkin_date || null,
             checkout_date: editingRoom.checkout_date || null,
@@ -135,6 +136,13 @@ export default function Rooms({ slug, rooms: initialRooms }: Props) {
                             </div>
                             <div><label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1">Guest Name</label>
                                 <input type="text" value={editingRoom.guest_name || ''} onChange={e => setEditingRoom({ ...editingRoom, guest_name: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-teal-400 outline-none" /></div>
+                            <div><label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1">Guest Country</label>
+                                <select value={editingRoom.guest_country_code || ''} onChange={e => setEditingRoom({ ...editingRoom, guest_country_code: e.target.value || null })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-teal-400 outline-none">
+                                    <option value="">Indonesia default</option>
+                                    {iptvCountries.map(country => <option key={country.code} value={country.code}>{country.name}</option>)}
+                                </select>
+                                <p className="mt-1 text-[11px] text-slate-400">Used by IPTV to add the guest origin country on top of Indonesia, US, and International.</p>
+                            </div>
                             <div><label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1">Welcome Message</label>
                                 <textarea rows={2} value={editingRoom.custom_welcome_message || ''} onChange={e => setEditingRoom({ ...editingRoom, custom_welcome_message: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:border-teal-400 outline-none resize-none" /></div>
                             <div className="grid grid-cols-2 gap-3">

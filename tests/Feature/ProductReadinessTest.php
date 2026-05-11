@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Hotel;
+use App\Models\IptvCountry;
 use App\Models\Room;
 use App\Models\Service;
 use App\Models\ServiceOption;
@@ -11,6 +12,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
@@ -363,5 +365,118 @@ class ProductReadinessTest extends TestCase
         $this->assertSame('premium', $hotel->billing_plan);
         $this->assertSame('hybrid', $hotel->billing_unit);
         $this->assertSame('active', $hotel->payment_status);
+    }
+
+    public function test_iptv_room_api_uses_default_and_guest_origin_countries(): void
+    {
+        $hotel = Hotel::create([
+            'name' => 'A Hotel',
+            'slug' => 'a-hotel',
+            'timezone' => 'Asia/Jakarta',
+            'is_active' => true,
+            'iptv_enabled' => true,
+        ]);
+        $room = Room::create([
+            'hotel_id' => $hotel->id,
+            'room_code' => '101',
+            'pin' => '1234',
+            'room_session_token' => 'room-token',
+            'guest_name' => 'John Smith',
+            'guest_country_code' => 'th',
+            'is_occupied' => true,
+        ]);
+
+        foreach ([
+            ['id', 'Indonesia', 1],
+            ['us', 'United States', 2],
+            ['int', 'International', 3],
+            ['th', 'Thailand', 4],
+        ] as [$code, $name, $sort]) {
+            IptvCountry::updateOrCreate(['code' => $code], [
+                'name' => $name,
+                'region' => 'Default',
+                'playlist_url' => "https://iptv-org.github.io/iptv/countries/{$code}.m3u",
+                'is_enabled' => true,
+                'sort_order' => $sort,
+            ]);
+        }
+
+        Http::fake([
+            'https://iptv-org.github.io/iptv/countries/id.m3u' => Http::response("#EXTM3U\n#EXTINF:-1 tvg-logo=\"https://example.test/id.png\" group-title=\"General\",Bali TV\nhttps://example.test/id.m3u8\n"),
+            'https://iptv-org.github.io/iptv/countries/us.m3u' => Http::response("#EXTM3U\n#EXTINF:-1 group-title=\"News\",US News\nhttps://example.test/us.m3u8\n"),
+            'https://iptv-org.github.io/iptv/countries/int.m3u' => Http::response("#EXTM3U\n#EXTINF:-1 group-title=\"Global\",World Feed\nhttps://example.test/int.m3u8\n"),
+            'https://iptv-org.github.io/iptv/countries/th.m3u' => Http::response("#EXTM3U\n#EXTINF:-1 group-title=\"General\",Thai Live\nhttps://example.test/th.m3u8\n"),
+        ]);
+
+        $this->withHeader('X-Room-Token', 'room-token')
+            ->getJson("/api/room/{$room->id}/iptv?hotelId={$hotel->id}")
+            ->assertOk()
+            ->assertJsonPath('enabled', true)
+            ->assertJsonPath('defaultCountryCodes.0', 'id')
+            ->assertJsonPath('defaultCountryCodes.1', 'us')
+            ->assertJsonPath('defaultCountryCodes.2', 'int')
+            ->assertJsonPath('defaultCountryCodes.3', 'th')
+            ->assertJsonPath('channels.0.name', 'Bali TV')
+            ->assertJsonPath('channels.3.countryName', 'Thailand');
+    }
+
+    public function test_iptv_is_hidden_from_room_api_when_hotel_disables_it(): void
+    {
+        $hotel = Hotel::create([
+            'name' => 'A Hotel',
+            'slug' => 'a-hotel',
+            'timezone' => 'Asia/Jakarta',
+            'is_active' => true,
+            'iptv_enabled' => false,
+        ]);
+        $room = Room::create([
+            'hotel_id' => $hotel->id,
+            'room_code' => '101',
+            'pin' => '1234',
+            'room_session_token' => 'room-token',
+            'is_occupied' => true,
+        ]);
+
+        $this->withHeader('X-Room-Token', 'room-token')
+            ->getJson("/api/room/{$room->id}/iptv?hotelId={$hotel->id}")
+            ->assertOk()
+            ->assertJsonPath('enabled', false)
+            ->assertJsonCount(0, 'countries')
+            ->assertJsonCount(0, 'channels');
+    }
+
+    public function test_superadmin_can_toggle_hotel_iptv_and_country_catalog(): void
+    {
+        $hotel = Hotel::create([
+            'name' => 'A Hotel',
+            'slug' => 'a-hotel',
+            'timezone' => 'Asia/Jakarta',
+            'is_active' => true,
+            'iptv_enabled' => false,
+        ]);
+        $country = IptvCountry::updateOrCreate(['code' => 'th'], [
+            'name' => 'Thailand',
+            'region' => 'Southeast Asia',
+            'playlist_url' => 'https://iptv-org.github.io/iptv/countries/th.m3u',
+            'is_enabled' => true,
+            'sort_order' => 10,
+        ]);
+        $admin = User::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('secret123'),
+            'role' => 'superadmin',
+        ]);
+
+        $this->actingAs($admin)
+            ->patch("/admin/hotels/{$hotel->id}/iptv", ['iptv_enabled' => true])
+            ->assertRedirect();
+
+        $this->actingAs($admin)
+            ->patch("/admin/iptv/countries/{$country->code}", ['is_enabled' => false])
+            ->assertRedirect();
+
+        $this->assertTrue($hotel->fresh()->iptv_enabled);
+        $this->assertFalse($country->fresh()->is_enabled);
     }
 }

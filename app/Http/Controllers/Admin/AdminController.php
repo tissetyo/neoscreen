@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hotel;
+use App\Models\IptvCountry;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Announcement;
+use App\Support\IptvCatalogHealth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -223,6 +225,44 @@ class AdminController extends Controller
         ]);
         $hotel->update($data);
         return back()->with('success', 'WiFi credentials saved.');
+    }
+
+    public function updateHotelIptv(Request $request, string $hotelId)
+    {
+        $data = $request->validate([
+            'iptv_enabled' => 'required|boolean',
+        ]);
+
+        Hotel::findOrFail($hotelId)->update($data);
+
+        return back()->with('success', $data['iptv_enabled'] ? 'IPTV enabled for this hotel.' : 'IPTV disabled for this hotel.');
+    }
+
+    public function iptv()
+    {
+        $countries = IptvCountry::orderBy('sort_order')->orderBy('name')->get();
+        $hotels = Hotel::orderBy('name')->get(['id', 'name', 'slug', 'iptv_enabled']);
+
+        return Inertia::render('Admin/Iptv', [
+            'countries' => $countries,
+            'hotels' => $hotels,
+            'source' => [
+                'name' => 'iptv-org/iptv',
+                'url' => 'https://github.com/iptv-org/iptv',
+            ],
+            'iptvHealth' => IptvCatalogHealth::summary($countries),
+        ]);
+    }
+
+    public function updateIptvCountry(Request $request, string $code)
+    {
+        $data = $request->validate([
+            'is_enabled' => 'required|boolean',
+        ]);
+
+        IptvCountry::findOrFail(strtolower($code))->update($data);
+
+        return back()->with('success', 'IPTV country availability updated.');
     }
 
     public function tvCanvas(string $hotelId)

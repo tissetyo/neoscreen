@@ -14,7 +14,7 @@ class Room extends Model
     protected $fillable = [
         'hotel_id', 'room_code', 'pin', 'room_session_token', 'stb_device_id',
         'stb_status', 'stb_paired_at', 'stb_last_seen_at', 'room_type_id',
-        'guest_name', 'guest_photo_url', 'background_url',
+        'guest_name', 'guest_country_code', 'guest_photo_url', 'background_url',
         'checkin_date', 'checkout_date', 'custom_welcome_message', 'is_occupied',
     ];
 

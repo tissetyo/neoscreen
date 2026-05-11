@@ -5,7 +5,7 @@ import {
     Clock, ChefHat, Tag, Settings, Users, LogOut,
     ChevronLeft, ChevronRight, Building2, Megaphone,
     ShieldCheck, Menu, X, BarChart3, Wrench, BookOpen, ClipboardList, DoorOpen,
-    CreditCard, Router, CheckCircle2, AlertTriangle, Info
+    CreditCard, Router, CheckCircle2, AlertTriangle, Info, Tv
 } from 'lucide-react';
 
 interface StaffLayoutProps {
@@ -34,6 +34,7 @@ export default function StaffLayout({ children, header, fullBleed = false }: Pro
         { label: 'Alarms', icon: Clock, href: `/${slug}/frontoffice/alarms` },
         { label: 'Requests', icon: ChefHat, href: `/${slug}/frontoffice/requests` },
         { label: 'Promos', icon: Tag, href: `/${slug}/frontoffice/promos` },
+        { label: 'IPTV', icon: Tv, href: `/${slug}/frontoffice/iptv` },
         { label: 'Analytics', icon: BarChart3, href: `/${slug}/frontoffice/analytics` },
     ] : [];
 
@@ -42,6 +43,7 @@ export default function StaffLayout({ children, header, fullBleed = false }: Pro
         { label: 'Portal', icon: DoorOpen, href: '/portal' },
         { label: 'Hotels', icon: Building2, href: '/admin/hotels' },
         { label: 'STB Fleet', icon: Router, href: '/admin/stb-fleet' },
+        { label: 'IPTV', icon: Tv, href: '/admin/iptv' },
         { label: 'Billing', icon: CreditCard, href: '/admin/billing' },
         { label: 'Accounts', icon: Users, href: '/admin/accounts' },
         { label: 'Announcements', icon: Megaphone, href: '/admin/announcements' },

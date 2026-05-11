@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Alarm;
 use App\Models\ChatMessage;
 use App\Models\Hotel;
+use App\Models\IptvCountry;
 use App\Models\Notification;
 use App\Models\Room;
 use App\Models\ServiceRequest;
+use App\Support\IptvCatalogHealth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -71,6 +73,10 @@ class FrontOfficeController extends Controller
         return Inertia::render('Staff/Rooms', [
             'slug' => $slug,
             'rooms' => $rooms,
+            'iptvCountries' => IptvCountry::where('is_enabled', true)
+                ->orderBy('sort_order')
+                ->orderBy('name')
+                ->get(['code', 'name']),
         ]);
     }
 
@@ -81,6 +87,7 @@ class FrontOfficeController extends Controller
 
         $data = $request->validate([
             'guest_name' => 'nullable|string|max:255',
+            'guest_country_code' => 'nullable|string|max:3|exists:iptv_countries,code',
             'custom_welcome_message' => 'nullable|string|max:500',
             'checkin_date' => 'nullable|date',
             'checkout_date' => 'nullable|date',
@@ -91,6 +98,27 @@ class FrontOfficeController extends Controller
         $room->update($data);
 
         return back()->with('success', 'Room updated successfully.');
+    }
+
+    public function iptv(string $slug)
+    {
+        $hotel = $this->getHotel($slug);
+        $countries = IptvCountry::where('is_enabled', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['code', 'name', 'region', 'playlist_url', 'is_enabled']);
+
+        $rooms = Room::where('hotel_id', $hotel->id)
+            ->orderBy('room_code')
+            ->get(['id', 'room_code', 'guest_name', 'guest_country_code', 'is_occupied']);
+
+        return Inertia::render('Staff/Iptv', [
+            'slug' => $slug,
+            'hotel' => $hotel->only(['id', 'name', 'iptv_enabled']),
+            'countries' => $countries,
+            'rooms' => $rooms,
+            'iptvHealth' => IptvCatalogHealth::summary($countries),
+        ]);
     }
 
     public function storeRoom(Request $request, string $slug)
@@ -475,6 +503,12 @@ class FrontOfficeController extends Controller
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
 
+        $iptvCountries = IptvCountry::where('is_enabled', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['code', 'name', 'region', 'playlist_url', 'is_enabled']);
+        $iptvHealth = IptvCatalogHealth::summary($iptvCountries);
+
         return [
             'totalRooms' => $totalRooms,
             'occupiedRooms' => $occupiedRooms,
@@ -496,6 +530,13 @@ class FrontOfficeController extends Controller
             'alarmsAcknowledged7d' => $alarmsAck7d,
             'alarmsActive' => $alarmsActive,
             'notificationsPendingStaffAck7d' => $notificationsPendingStaffAck,
+            'iptvAnalytics' => [
+                'enabled' => (bool) $hotel->iptv_enabled,
+                'countriesEnabled' => $iptvHealth['enabledCountries'],
+                'playlistOnline' => $iptvHealth['playlistOnline'],
+                'playableChannels' => $iptvHealth['playableChannels'],
+                'hiddenChannels' => $iptvHealth['hiddenChannels'],
+            ],
         ];
     }
 

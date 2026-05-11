@@ -11,6 +11,7 @@ import {
     Clock,
     TrendingUp,
     Users,
+    Tv,
 } from 'lucide-react';
 import {
     ResponsiveContainer,
@@ -58,6 +59,13 @@ interface Props {
     alarmsAcknowledged7d: number;
     alarmsActive: number;
     notificationsPendingStaffAck7d: number;
+    iptvAnalytics: {
+        enabled: boolean;
+        countriesEnabled: number;
+        playlistOnline: number;
+        playableChannels: number;
+        hiddenChannels: number;
+    };
 }
 
 const fmtDay = (d: string) => {
@@ -87,6 +95,7 @@ export default function Analytics({
     alarmsAcknowledged7d,
     alarmsActive,
     notificationsPendingStaffAck7d,
+    iptvAnalytics,
 }: Props) {
     const vacantRooms = totalRooms - occupiedRooms;
 
@@ -112,6 +121,7 @@ export default function Analytics({
         { label: 'Unread Chats', value: unreadChats, sub: 'Guest messages waiting', icon: MessageSquare, color: 'text-rose-600', bg: 'bg-rose-50', href: `/${slug}/frontoffice/chat` },
         { label: 'Pending Requests', value: pendingRequests, sub: 'Service requests open', icon: ChefHat, color: 'text-amber-600', bg: 'bg-amber-50', href: `/${slug}/frontoffice/requests` },
         { label: 'Active Promos', value: totalPromos, sub: 'Displayed on TVs', icon: Tag, color: 'text-pink-600', bg: 'bg-pink-50', href: `/${slug}/frontoffice/promos` },
+        { label: 'IPTV Playable', value: iptvAnalytics.playableChannels, sub: `${iptvAnalytics.hiddenChannels} unavailable hidden`, icon: Tv, color: 'text-cyan-600', bg: 'bg-cyan-50', href: `/${slug}/frontoffice/iptv` },
         { label: 'Total Rooms', value: totalRooms, sub: 'In inventory', icon: BedDouble, color: 'text-blue-600', bg: 'bg-blue-50', href: `/${slug}/frontoffice/rooms` },
         { label: 'Services', value: totalServices, sub: 'Available categories', icon: Wrench, color: 'text-violet-600', bg: 'bg-violet-50', href: `/${slug}/frontoffice/services` },
     ];
@@ -206,6 +216,26 @@ export default function Analytics({
                                 <p className="text-2xl font-semibold text-slate-900 mt-1">{t.value}</p>
                                 <p className="text-xs text-slate-500 mt-1">{t.sub}</p>
                             </Link>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                    <h2 className="font-medium text-slate-800 flex items-center gap-2">
+                        <Tv size={18} className="text-cyan-500" /> IPTV availability
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-0.5">Guest TVs only show playable channels; unavailable playlist entries stay hidden.</p>
+                    <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {[
+                            { label: 'Hotel IPTV', value: iptvAnalytics.enabled ? 'Enabled' : 'Locked' },
+                            { label: 'Countries', value: iptvAnalytics.countriesEnabled },
+                            { label: 'Playlists online', value: iptvAnalytics.playlistOnline },
+                            { label: 'Hidden channels', value: iptvAnalytics.hiddenChannels },
+                        ].map(item => (
+                            <div key={item.label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{item.label}</p>
+                                <p className="mt-1 text-2xl font-semibold text-slate-900">{item.value}</p>
+                            </div>
                         ))}
                     </div>
                 </div>

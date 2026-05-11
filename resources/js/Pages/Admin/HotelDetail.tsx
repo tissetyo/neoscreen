@@ -5,7 +5,7 @@ import { ArrowLeft, BedDouble, Users, Wrench, Wifi, Film, Monitor, Globe, Tv2, T
 
 interface HotelDetail {
     id: string; name: string; slug: string; location: string | null; timezone: string;
-    is_active: boolean; featured_image_url: string | null; created_at: string;
+    is_active: boolean; iptv_enabled: boolean; featured_image_url: string | null; created_at: string;
     wifi_ssid: string | null; wifi_username: string | null; wifi_password: string | null; startup_video_url: string | null;
     tv_layout_config: Record<string, any> | null;
     rooms_count: number; services_count: number;
@@ -15,13 +15,14 @@ interface Props { hotel: HotelDetail; staff: StaffUser[]; }
 
 export default function AdminHotelDetail({ hotel: initialHotel, staff }: Props) {
     const [hotel, setHotel] = useState(initialHotel);
-    const [tab, setTab] = useState<'overview' | 'tv' | 'wifi'>('overview');
+    const [tab, setTab] = useState<'overview' | 'tv' | 'wifi' | 'iptv'>('overview');
     const [screenMode, setScreenMode] = useState<'grid' | 'slideshow'>((hotel.tv_layout_config?.screenMode as any) || 'grid');
     const [saving, setSaving] = useState(false);
     const [wifiSsid, setWifiSsid] = useState(hotel.wifi_ssid ?? '');
     const [wifiUsername, setWifiUsername] = useState(hotel.wifi_username ?? '');
     const [wifiPassword, setWifiPassword] = useState(hotel.wifi_password ?? '');
     const [savingWifi, setSavingWifi] = useState(false);
+    const [savingIptv, setSavingIptv] = useState(false);
 
     useEffect(() => {
         setHotel(initialHotel);
@@ -61,9 +62,19 @@ export default function AdminHotelDetail({ hotel: initialHotel, staff }: Props) 
         });
     };
 
+    const toggleIptv = () => {
+        setSavingIptv(true);
+        router.patch(`/admin/hotels/${hotel.id}/iptv`, { iptv_enabled: !hotel.iptv_enabled }, {
+            onSuccess: () => { setHotel({ ...hotel, iptv_enabled: !hotel.iptv_enabled }); setSavingIptv(false); },
+            onError: () => setSavingIptv(false),
+            preserveScroll: true,
+        });
+    };
+
     const tabs = [
         { key: 'overview', label: 'Overview', icon: Globe },
         { key: 'tv', label: 'TV Settings', icon: Tv2 },
+        { key: 'iptv', label: 'IPTV', icon: Satellite },
         { key: 'wifi', label: 'WiFi', icon: Wifi },
     ] as const;
 
@@ -253,6 +264,34 @@ export default function AdminHotelDetail({ hotel: initialHotel, staff }: Props) 
                                         </a>
                                     ))}
                                 </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {tab === 'iptv' && (
+                        <div className="space-y-6 max-w-2xl">
+                            <div>
+                                <h3 className="font-medium text-slate-800 mb-1 flex items-center gap-2"><Satellite size={16} /> IPTV availability</h3>
+                                <p className="text-sm text-slate-500">Controls whether the IPTV app appears on guest room TVs. When off, Front Office can see IPTV as locked and the TV app disappears from rooms.</p>
+                            </div>
+                            <div className={`rounded-2xl border p-5 ${hotel.iptv_enabled ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50'}`}>
+                                <div className="flex items-center justify-between gap-4">
+                                    <div>
+                                        <p className="font-medium text-slate-900">{hotel.iptv_enabled ? 'IPTV is enabled' : 'IPTV is disabled'}</p>
+                                        <p className="text-sm text-slate-500 mt-1">{hotel.iptv_enabled ? 'Guest TVs can open country-based live channels.' : 'The app is hidden from guest TVs and locked for staff.'}</p>
+                                    </div>
+                                    <button type="button" onClick={toggleIptv} disabled={savingIptv}
+                                        className={`relative h-8 w-14 rounded-full p-1 transition-colors disabled:opacity-60 ${hotel.iptv_enabled ? 'bg-emerald-500' : 'bg-slate-300'}`}>
+                                        <span className={`block h-6 w-6 rounded-full bg-white shadow transition-transform ${hotel.iptv_enabled ? 'translate-x-6' : ''}`} />
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                                <h4 className="font-medium text-slate-800">Country catalog</h4>
+                                <p className="text-sm text-slate-500 mt-1">Enable or disable countries globally from the IPTV Control page. Room defaults always include Indonesia, United States, International, and the guest origin country when available.</p>
+                                <Link href="/admin/iptv" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-rose-500 px-4 py-2 text-sm font-medium text-white hover:bg-rose-600">
+                                    Manage IPTV catalog
+                                </Link>
                             </div>
                         </div>
                     )}

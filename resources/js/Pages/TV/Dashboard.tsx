@@ -27,11 +27,12 @@ import NotificationsModal from '@/Components/TV/NotificationsModal';
 import SettingsPage from '@/Components/TV/SettingsPage';
 import SlideshowDashboard from '@/Components/TV/SlideshowDashboard';
 import GuestLogoutModal from '@/Components/TV/GuestLogoutModal';
+import IptvModal from '@/Components/TV/IptvModal';
 import { CheckoutWidget, CheckoutModal } from '@/Components/TV/CheckoutReminder';
 import type { AppConfig } from '@/Components/TV/AppLauncher';
 import {
   AlarmClock, MessageCircle, Bell, Settings, Clock, Plane, ShoppingBag,
-  ConciergeBell, Info, MapPin, User, Wifi, MonitorCog,
+  ConciergeBell, Info, MapPin, User, Wifi, MonitorCog, Tv,
 } from 'lucide-react';
 
 const DEFAULT_APPS = [
@@ -63,6 +64,7 @@ interface Hotel {
     clock_label_2: string;
     clock_label_3: string;
     tv_layout_config: Record<string, any> | null;
+    iptv_enabled: boolean;
 }
 
 interface Room {
@@ -223,6 +225,11 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
 
   const handleAction = useCallback((action: string) => { setActiveModal(action); }, []);
   const handleLaunchApp = useCallback((app: any) => {
+    if (app.id === 'iptv' || app.url === 'neotiv://iptv') {
+      setActiveModal('iptv');
+      return;
+    }
+
     if (app.name === 'TV') {
       window.dispatchEvent(new CustomEvent('neotiv:switch-to-tv', { bubbles: true }));
       return;
@@ -305,7 +312,22 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
     }
   };
   const savedConfig = (store.tvLayoutConfig && typeof store.tvLayoutConfig === 'object' ? store.tvLayoutConfig : {}) as any;
-  const appLayout = ((savedConfig.apps ?? defaultConfig.apps) || []).reduce((layout: Record<string, any>, app: any, index: number) => {
+  const configuredApps = [...((savedConfig.apps ?? defaultConfig.apps) || [])];
+  if (hotel.iptv_enabled && !configuredApps.some((app: any) => app.id === 'iptv')) {
+    configuredApps.push({
+      id: 'iptv',
+      name: 'IPTV',
+      url: 'neotiv://iptv',
+      icon: '',
+      subtitle: 'Countries',
+      brandColor: '#0891b2',
+      iconScale: 1,
+      enabled: true,
+      embeddable: false,
+    });
+  }
+  const activeApps = configuredApps.filter((app: any) => app.enabled !== false && (app.id !== 'iptv' || hotel.iptv_enabled));
+  const appLayout = activeApps.reduce((layout: Record<string, any>, app: any, index: number) => {
     const key = `app-${app.id}`;
     layout[key] = {
       colStart: 15 + ((index % 5) * 2),
@@ -319,7 +341,6 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
   }, {});
   const savedLayout = { ...(savedConfig.layout ?? {}) };
   delete savedLayout.appGrid;
-  const activeApps = ((savedConfig.apps ?? defaultConfig.apps) || []).filter((app: any) => app.enabled !== false);
   const config = {
     ...defaultConfig,
     ...savedConfig,
@@ -615,6 +636,7 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
         {renderBrandLogo(true)}
         {/* Modals — same as grid mode */}
         {launchApp && <AppLauncher app={launchApp} isOpen={!!launchApp} onClose={() => setLaunchApp(null)} />}
+        <IptvModal isOpen={activeModal === 'iptv'} onClose={() => setActiveModal(null)} />
         <ChatModal isOpen={activeModal === 'chat'} onClose={() => setActiveModal(null)} />
         <AlarmModal isOpen={activeModal === 'alarm'} onClose={() => setActiveModal(null)} />
         <PromoModal isOpen={activeModal === 'promo'} onClose={() => setActiveModal(null)} />
@@ -798,6 +820,8 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
                      }}>
                    {app.icon && typeof app.icon === 'string' && (app.icon.startsWith('/') || app.icon.startsWith('http')) ? (
                       <img src={app.icon} alt={app.name} className="w-full h-full object-contain" />
+                   ) : app.id === 'iptv' ? (
+                      <Tv className="h-[70%] w-[70%] text-white/90" strokeWidth={1.8} />
                    ) : (
                       <span className="text-[clamp(14px,1.5vw,28px)] font-semibold leading-none">{(app.name || 'App').slice(0, 2).toUpperCase()}</span>
                    )}
@@ -878,6 +902,7 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
       <PromoModal isOpen={activeModal === 'promos'} onClose={() => setActiveModal(null)} />
       <GuestLogoutModal isOpen={activeModal === 'logout'} onClose={() => setActiveModal(null)} />
       <AppLauncher app={launchApp} isOpen={!!launchApp} onClose={() => setLaunchApp(null)} />
+      <IptvModal isOpen={activeModal === 'iptv'} onClose={() => setActiveModal(null)} />
       <ServiceRequestModal
         isOpen={activeModal === 'services'}
         onClose={() => setActiveModal(null)}

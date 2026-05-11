@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/rooms', [FrontOfficeController::class, 'storeRoom'])->name('rooms.store');
         Route::put('/rooms/{roomId}', [FrontOfficeController::class, 'updateRoom'])->name('rooms.update');
         Route::delete('/rooms/{roomId}', [FrontOfficeController::class, 'deleteRoom'])->name('rooms.delete');
+        Route::get('/iptv', [FrontOfficeController::class, 'iptv'])->name('iptv');
 
         // Chat
         Route::get('/chat', [FrontOfficeController::class, 'chat'])->name('chat');
@@ -123,6 +124,7 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/hotels/{hotelId}/toggle', [AdminController::class, 'toggleHotel'])->name('hotels.toggle');
         Route::patch('/hotels/{hotelId}/tv-config', [AdminController::class, 'updateTvConfig'])->name('hotels.tv-config');
         Route::patch('/hotels/{hotelId}/wifi', [AdminController::class, 'updateHotelWifi'])->name('hotels.wifi');
+        Route::patch('/hotels/{hotelId}/iptv', [AdminController::class, 'updateHotelIptv'])->name('hotels.iptv');
         Route::get('/hotels/{hotelId}/tv-canvas', [AdminController::class, 'tvCanvas'])->name('hotels.tv-canvas');
         Route::put('/hotels/{hotelId}/tv-canvas', [AdminController::class, 'saveTvCanvas'])->name('hotels.tv-canvas.save');
         Route::get('/stb-fleet', [AdminController::class, 'stbFleet'])->name('stb-fleet');
@@ -139,5 +141,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/announcements', [AdminController::class, 'announcements'])->name('announcements');
         Route::post('/announcements', [AdminController::class, 'storeAnnouncement'])->name('announcements.store');
         Route::delete('/announcements/{id}', [AdminController::class, 'deleteAnnouncement'])->name('announcements.delete');
+        Route::get('/iptv', [AdminController::class, 'iptv'])->name('iptv');
+        Route::patch('/iptv/countries/{code}', [AdminController::class, 'updateIptvCountry'])->name('iptv.countries.update');
     });
 });

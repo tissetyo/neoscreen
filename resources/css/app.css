@@ -34,6 +34,15 @@
   }
 }
 
+.iptv-scrollbar-hidden {
+  scrollbar-width: none;
+}
+
+.iptv-scrollbar-hidden::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
 /* ═══════════════════════════════════════════
    TILE SLOT — invisible background grid slots
    Visible only in admin/edit mode, subtle dashed border

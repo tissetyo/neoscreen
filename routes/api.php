@@ -10,6 +10,7 @@ use App\Http\Controllers\TV\AlarmController;
 use App\Http\Controllers\TV\ServiceRequestController;
 use App\Http\Controllers\TV\MobileSessionController;
 use App\Http\Controllers\TV\CheckoutController;
+use App\Http\Controllers\TV\IptvController;
 use App\Http\Controllers\Mobile\PortalApiController;
 use App\Http\Controllers\UploadController;
 
@@ -22,6 +23,7 @@ use App\Http\Controllers\UploadController;
 
 // Room authentication (PIN login)
 Route::post('/room/login', [RoomLoginController::class, 'login'])->middleware('throttle:10,1');
+Route::get('/iptv/proxy', [IptvController::class, 'proxy'])->middleware('throttle:240,1');
 
 // Room status (polled every 60s by STB)
 Route::middleware(['room.session', 'throttle:120,1'])->prefix('/room/{roomId}')->group(function () {
@@ -38,6 +40,7 @@ Route::middleware(['room.session', 'throttle:120,1'])->prefix('/room/{roomId}')-
     Route::patch('/service-request/{serviceRequestId}/guest-ack', [ServiceRequestController::class, 'guestAcknowledge']);
     Route::post('/mobile-session', [MobileSessionController::class, 'store']);
     Route::post('/checkout', [CheckoutController::class, 'store']);
+    Route::get('/iptv', [IptvController::class, 'show']);
 });
 
 // Hotel TV config
