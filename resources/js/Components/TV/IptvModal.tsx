@@ -159,16 +159,49 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     video.addEventListener('loadstart', markWaiting);
 
     if (isHls && Hls.isSupported()) {
-      const hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+      const hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true,
+        startLevel: 0,
+        capLevelToPlayerSize: true,
+        maxBufferLength: 45,
+        maxMaxBufferLength: 90,
+        backBufferLength: 30,
+        liveSyncDurationCount: 3,
+        liveMaxLatencyDurationCount: 8,
+        manifestLoadingTimeOut: 12000,
+        levelLoadingTimeOut: 12000,
+        fragLoadingTimeOut: 16000,
+        abrBandWidthFactor: 0.72,
+        abrBandWidthUpFactor: 0.65,
+        abrEwmaDefaultEstimate: 650000,
+      });
       hls.loadSource(playbackUrl);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      hls.on(Hls.Events.MANIFEST_PARSED, (_event, manifest) => {
+        if ((manifest?.levels?.length ?? 0) > 1) {
+          hls.nextLevel = 0;
+          hls.currentLevel = 0;
+        }
+
         video.play().catch(() => {
           setIsBuffering(false);
           setPlaybackError('Press OK to start this channel.');
         });
       });
       hls.on(Hls.Events.ERROR, (_event, details) => {
+        if (!details.fatal) return;
+
+        if (details.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          hls.startLoad();
+          return;
+        }
+
+        if (details.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          hls.recoverMediaError();
+          return;
+        }
+
         if (details.fatal) {
           setIsBuffering(false);
           setPlaybackError('This stream is temporarily unavailable.');
