@@ -41,6 +41,7 @@ Route::middleware(['room.session', 'throttle:120,1'])->prefix('/room/{roomId}')-
     Route::post('/mobile-session', [MobileSessionController::class, 'store']);
     Route::post('/checkout', [CheckoutController::class, 'store']);
     Route::get('/iptv', [IptvController::class, 'show']);
+    Route::post('/iptv/report', [IptvController::class, 'report'])->middleware('throttle:120,1');
 });
 
 // Hotel TV config

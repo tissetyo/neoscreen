@@ -117,6 +117,50 @@ class IptvController extends Controller
         ]);
     }
 
+    public function report(Request $request, string $roomId): JsonResponse
+    {
+        $room = $request->attributes->get('room') ?: Room::findOrFail($roomId);
+        $hotelId = $request->query('hotelId');
+        abort_unless((string) $room->hotel_id === (string) $hotelId, 403);
+
+        $data = $request->validate([
+            'countryCode' => 'required|string|max:3',
+            'channelKey' => 'required|string|max:120',
+            'name' => 'required|string|max:160',
+            'url' => 'nullable|string|max:1000',
+            'event' => 'required|in:play,buffer,recover,error,timeout,skip',
+            'message' => 'nullable|string|max:255',
+            'startupMs' => 'nullable|integer|min:0|max:120000',
+        ]);
+
+        $override = IptvChannelOverride::firstOrNew([
+            'country_code' => strtolower($data['countryCode']),
+            'channel_key' => strtolower($data['channelKey']),
+        ]);
+
+        $isSuccess = in_array($data['event'], ['play', 'recover'], true);
+        $isFailure = in_array($data['event'], ['error', 'timeout', 'skip'], true);
+        $failures = $isSuccess ? 0 : ($isFailure ? ((int) $override->consecutive_failures + 1) : (int) $override->consecutive_failures);
+
+        $override->fill([
+            'name' => $data['name'],
+            'source_url' => $data['url'] ?? $override->source_url,
+            'is_available' => $isSuccess || ! $isFailure || $failures < 2,
+            'consecutive_failures' => $failures,
+            'response_time_ms' => $data['startupMs'] ?? $override->response_time_ms,
+            'status_message' => $data['message'] ?? $data['event'],
+            'checked_at' => now(),
+        ])->save();
+
+        Cache::forget("iptv_country_{$override->country_code}_v13");
+
+        return response()->json([
+            'ok' => true,
+            'isAvailable' => $override->is_available,
+            'failures' => $override->consecutive_failures,
+        ]);
+    }
+
     private function channelsForCountry(IptvCountry $country)
     {
         $channels = collect(Cache::remember("iptv_country_{$country->code}_v13", now()->addHours(6), function () use ($country) {
@@ -184,6 +228,8 @@ class IptvController extends Controller
                 return array_merge($channel, [
                     'channelKey' => $key,
                     'healthStatus' => $override?->is_available === false ? 'unavailable' : 'available',
+                    'consecutiveFailures' => (int) ($override?->consecutive_failures ?? 0),
+                    'responseTimeMs' => $override?->response_time_ms,
                     'checkedAt' => $override?->checked_at?->toIso8601String(),
                     'statusMessage' => $override?->status_message,
                     'restreamUrl' => $override?->restream_url,
@@ -191,6 +237,13 @@ class IptvController extends Controller
                 ]);
             })
             ->filter(fn ($channel) => $channel['healthStatus'] === 'available')
+            ->sort(fn ($a, $b) => [
+                (int) ($a['consecutiveFailures'] ?? 0),
+                (int) ($a['responseTimeMs'] ?? 999999),
+            ] <=> [
+                (int) ($b['consecutiveFailures'] ?? 0),
+                (int) ($b['responseTimeMs'] ?? 999999),
+            ])
             ->values();
     }
 

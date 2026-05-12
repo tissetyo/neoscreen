@@ -19,6 +19,9 @@ interface Channel {
   countryCode: string;
   countryName: string;
   availabilityStatus?: string;
+  channelKey?: string;
+  healthStatus?: string;
+  responseTimeMs?: number | null;
 }
 
 interface IptvModalProps {
@@ -48,6 +51,8 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const openedAtRef = useRef(0);
+  const playStartedAtRef = useRef(0);
+  const reportedRef = useRef<Record<string, boolean>>({});
   const [enabledCountries, setEnabledCountries] = useState<string[]>([]);
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
   const [playbackError, setPlaybackError] = useState('');
@@ -105,6 +110,7 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
 
   const countries: Country[] = data?.countries || [];
   const channels: Channel[] = data?.channels || [];
+  const authHeaders = store.roomSessionToken ? { 'X-Room-Token': store.roomSessionToken } : {};
   const categories = useMemo(() => {
     const found = new Set<string>();
     channels.forEach(channel => found.add(normalizeCategory(channel.category || 'General')));
@@ -124,6 +130,28 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     });
   }, [channels, query, selectedCategory]);
 
+  const reportChannel = (channel: Channel | null, event: 'play' | 'buffer' | 'recover' | 'error' | 'timeout' | 'skip', message?: string, startupMs?: number) => {
+    if (!channel || !store.roomId || !store.hotelId) return;
+
+    fetch(`/api/room/${store.roomId}/iptv/report?hotelId=${store.hotelId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
+      body: JSON.stringify({
+        countryCode: channel.countryCode,
+        channelKey: channel.channelKey || channel.name.toLowerCase().replace(/[^a-z0-9]/g, ''),
+        name: channel.name,
+        url: channel.url,
+        event,
+        message,
+        startupMs,
+      }),
+    })
+      .then(() => {
+        if (['error', 'timeout', 'skip'].includes(event)) mutate();
+      })
+      .catch(() => {});
+  };
+
   useEffect(() => {
     if (activeChannel && channels.length && !channels.some(channel => channel.url === activeChannel.url)) {
       setActiveChannel(channels[0]);
@@ -139,19 +167,37 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     const video = videoRef.current;
     if (!video || !activeChannel) return;
 
+    playStartedAtRef.current = Date.now();
+    reportedRef.current = {};
     setPlaybackError('');
     setIsBuffering(true);
     setSlowBuffer(false);
     const playbackUrl = activeChannel.proxyUrl || activeChannel.url;
     const isHls = activeChannel.url.toLowerCase().includes('.m3u8');
-    const slowTimer = window.setTimeout(() => setSlowBuffer(true), 30000);
+    const slowTimer = window.setTimeout(() => setSlowBuffer(true), 7000);
+    const autoSkipTimer = window.setTimeout(() => {
+      reportChannel(activeChannel, 'timeout', 'Startup timeout', Date.now() - playStartedAtRef.current);
+      setPlaybackError('Trying the next available channel...');
+      window.setTimeout(() => moveChannel(1), 900);
+    }, 15000);
 
     const markPlaying = () => {
+      window.clearTimeout(autoSkipTimer);
+      if (!reportedRef.current.play) {
+        reportedRef.current.play = true;
+        reportChannel(activeChannel, 'play', 'Playback started', Date.now() - playStartedAtRef.current);
+      }
       setIsBuffering(false);
       setSlowBuffer(false);
       setPlaybackError('');
     };
-    const markWaiting = () => setIsBuffering(true);
+    const markWaiting = () => {
+      setIsBuffering(true);
+      if (!reportedRef.current.buffer) {
+        reportedRef.current.buffer = true;
+        reportChannel(activeChannel, 'buffer', 'Player waiting for data', Date.now() - playStartedAtRef.current);
+      }
+    };
     video.addEventListener('playing', markPlaying);
     video.addEventListener('canplay', markPlaying);
     video.addEventListener('waiting', markWaiting);
@@ -187,17 +233,20 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
         video.play().catch(() => {
           setIsBuffering(false);
           setPlaybackError('Press OK to start this channel.');
+          reportChannel(activeChannel, 'error', 'Autoplay blocked', Date.now() - playStartedAtRef.current);
         });
       });
       hls.on(Hls.Events.ERROR, (_event, details) => {
         if (!details.fatal) return;
 
         if (details.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          reportChannel(activeChannel, 'recover', 'Recovered network error', Date.now() - playStartedAtRef.current);
           hls.startLoad();
           return;
         }
 
         if (details.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          reportChannel(activeChannel, 'recover', 'Recovered media error', Date.now() - playStartedAtRef.current);
           hls.recoverMediaError();
           return;
         }
@@ -205,11 +254,13 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
         if (details.fatal) {
           setIsBuffering(false);
           setPlaybackError('This stream is temporarily unavailable.');
+          reportChannel(activeChannel, 'error', details.details || 'Fatal HLS error', Date.now() - playStartedAtRef.current);
         }
       });
 
       return () => {
         window.clearTimeout(slowTimer);
+        window.clearTimeout(autoSkipTimer);
         video.removeEventListener('playing', markPlaying);
         video.removeEventListener('canplay', markPlaying);
         video.removeEventListener('waiting', markWaiting);
@@ -223,10 +274,12 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     video.play().catch(() => {
       setIsBuffering(false);
       setPlaybackError('Press OK to start this channel.');
+      reportChannel(activeChannel, 'error', 'Autoplay blocked', Date.now() - playStartedAtRef.current);
     });
 
     return () => {
       window.clearTimeout(slowTimer);
+      window.clearTimeout(autoSkipTimer);
       video.removeEventListener('playing', markPlaying);
       video.removeEventListener('canplay', markPlaying);
       video.removeEventListener('waiting', markWaiting);
@@ -236,6 +289,19 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
       video.load();
     };
   }, [activeChannel]);
+
+  useEffect(() => {
+    if (!activeChannel || !channels.length) return;
+    const index = channels.findIndex(channel => channel.url === activeChannel.url);
+    if (index < 0) return;
+
+    channels
+      .slice(index + 1, index + 4)
+      .filter(channel => (channel.proxyUrl || channel.url).toLowerCase().includes('.m3u8'))
+      .forEach(channel => {
+        fetch(channel.proxyUrl || channel.url, { headers: authHeaders, cache: 'force-cache' }).catch(() => {});
+      });
+  }, [activeChannel, channels]);
 
   useEffect(() => {
     if (!isOpen || !chromeVisible) return;
