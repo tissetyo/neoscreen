@@ -43,6 +43,19 @@ const DEFAULT_APPS = [
     { id: 'iptv', name: 'IPTV', url: 'neotiv://iptv', icon: '', subtitle: 'Countries', brandColor: '#0891b2', iconScale: 1, enabled: true, embeddable: false },
 ];
 
+const mergeSystemApps = (savedApps: any) => {
+    if (!Array.isArray(savedApps)) return DEFAULT_APPS;
+
+    const savedById = new Map(savedApps.filter((app: any) => app?.id).map((app: any) => [app.id, app]));
+    const mergedDefaults = DEFAULT_APPS.map(defaultApp => ({
+        ...defaultApp,
+        ...(savedById.get(defaultApp.id) ?? {}),
+    }));
+    const customApps = savedApps.filter((app: any) => app?.id && !DEFAULT_APPS.some(defaultApp => defaultApp.id === app.id));
+
+    return [...mergedDefaults, ...customApps];
+};
+
 const defaultAppLayout = (app: any, index: number, savedLayout: Record<string, any> = {}) => {
     const key = `app-${app.id}`;
     return {
@@ -102,6 +115,7 @@ interface Hotel {
     id: string; name: string; slug: string;
     tv_layout_config: Record<string, any> | null;
     startup_video_url: string | null;
+    iptv_enabled: boolean;
 }
 
 export default function TvCanvas({ hotel }: { hotel: Hotel }) {
@@ -110,14 +124,17 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
         const savedLayout = { ...(saved.layout ?? {}) };
         delete savedLayout.appGrid;
 
-        const apps = Array.isArray(saved.apps) ? saved.apps : DEFAULT_APPS;
+        const apps = mergeSystemApps(saved.apps);
         const appLayout = apps.reduce((layout: Record<string, any>, app: any, index: number) => {
             const key = `app-${app.id}`;
             layout[key] = defaultAppLayout(app, index, saved.layout ?? {});
             return layout;
         }, {});
 
-        const defaultSliderOrder = SLIDER_ITEMS.map(item => item.id);
+        const appSliderItems = apps
+            .filter((app: any) => app.enabled !== false && (app.id !== 'iptv' || hotel.iptv_enabled))
+            .map((app: any) => `app-${app.id}`);
+        const defaultSliderOrder = [...SLIDER_ITEMS.map(item => item.id), ...appSliderItems];
         const savedSlideshow = saved.slideshow ?? {};
         const savedSliderOrder = Array.isArray(savedSlideshow.sliderOrder)
             ? savedSlideshow.sliderOrder.filter((id: string) => defaultSliderOrder.includes(id))
@@ -126,8 +143,12 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
             ...savedSliderOrder,
             ...defaultSliderOrder.filter(id => !savedSliderOrder.includes(id)),
         ];
+        const legacyMissingSliderItems = defaultSliderOrder.filter(id => !savedSliderOrder.includes(id));
         const sliderEnabled = Array.isArray(savedSlideshow.sliderEnabled)
-            ? savedSlideshow.sliderEnabled.filter((id: string) => defaultSliderOrder.includes(id))
+            ? [
+                ...savedSlideshow.sliderEnabled.filter((id: string) => defaultSliderOrder.includes(id)),
+                ...legacyMissingSliderItems,
+            ]
             : savedSliderOrder;
 
         return {
@@ -242,6 +263,16 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
             const layout = { ...c.layout };
             if (removedAppId) delete layout[`app-${removedAppId}`];
             return { ...c, apps, layout };
+        });
+    };
+
+    const moveApp = (index: number, direction: -1 | 1) => {
+        setConfig(c => {
+            const apps = [...(c.apps ?? [])];
+            const nextIndex = index + direction;
+            if (index < 0 || nextIndex < 0 || nextIndex >= apps.length) return c;
+            [apps[index], apps[nextIndex]] = [apps[nextIndex], apps[index]];
+            return { ...c, apps };
         });
     };
 
@@ -367,7 +398,15 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
     ] as const;
 
     const inp = 'w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-400';
-    const defaultSliderOrder = SLIDER_ITEMS.map(item => item.id);
+    const appSliderItems = (config.apps ?? [])
+        .filter((app: any) => app.enabled !== false && (app.id !== 'iptv' || hotel.iptv_enabled))
+        .map((app: any) => ({
+            id: `app-${app.id}`,
+            label: app.name || 'App',
+            app,
+        }));
+    const allSliderItems = [...SLIDER_ITEMS, ...appSliderItems];
+    const defaultSliderOrder = allSliderItems.map(item => item.id);
     const sliderOrder = Array.isArray(config.slideshow.sliderOrder) && config.slideshow.sliderOrder.length
         ? [
             ...config.slideshow.sliderOrder.filter((id: string) => defaultSliderOrder.includes(id)),
@@ -378,7 +417,7 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
         ? config.slideshow.sliderEnabled.filter((id: string) => defaultSliderOrder.includes(id))
         : sliderOrder;
     const orderedSliderItems = sliderOrder
-        .map((id: string) => SLIDER_ITEMS.find(item => item.id === id))
+        .map((id: string) => allSliderItems.find(item => item.id === id))
         .filter(Boolean) as typeof SLIDER_ITEMS;
     const visibleSliderItems = orderedSliderItems.filter(item => sliderEnabled.includes(item.id));
 
@@ -694,6 +733,16 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                                 <span className={`rounded-full px-3 py-1 text-xs font-medium ${layout.visible === false ? 'bg-slate-100 text-slate-500' : 'bg-teal-50 text-teal-700'}`}>
                                                     {layout.visible === false ? 'Hidden' : 'Canvas'}
                                                 </span>
+                                                <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                                                    <button type="button" onClick={() => moveApp(index, -1)} disabled={index === 0}
+                                                        className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 hover:bg-white disabled:opacity-35">
+                                                        Up
+                                                    </button>
+                                                    <button type="button" onClick={() => moveApp(index, 1)} disabled={index === (config.apps?.length ?? 1) - 1}
+                                                        className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500 hover:bg-white disabled:opacity-35">
+                                                        Down
+                                                    </button>
+                                                </div>
                                                 <ChevronDown size={18} className={`text-slate-400 transition-transform ${expanded ? 'rotate-180' : ''}`} />
                                             </button>
 

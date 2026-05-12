@@ -89,7 +89,9 @@ export default function SlideshowDashboard({
     if (bi === -1) return -1;
     return ai - bi;
   }).filter(item => {
-    return !Array.isArray(sliderEnabled) || sliderEnabled.length === 0 || sliderEnabled.includes(item.id) || item.id.startsWith('app-');
+    if (!Array.isArray(sliderEnabled) || sliderEnabled.length === 0) return true;
+    if (sliderEnabled.includes(item.id)) return true;
+    return item.id.startsWith('app-') && !sliderOrder.includes(item.id);
   });
 
   // Background auto-advance

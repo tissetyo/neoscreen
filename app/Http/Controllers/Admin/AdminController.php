@@ -395,6 +395,7 @@ class AdminController extends Controller
             ['id' => 'disney', 'name' => 'Disney+', 'url' => 'com.disney.disneyplus', 'icon' => '', 'subtitle' => 'Streaming', 'brandColor' => '#113ccf', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
             ['id' => 'prime', 'name' => 'Prime Video', 'url' => 'com.amazon.amazonvideo.livingroom', 'icon' => '', 'subtitle' => 'Streaming', 'brandColor' => '#00a8e1', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
             ['id' => 'spotify', 'name' => 'Spotify', 'url' => 'com.spotify.tv.android', 'icon' => '', 'subtitle' => 'Music', 'brandColor' => '#1db954', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
+            ['id' => 'iptv', 'name' => 'IPTV', 'url' => 'neotiv://iptv', 'icon' => '', 'subtitle' => 'Countries', 'brandColor' => '#0891b2', 'iconScale' => 1, 'enabled' => true, 'embeddable' => false],
         ];
     }
 }

@@ -41,7 +41,21 @@ const DEFAULT_APPS = [
   { id: 'disney', name: 'Disney+', url: 'com.disney.disneyplus', icon: '', subtitle: 'Streaming', brandColor: '#113ccf', iconScale: 1, enabled: true, embeddable: false },
   { id: 'prime', name: 'Prime Video', url: 'com.amazon.amazonvideo.livingroom', icon: '', subtitle: 'Streaming', brandColor: '#00a8e1', iconScale: 1, enabled: true, embeddable: false },
   { id: 'spotify', name: 'Spotify', url: 'com.spotify.tv.android', icon: '', subtitle: 'Music', brandColor: '#1db954', iconScale: 1, enabled: true, embeddable: false },
+  { id: 'iptv', name: 'IPTV', url: 'neotiv://iptv', icon: '', subtitle: 'Countries', brandColor: '#0891b2', iconScale: 1, enabled: true, embeddable: false },
 ];
+
+const mergeSystemApps = (savedApps: any) => {
+  if (!Array.isArray(savedApps)) return DEFAULT_APPS;
+
+  const savedById = new Map(savedApps.filter((app: any) => app?.id).map((app: any) => [app.id, app]));
+  const mergedDefaults = DEFAULT_APPS.map(defaultApp => ({
+    ...defaultApp,
+    ...(savedById.get(defaultApp.id) ?? {}),
+  }));
+  const customApps = savedApps.filter((app: any) => app?.id && !DEFAULT_APPS.some(defaultApp => defaultApp.id === app.id));
+
+  return [...mergedDefaults, ...customApps];
+};
 
 interface Hotel {
     id: string;
@@ -312,20 +326,7 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
     }
   };
   const savedConfig = (store.tvLayoutConfig && typeof store.tvLayoutConfig === 'object' ? store.tvLayoutConfig : {}) as any;
-  const configuredApps = [...((savedConfig.apps ?? defaultConfig.apps) || [])];
-  if (hotel.iptv_enabled && !configuredApps.some((app: any) => app.id === 'iptv')) {
-    configuredApps.push({
-      id: 'iptv',
-      name: 'IPTV',
-      url: 'neotiv://iptv',
-      icon: '',
-      subtitle: 'Countries',
-      brandColor: '#0891b2',
-      iconScale: 1,
-      enabled: true,
-      embeddable: false,
-    });
-  }
+  const configuredApps = mergeSystemApps(savedConfig.apps ?? defaultConfig.apps);
   const activeApps = configuredApps.filter((app: any) => app.enabled !== false && (app.id !== 'iptv' || hotel.iptv_enabled));
   const appLayout = activeApps.reduce((layout: Record<string, any>, app: any, index: number) => {
     const key = `app-${app.id}`;
