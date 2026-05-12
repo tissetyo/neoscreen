@@ -4,6 +4,7 @@ namespace App\Http\Controllers\TV;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hotel;
+use App\Models\IptvChannelOverride;
 use App\Models\IptvCountry;
 use App\Models\Room;
 use App\Support\IptvCatalogHealth;
@@ -118,7 +119,7 @@ class IptvController extends Controller
 
     private function channelsForCountry(IptvCountry $country)
     {
-        return collect(Cache::remember("iptv_country_{$country->code}_v12", now()->addHours(6), function () use ($country) {
+        $channels = collect(Cache::remember("iptv_country_{$country->code}_v13", now()->addHours(6), function () use ($country) {
             try {
                 $response = Http::timeout(10)->retry(1, 300)->get($country->playlist_url);
             } catch (Throwable) {
@@ -162,11 +163,35 @@ class IptvController extends Controller
             }
 
             return $this->prioritizeChannels($country, $channels
-                ->filter(fn ($channel) => $this->isPlayableUrl((string) $channel['url']) && $channel['availabilityStatus'] === 'available' && $this->isAllowedChannel($channel))
+                ->filter(fn ($channel) => $this->isPlayableUrl((string) $channel['url'])
+                    && $channel['availabilityStatus'] === 'available'
+                    && $this->isAllowedChannel($channel))
                 ->unique('url')
                 ->values())
                 ->all();
-        }))->values();
+        }));
+
+        $overrides = IptvChannelOverride::where('country_code', $country->code)
+            ->get()
+            ->keyBy('channel_key');
+
+        return $channels
+            ->map(function (array $channel) use ($overrides) {
+                $key = $this->channelKey($channel);
+                /** @var IptvChannelOverride|null $override */
+                $override = $overrides->get($key);
+
+                return array_merge($channel, [
+                    'channelKey' => $key,
+                    'healthStatus' => $override?->is_available === false ? 'unavailable' : 'available',
+                    'checkedAt' => $override?->checked_at?->toIso8601String(),
+                    'statusMessage' => $override?->status_message,
+                    'restreamUrl' => $override?->restream_url,
+                    'proxyUrl' => $this->proxyUrl($override?->restream_url ?: (string) $channel['url']),
+                ]);
+            })
+            ->filter(fn ($channel) => $channel['healthStatus'] === 'available')
+            ->values();
     }
 
     public function proxy(Request $request)

@@ -112,6 +112,58 @@ class IptvCatalogHealth
         }
 
         return Cache::remember('iptv_stream_health_' . sha1($url) . '_v2', now()->addMinutes(45), function () use ($url) {
+            return self::probeStream($url)['available'];
+        });
+    }
+
+    /**
+     * @return array{available: bool, responseTimeMs: int|null, message: string}
+     */
+    public static function probeStream(string $url): array
+    {
+        $started = microtime(true);
+
+        if (! self::isPlayableUrl($url)) {
+            return ['available' => false, 'responseTimeMs' => null, 'message' => 'Unsupported stream URL'];
+        }
+
+        try {
+            $response = Http::timeout(5)
+                ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
+                ->get($url);
+        } catch (Throwable $exception) {
+            return ['available' => false, 'responseTimeMs' => null, 'message' => Str::limit($exception->getMessage(), 180)];
+        }
+
+        $responseTimeMs = (int) round((microtime(true) - $started) * 1000);
+
+        if (! $response->ok()) {
+            return ['available' => false, 'responseTimeMs' => $responseTimeMs, 'message' => 'HTTP ' . $response->status()];
+        }
+
+        $path = strtolower((string) parse_url($url, PHP_URL_PATH));
+        $contentType = strtolower($response->header('Content-Type', ''));
+        $isHls = str_ends_with($path, '.m3u8') || str_contains($contentType, 'mpegurl') || str_contains($response->body(), '#EXTM3U');
+
+        if (! $isHls) {
+            return ['available' => true, 'responseTimeMs' => $responseTimeMs, 'message' => 'OK'];
+        }
+
+        if (! self::hlsPlaylistAvailable($response->body(), $url)) {
+            return ['available' => false, 'responseTimeMs' => $responseTimeMs, 'message' => 'No playable HLS segment'];
+        }
+
+        return ['available' => true, 'responseTimeMs' => $responseTimeMs, 'message' => 'OK'];
+    }
+
+    public static function forgetStreamCache(string $url): void
+    {
+        Cache::forget('iptv_stream_health_' . sha1($url) . '_v2');
+    }
+
+    public static function cachedStreamAvailable(string $url): bool
+    {
+        return Cache::remember('iptv_stream_health_' . sha1($url) . '_v2', now()->addMinutes(45), function () use ($url) {
             if (! self::isPlayableUrl($url)) {
                 return false;
             }
