@@ -52,6 +52,7 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const openedAtRef = useRef(0);
   const playStartedAtRef = useRef(0);
+  const lastVideoTimeRef = useRef(0);
   const reportedRef = useRef<Record<string, boolean>>({});
   const [enabledCountries, setEnabledCountries] = useState<string[]>([]);
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
@@ -168,6 +169,7 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     if (!video || !activeChannel) return;
 
     playStartedAtRef.current = Date.now();
+    lastVideoTimeRef.current = 0;
     reportedRef.current = {};
     setPlaybackError('');
     setIsBuffering(true);
@@ -175,13 +177,11 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     const playbackUrl = activeChannel.proxyUrl || activeChannel.url;
     const isHls = activeChannel.url.toLowerCase().includes('.m3u8');
     const slowTimer = window.setTimeout(() => setSlowBuffer(true), 7000);
-    const autoSkipTimer = window.setTimeout(() => {
-      reportChannel(activeChannel, 'timeout', 'Startup timeout', Date.now() - playStartedAtRef.current);
-      setPlaybackError('Trying the next available channel...');
-      window.setTimeout(() => moveChannel(1), 900);
-    }, 15000);
+    let softReloadTimer = 0;
+    let autoSkipTimer = 0;
 
     const markPlaying = () => {
+      window.clearTimeout(softReloadTimer);
       window.clearTimeout(autoSkipTimer);
       if (!reportedRef.current.play) {
         reportedRef.current.play = true;
@@ -191,7 +191,19 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
       setSlowBuffer(false);
       setPlaybackError('');
     };
+    const markProgress = () => {
+      const currentTime = video.currentTime || 0;
+      if (currentTime > 0 && currentTime >= lastVideoTimeRef.current) {
+        lastVideoTimeRef.current = currentTime;
+        markPlaying();
+      }
+    };
     const markWaiting = () => {
+      if (video.currentTime > 0 && !video.paused && !video.ended) {
+        markPlaying();
+        return;
+      }
+
       setIsBuffering(true);
       if (!reportedRef.current.buffer) {
         reportedRef.current.buffer = true;
@@ -200,9 +212,33 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     };
     video.addEventListener('playing', markPlaying);
     video.addEventListener('canplay', markPlaying);
+    video.addEventListener('timeupdate', markProgress);
+    video.addEventListener('progress', markProgress);
     video.addEventListener('waiting', markWaiting);
     video.addEventListener('stalled', markWaiting);
     video.addEventListener('loadstart', markWaiting);
+
+    softReloadTimer = window.setTimeout(() => {
+      if (video.currentTime > 0 || !video.paused) {
+        markPlaying();
+        return;
+      }
+
+      setPlaybackError('Reconnecting to this channel...');
+      reportChannel(activeChannel, 'recover', 'Soft reload after slow startup', Date.now() - playStartedAtRef.current);
+      if (isHls && Hls.isSupported()) return;
+      video.load();
+      video.play().catch(() => {});
+    }, 12000);
+    autoSkipTimer = window.setTimeout(() => {
+      if (video.currentTime > 0 || !video.paused) {
+        markPlaying();
+        return;
+      }
+      reportChannel(activeChannel, 'timeout', 'Startup timeout', Date.now() - playStartedAtRef.current);
+      setPlaybackError('Trying the next available channel...');
+      window.setTimeout(() => moveChannel(1), 900);
+    }, 15000);
 
     if (isHls && Hls.isSupported()) {
       const hls = new Hls({
@@ -224,6 +260,23 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
       });
       hls.loadSource(playbackUrl);
       hls.attachMedia(video);
+      const reloadHls = () => {
+        hls.stopLoad();
+        hls.loadSource(playbackUrl);
+        hls.startLoad(-1);
+        video.play().catch(() => {});
+      };
+      window.clearTimeout(softReloadTimer);
+      const hlsSoftReloadTimer = window.setTimeout(() => {
+        if (video.currentTime > 0 || !video.paused) {
+          markPlaying();
+          return;
+        }
+
+        setPlaybackError('Reconnecting to this channel...');
+        reportChannel(activeChannel, 'recover', 'Soft HLS reload after slow startup', Date.now() - playStartedAtRef.current);
+        reloadHls();
+      }, 12000);
       hls.on(Hls.Events.MANIFEST_PARSED, (_event, manifest) => {
         if ((manifest?.levels?.length ?? 0) > 1) {
           hls.nextLevel = 0;
@@ -260,9 +313,13 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
 
       return () => {
         window.clearTimeout(slowTimer);
+        window.clearTimeout(softReloadTimer);
+        window.clearTimeout(hlsSoftReloadTimer);
         window.clearTimeout(autoSkipTimer);
         video.removeEventListener('playing', markPlaying);
         video.removeEventListener('canplay', markPlaying);
+        video.removeEventListener('timeupdate', markProgress);
+        video.removeEventListener('progress', markProgress);
         video.removeEventListener('waiting', markWaiting);
         video.removeEventListener('stalled', markWaiting);
         video.removeEventListener('loadstart', markWaiting);
@@ -279,9 +336,12 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
 
     return () => {
       window.clearTimeout(slowTimer);
+      window.clearTimeout(softReloadTimer);
       window.clearTimeout(autoSkipTimer);
       video.removeEventListener('playing', markPlaying);
       video.removeEventListener('canplay', markPlaying);
+      video.removeEventListener('timeupdate', markProgress);
+      video.removeEventListener('progress', markProgress);
       video.removeEventListener('waiting', markWaiting);
       video.removeEventListener('stalled', markWaiting);
       video.removeEventListener('loadstart', markWaiting);
