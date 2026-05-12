@@ -35,6 +35,12 @@ const DEFAULT_SLIDESHOW_IMAGES = [
   'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1920&auto=format&fit=crop',
 ];
 
+const FALLBACK_SLIDESHOW_BACKGROUNDS = [
+  'linear-gradient(135deg, #0f172a 0%, #164e63 42%, #d4af37 100%)',
+  'linear-gradient(135deg, #111827 0%, #115e59 50%, #7c3aed 100%)',
+  'linear-gradient(135deg, #020617 0%, #1e3a8a 48%, #14b8a6 100%)',
+];
+
 const DOCK_WIDGETS = [
   { id: 'clock',    label: 'Clocks',        icon: Clock },
   { id: 'guest',    label: 'Guest',         icon: User },
@@ -198,6 +204,8 @@ export default function SlideshowDashboard({
   const sideCardSize = 'clamp(78px, 6vw, 118px)';
   const centerIconSize = 'clamp(42px, 3vw, 68px)';
   const sideIconSize = 'clamp(24px, 1.75vw, 38px)';
+  const previewLabelClass = 'text-[clamp(11px,0.8vw,15px)] font-medium uppercase tracking-[0.12em] text-white/55';
+  const previewTitleClass = 'text-[clamp(24px,2.2vw,42px)] font-semibold leading-tight text-white';
 
   // Render expanded widget panel
   const renderWidget = () => {
@@ -205,23 +213,53 @@ export default function SlideshowDashboard({
     const content = (() => {
       switch (activeWidget) {
         case 'clock': return (
-          <div className="flex items-center gap-[2vw]">
-            {store.clockTimezones?.length >= 3 && (
-              <div className="flex items-center gap-[1.5vw]">
-                <AnalogClock timezone={store.clockTimezones[0]} label={store.clockLabels[0]} size={80} clockStyle={config.theme?.clockStyle} />
-                <AnalogClock timezone={store.clockTimezones[1]} label={store.clockLabels[1]} size={80} clockStyle={config.theme?.clockStyle} />
-                <AnalogClock timezone={store.clockTimezones[2]} label={store.clockLabels[2]} size={80} clockStyle={config.theme?.clockStyle} />
-              </div>
-            )}
+          <div className="h-full rounded-[var(--widget-radius)] border border-white/15 bg-black/28 px-[clamp(18px,1.8vw,36px)] py-[clamp(12px,1.2vw,24px)] backdrop-blur-xl">
+            <p className={previewLabelClass}>World clocks</p>
+            <div className="mt-[1vh] flex h-[70%] items-center justify-center gap-[clamp(20px,2vw,42px)] overflow-hidden">
+              {(store.clockTimezones?.length ? store.clockTimezones.slice(0, 3) : ['Asia/Jakarta', 'Europe/London', 'Asia/Tokyo']).map((tz, i) => (
+                <div key={tz} className="flex min-w-[clamp(80px,7vw,140px)] flex-col items-center justify-center">
+                  <AnalogClock timezone={tz} label={store.clockLabels?.[i] || ['Jakarta', 'London', 'Tokyo'][i]} size={96} clockStyle={config.theme?.clockStyle} />
+                </div>
+              ))}
+            </div>
           </div>
         );
         case 'guest': return isCheckoutDay
           ? <CheckoutWidget onOpenModal={() => onAction('checkout-reminder')} />
-          : <GuestCard guestName={store.guestName} guestPhotoUrl={store.guestPhotoUrl} roomCode={store.roomCode} onClick={() => onAction('logout')} />;
-        case 'wifi': return <WifiCard ssid={store.wifiSsid} username={store.wifiUsername} password={store.wifiPassword} />;
+          : (
+            <div className="flex h-full items-center gap-[clamp(16px,1.6vw,32px)] rounded-[var(--widget-radius)] border border-white/15 bg-black/30 px-[clamp(22px,2vw,44px)] py-[clamp(14px,1.4vw,28px)] backdrop-blur-xl">
+              <div className="h-[clamp(74px,6.5vw,120px)] w-[clamp(74px,6.5vw,120px)] shrink-0 overflow-hidden rounded-full border-[3px] border-[#d4af37] bg-white/10">
+                <img src={store.guestPhotoUrl || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=480&auto=format&fit=crop&crop=faces'} alt="" className="h-full w-full object-cover" />
+              </div>
+              <div className="min-w-0">
+                <p className={previewLabelClass}>Welcome</p>
+                <p className={`${previewTitleClass} max-w-[24vw] truncate`}>{store.guestName || 'Guest'}</p>
+                <p className="mt-[0.5vh] text-[clamp(18px,1.4vw,28px)] font-semibold text-[#d4af37]">Room {store.roomCode}</p>
+              </div>
+            </div>
+          );
+        case 'wifi': return (
+          <div className="grid h-full grid-cols-[1fr_auto] items-center gap-[clamp(18px,2vw,42px)] rounded-[var(--widget-radius)] border border-white/15 bg-white/92 px-[clamp(22px,2vw,44px)] py-[clamp(14px,1.4vw,28px)] text-slate-950 shadow-2xl">
+            <div className="min-w-0">
+              <div className="mb-[0.8vh] flex items-center gap-[0.6vw] text-[#aa8529]">
+                <Wifi className="h-[clamp(18px,1.5vw,32px)] w-[clamp(18px,1.5vw,32px)]" />
+                <span className="text-[clamp(11px,0.8vw,15px)] font-bold uppercase tracking-[0.12em]">WiFi access</span>
+              </div>
+              <p className="truncate text-[clamp(24px,2.2vw,42px)] font-bold">{store.wifiSsid || 'WiFi not configured'}</p>
+              {store.wifiPassword && <p className="mt-[0.4vh] truncate font-mono text-[clamp(18px,1.5vw,30px)] text-slate-700">{store.wifiPassword}</p>}
+            </div>
+            <div className="flex h-[clamp(72px,6vw,116px)] w-[clamp(72px,6vw,116px)] items-center justify-center rounded-2xl bg-slate-950/5">
+              <Wifi className="h-[45%] w-[45%] text-slate-700" />
+            </div>
+          </div>
+        );
         case 'flights': return <FlightSchedule />;
         case 'notif': return <NotificationCard />;
-        case 'map': return <MapWidget location={store.hotelLocation} hotelName={store.hotelName} />;
+        case 'map': return (
+          <div className="h-full overflow-hidden rounded-[var(--widget-radius)] border border-white/20 bg-white shadow-2xl">
+            <MapWidget location={store.hotelLocation} hotelName={store.hotelName} />
+          </div>
+        );
         case 'info': return (
           <div className="slideshow-info-card">
             <span className="text-[clamp(10px,0.75vw,14px)] font-medium uppercase tracking-normal text-white/65">Hotel Info</span>
@@ -255,6 +293,8 @@ export default function SlideshowDashboard({
 
   const overrides = store.tvDisplayOverrides || {};
   const displayFilter = `brightness(${overrides.brightness ?? 1}) contrast(${overrides.contrast ?? 1}) saturate(${overrides.saturate ?? 1})`;
+  const fallbackBackground = FALLBACK_SLIDESHOW_BACKGROUNDS[bgIndex % FALLBACK_SLIDESHOW_BACKGROUNDS.length];
+  const currentImage = String(slideshowImages[bgIndex] || '').replace(/"/g, '\\"');
 
   // For carousel: render items relative to centerIdx
   // We show up to 9 visible items: -4 to +4 if there are enough items
@@ -290,7 +330,13 @@ export default function SlideshowDashboard({
             }}
             transition={{ duration: 1.4, ease: 'easeInOut' }}
             className="absolute inset-0"
-            style={{ backgroundImage: `url(${slideshowImages[bgIndex]})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: displayFilter }}
+            style={{
+              backgroundColor: '#0a0c10',
+              backgroundImage: currentImage ? `url("${currentImage}"), ${fallbackBackground}` : fallbackBackground,
+              backgroundSize: 'cover, cover',
+              backgroundPosition: 'center',
+              filter: displayFilter,
+            }}
           />
         </AnimatePresence>
         {/* Gradient vignette bottom */}
@@ -347,14 +393,16 @@ export default function SlideshowDashboard({
             className={`absolute z-30 flex ${sliderOrientation === 'vertical' ? 'flex-row' : 'flex-col'} items-center ${carouselPositionClass}`}
           >
             {/* Label for center item */}
-            <motion.p
-              key={centerIdx}
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-white text-[clamp(22px,2.4vw,48px)] font-medium mb-[1.4vw] tracking-normal drop-shadow-lg"
-            >
-              {allDockItems[centerIdx]?.label}
-            </motion.p>
+            {!activeWidget && (
+              <motion.p
+                key={centerIdx}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-white text-[clamp(22px,2.4vw,48px)] font-medium mb-[1.4vw] tracking-normal drop-shadow-lg"
+              >
+                {allDockItems[centerIdx]?.label}
+              </motion.p>
+            )}
 
             {/* Carousel row */}
             <div className={`flex ${sliderOrientation === 'vertical' ? 'flex-col' : 'flex-row'} items-center justify-center gap-[clamp(18px,1.8vw,36px)] w-full`} style={{ minHeight: 'clamp(130px, 10vw, 190px)' }}>

@@ -19,7 +19,7 @@ export default function MarqueeBar() {
   return (
     <div className="w-full h-full overflow-hidden flex items-center"
       style={{ background: 'rgba(15, 23, 42, 0.7)' }}>
-      <div className="whitespace-nowrap animate-marquee text-white/80 text-[15px]"
+      <div className="min-w-max whitespace-nowrap animate-marquee text-white/80 text-[15px]"
         style={{ animationDuration: `${duration}s` }}>
         {text}&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;{text}
       </div>

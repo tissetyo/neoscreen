@@ -525,13 +525,13 @@
 }
 
 .slideshow-widget-clock {
-  width: min(34vw, 640px);
-  height: min(18vh, 190px);
+  width: min(44vw, 840px);
+  height: min(20vh, 220px);
 }
 
 .slideshow-widget-guest {
-  width: min(38vw, 720px);
-  height: min(14vh, 150px);
+  width: min(42vw, 800px);
+  height: min(18vh, 190px);
 }
 
 .slideshow-widget-wifi {
@@ -545,8 +545,8 @@
 }
 
 .slideshow-widget-map {
-  width: min(34vw, 640px);
-  height: min(34vh, 360px);
+  width: min(42vw, 780px);
+  height: min(30vh, 330px);
 }
 
 .slideshow-widget-info,
@@ -857,7 +857,7 @@
    ANIMATIONS
    ═══════════════════════════════════════════ */
 @keyframes marquee {
-  from { transform: translateX(100%); }
+  from { transform: translateX(100vw); }
   to { transform: translateX(-100%); }
 }
 .animate-marquee {

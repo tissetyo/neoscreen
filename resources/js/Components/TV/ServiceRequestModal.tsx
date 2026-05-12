@@ -320,6 +320,27 @@ export default function ServiceRequestModal({ isOpen, onClose, onOrderComplete }
               </div>
             </div>
 
+            {step !== 'done' && (
+              <div className="absolute right-[3vw] top-[8.5vh] z-20 hidden w-[min(15vw,230px)] rounded-3xl border border-[#d4af37]/30 bg-[#d4af37]/10 p-[0.9vw] text-center shadow-[0_18px_50px_rgba(0,0,0,0.24)] backdrop-blur-xl xl:block">
+                <div className="mb-[0.5vh] flex items-center justify-center gap-[0.4vw] text-[#f3e5ab]">
+                  <QrCode className="h-[0.9vw] w-[0.9vw]" />
+                  <span className="text-[0.65vw] font-bold uppercase tracking-[0.12em]">Mobile order</span>
+                </div>
+                {loadingQr ? (
+                  <div className="mx-auto h-[min(10vw,150px)] w-[min(10vw,150px)] animate-pulse rounded-2xl bg-white/10" />
+                ) : qrUrl ? (
+                  <div className="mx-auto inline-block rounded-2xl bg-white p-[0.5vw]">
+                    <QRCode value={qrUrl} size={150} style={{ width: 'min(10vw,150px)', height: 'min(10vw,150px)' }} />
+                  </div>
+                ) : (
+                  <div className="mx-auto flex h-[min(10vw,150px)] w-[min(10vw,150px)] items-center justify-center rounded-2xl bg-white/10 text-[0.65vw] text-white/40">
+                    QR unavailable
+                  </div>
+                )}
+                <p className="mt-[0.6vh] text-[0.65vw] leading-snug text-white/55">Scan to browse services on your phone.</p>
+              </div>
+            )}
+
             {/* Main area */}
             <div className="flex-1 flex items-center justify-center overflow-hidden">
               <AnimatePresence mode="wait">
