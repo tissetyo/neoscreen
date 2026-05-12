@@ -65,10 +65,35 @@ $playlistChannels = function (IptvCountry $country) use ($channelKey) {
         }
     }
 
-    return $channels
+    $channels = $channels
         ->filter(fn (array $channel) => IptvCatalogHealth::isPlayableUrl((string) $channel['url']))
         ->unique('channelKey')
         ->values();
+
+    if ($country->code === 'id') {
+        $priority = [
+            'rcti', 'sctv', 'indosiar', 'transtv', 'trans7', 'mnctv', 'antv', 'tvone', 'metrotv',
+            'gtv', 'kompastv', 'net', 'inews', 'moji', 'rajawalitv', 'jaktv', 'btv', 'garudatv',
+            'tvri', 'mentaritv', 'magnachannel', 'nusantaratv', 'jtv', 'balitv', 'elshintatv',
+        ];
+
+        $channels = $channels
+            ->sort(function (array $a, array $b) use ($priority) {
+                $rankA = array_search($a['channelKey'], $priority, true);
+                $rankB = array_search($b['channelKey'], $priority, true);
+
+                return [
+                    $rankA === false ? 1000 : $rankA,
+                    $a['name'],
+                ] <=> [
+                    $rankB === false ? 1000 : $rankB,
+                    $b['name'],
+                ];
+            })
+            ->values();
+    }
+
+    return $channels;
 };
 
 Artisan::command('iptv:health-monitor {--country=id : Country code to check, or "all"} {--limit=25 : Max channels per country} {--failures=2 : Failures before hiding}', function () use ($playlistChannels) {
@@ -119,7 +144,7 @@ Artisan::command('iptv:health-monitor {--country=id : Country code to check, or 
                 $hidden++;
             }
 
-            $status = $available ? 'ok' : 'hidden';
+            $status = $probe['available'] ? 'ok' : ($available ? "fail {$failures}/{$failureThreshold}" : 'hidden');
             $this->line("  {$status} {$channel['name']} ({$probe['message']})");
         }
     }
