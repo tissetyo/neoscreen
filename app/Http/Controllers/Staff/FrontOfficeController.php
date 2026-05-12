@@ -121,6 +121,28 @@ class FrontOfficeController extends Controller
         ]);
     }
 
+    public function stb(string $slug)
+    {
+        $hotel = $this->getHotel($slug);
+        $rooms = Room::where('hotel_id', $hotel->id)
+            ->orderBy('room_code')
+            ->get([
+                'id',
+                'room_code',
+                'guest_name',
+                'stb_device_id',
+                'stb_status',
+                'stb_paired_at',
+                'stb_last_seen_at',
+            ]);
+
+        return Inertia::render('Staff/StbPairing', [
+            'slug' => $slug,
+            'hotel' => $hotel->only(['id', 'name', 'slug']),
+            'rooms' => $rooms,
+        ]);
+    }
+
     public function storeRoom(Request $request, string $slug)
     {
         $hotel = $this->getHotel($slug);

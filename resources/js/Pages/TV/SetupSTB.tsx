@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react';
 
 interface SetupSTBProps {}
 
+declare global {
+    interface Window {
+        NeotivSetup?: {
+            onPaired: (hotelSlug: string, roomCode: string, roomSessionToken: string) => void;
+        };
+    }
+}
+
 export default function SetupSTB({}: SetupSTBProps) {
     const [code, setCode] = useState<string | null>(null);
     const [status, setStatus] = useState<'loading' | 'showing' | 'paired' | 'expired'>('loading');
@@ -36,10 +44,21 @@ export default function SetupSTB({}: SetupSTBProps) {
                     setPairedSlug(data.hotel_slug);
                     setPairedRoom(data.room_code);
                     setStatus('paired');
+                    localStorage.setItem('neotiv_stb_setup', JSON.stringify({
+                        hotelSlug: data.hotel_slug,
+                        roomCode: data.room_code,
+                        roomSessionToken: data.room_session_token,
+                    }));
+                    const hasNativeBridge = Boolean(window.NeotivSetup && data.room_session_token);
+                    if (hasNativeBridge) {
+                        window.NeotivSetup.onPaired(data.hotel_slug, data.room_code, data.room_session_token);
+                    }
                     clearInterval(interval);
-                    // Redirect to dashboard after 2s
+                    // Browser fallback uses the normal room splash because only the native app can set the room-session cookie.
                     setTimeout(() => {
-                        window.location.href = `/d/${data.hotel_slug}/${data.room_code}`;
+                        if (!hasNativeBridge) {
+                            window.location.href = `/d/${data.hotel_slug}/${data.room_code}`;
+                        }
                     }, 2000);
                 } else if (data.status === 'expired') {
                     setStatus('expired');
@@ -53,7 +72,7 @@ export default function SetupSTB({}: SetupSTBProps) {
     return (
         <div style={{
             width: '100vw', height: '100vh',
-            background: 'linear-gradient(135deg, rgba(10,12,16,0.85) 0%, rgba(10,12,16,0.7) 100%), url(https://images.unsplash.com/photo-1542314831-c6a4d27ce6a2?q=80&w=3540&auto=format&fit=crop)',
+            background: 'radial-gradient(circle at 20% 10%, rgba(20,184,166,0.22), transparent 34%), radial-gradient(circle at 80% 20%, rgba(212,175,55,0.18), transparent 30%), linear-gradient(135deg, #020617 0%, #0f172a 46%, #111827 100%)',
             backgroundSize: 'cover', backgroundPosition: 'center',
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
@@ -68,7 +87,7 @@ export default function SetupSTB({}: SetupSTBProps) {
                 Neoscreen
             </h1>
             <p style={{ color: '#94a3b8', marginBottom: '48px', fontSize: '1.1rem' }}>
-                STB Setup
+                STB Launcher Setup
             </p>
 
             {status === 'loading' && (
@@ -78,7 +97,7 @@ export default function SetupSTB({}: SetupSTBProps) {
             {status === 'showing' && code && (
                 <div style={{ textAlign: 'center' }}>
                     <p style={{ color: '#94a3b8', marginBottom: '16px' }}>
-                        Enter this code in the staff panel to pair this device:
+                        Open Front Office, choose STB Pairing, select the room, then enter this code:
                     </p>
                     <div style={{
                         display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '32px',
@@ -97,7 +116,7 @@ export default function SetupSTB({}: SetupSTBProps) {
                         ))}
                     </div>
                     <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
-                        Code expires in 10 minutes
+                        Code expires in 10 minutes. This screen refreshes after expiry.
                     </p>
                 </div>
             )}

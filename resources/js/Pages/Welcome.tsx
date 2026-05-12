@@ -59,12 +59,12 @@ export default function Welcome() {
             helper: `Room ${demoRoomCode} · PIN ${demoRoomPin}`,
         },
         {
-            title: 'STB Setup',
-            description: 'Pair physical set-top boxes, show pairing codes, and prepare kiosk deployment.',
-            href: '/setup-stb',
+            title: 'STB Launcher',
+            description: 'Download the Android TV launcher, install it on STBs, and pair rooms from Front Office.',
+            href: '/launcher',
             icon: MonitorCog,
             badge: 'Hardware',
-            helper: 'Use after installing the Android wrapper',
+            helper: 'Download APK and connect with TV code',
         },
         {
             title: 'Guest Mobile Portal',
@@ -117,17 +117,17 @@ export default function Welcome() {
                                 <Lock size={14} /> Separate portals for each product surface
                             </div>
                             <h1 className="max-w-2xl text-4xl font-black leading-tight tracking-tight sm:text-5xl">
-                                One entry point for admin, front office, room TV, mobile, and STB setup.
+                                One entry point for admin, front office, room TV, mobile, and STB launcher installs.
                             </h1>
                             <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">
-                                This portal keeps client handoff clean: operators go to Front Office, platform users go to Super Admin, physical TVs use STB Setup, and guest mobile sessions stay isolated behind QR-generated links.
+                                This portal keeps client handoff clean: operators go to Front Office, platform users go to Super Admin, physical TVs use the STB Launcher, and guest mobile sessions stay isolated behind QR-generated links.
                             </p>
                             <div className="mt-8 grid max-w-xl grid-cols-2 gap-3 text-sm text-slate-300">
                                 {[
                                     ['Admin', '/admin'],
                                     ['Front Office', hotelSlug ? `/${hotelSlug}/frontoffice` : '/{hotel}/frontoffice'],
                                     ['Room TV', '/d/{hotel}/{room}'],
-                                    ['STB Setup', '/setup-stb'],
+                                    ['STB Launcher', '/launcher'],
                                 ].map(([label, value]) => (
                                     <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                                         <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</p>

@@ -132,11 +132,11 @@ class OnboardingController extends Controller
             [
                 'id' => 'stb_flow',
                 'title' => 'Pair a set-top box (STB)',
-                'description' => 'Walk through /setup-stb on the device once so production TVs can log in.',
+                'description' => 'Download the STB Launcher from /launcher, install it on a device, then pair the TV code from Front Office.',
                 'done' => isset($manual['stb_flow']),
-                'href' => '/setup-stb',
+                'href' => "/{$hotel->slug}/frontoffice/stb",
                 'manual' => true,
-                'external' => true,
+                'external' => false,
             ],
             [
                 'id' => 'staff_roles',

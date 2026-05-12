@@ -9,6 +9,7 @@ use App\Models\Room;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class STBController extends Controller
 {
@@ -63,6 +64,10 @@ class STBController extends Controller
         $room = Room::where('hotel_id', $hotel->id)->where('room_code', $roomCode)->first();
         if (!$room) {
             return response()->json(['error' => 'Room not found'], 404);
+        }
+
+        if (!$room->room_session_token) {
+            $room->forceFill(['room_session_token' => Str::random(64)])->save();
         }
 
         $pairing = StbPairingCode::where('code', $request->code)
@@ -122,10 +127,15 @@ class STBController extends Controller
                     'stb_last_seen_at' => now(),
                 ]);
 
+            $room = Room::where('hotel_id', $pairing->hotel_id)
+                ->where('room_code', $pairing->room_code)
+                ->first();
+
             return response()->json([
                 'status' => 'paired',
                 'hotel_slug' => $pairing->hotel_slug,
                 'room_code' => $pairing->room_code,
+                'room_session_token' => $room?->room_session_token,
             ]);
         }
 

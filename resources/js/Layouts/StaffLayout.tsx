@@ -5,7 +5,7 @@ import {
     Clock, ChefHat, Tag, Settings, Users, LogOut,
     ChevronLeft, ChevronRight, Building2, Megaphone,
     ShieldCheck, Menu, X, BarChart3, Wrench, BookOpen, ClipboardList, DoorOpen,
-    CreditCard, Router, CheckCircle2, AlertTriangle, Info, Tv
+    CreditCard, Router, CheckCircle2, AlertTriangle, Info, Tv, MonitorCog
 } from 'lucide-react';
 
 interface StaffLayoutProps {
@@ -29,6 +29,7 @@ export default function StaffLayout({ children, header, fullBleed = false }: Pro
         { label: 'Setup checklist', icon: ClipboardList, href: `/${slug}/frontoffice/onboarding` },
         { label: 'Help & docs', icon: BookOpen, href: `/${slug}/frontoffice/guide` },
         { label: 'Rooms', icon: BedDouble, href: `/${slug}/frontoffice/rooms` },
+        { label: 'STB Pairing', icon: MonitorCog, href: `/${slug}/frontoffice/stb` },
         { label: 'Chat', icon: MessageSquare, href: `/${slug}/frontoffice/chat` },
         { label: 'Notifications', icon: Bell, href: `/${slug}/frontoffice/notifications` },
         { label: 'Alarms', icon: Clock, href: `/${slug}/frontoffice/alarms` },

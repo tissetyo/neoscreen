@@ -197,7 +197,7 @@ export default function AdminHotelDetail({ hotel: initialHotel, staff }: Props) 
                                     {[
                                         { label: 'Front Office Panel', url: `/${hotel.slug}/frontoffice`, Icon: Building2, sub: `/${hotel.slug}/frontoffice` },
                                         { label: 'TV Preview (Room 101)', url: `/d/${hotel.slug}/101`, Icon: Tv2, sub: `/d/${hotel.slug}/101` },
-                                        { label: 'STB Setup Page', url: '/setup-stb', Icon: Satellite, sub: '/setup-stb' },
+                                        { label: 'STB Launcher', url: '/launcher', Icon: Satellite, sub: '/launcher' },
                                     ].map(link => (
                                         <a key={link.label} href={link.url} target="_blank"
                                             className="flex items-center gap-3 p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors">

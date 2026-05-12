@@ -31,11 +31,11 @@ const sections = [
         blocks: [
             {
                 heading: 'Use one portal, keep surfaces separate',
-                body: 'Open /portal for the product entry point. Super Admin uses /admin, hotel staff use /{hotel-slug}/frontoffice, TVs use /d/{hotel-slug}/{room-code}, physical boxes use /setup-stb, and guest phones use /{hotel-slug}/mobile/{session-id}.',
+                body: 'Open /portal for the product entry point. Super Admin uses /admin, hotel staff use /{hotel-slug}/frontoffice, TVs use /d/{hotel-slug}/{room-code}, STB installers use /launcher, and guest phones use /{hotel-slug}/mobile/{session-id}.',
             },
             {
                 heading: 'Why this matters for client handoff',
-                body: 'Operators should never need to guess which interface they are in. Admin changes platform and canvas settings; Front Office manages live hotel operations; Room TV is guest-facing; Mobile Portal is session-bound and QR-only; STB Setup is hardware-only.',
+                body: 'Operators should never need to guess which interface they are in. Admin changes platform and canvas settings; Front Office manages live hotel operations; Room TV is guest-facing; Mobile Portal is session-bound and QR-only; STB Launcher is hardware-only.',
             },
         ],
     },
@@ -84,7 +84,7 @@ const sections = [
             },
             {
                 heading: 'STB pairing',
-                body: 'Open /setup-stb on the device. The TV shows a six-character pairing code. In Front Office → Rooms, select a room and click “Pair STB to Room”, then enter the code. The STB polls /api/stb/poll and redirects to /d/{hotel-slug}/{room-code} after pairing.',
+                body: 'Open /launcher to download and install the Android STB Launcher. When the launcher opens on the TV, it shows a six-digit pairing code. In Front Office → STB Pairing, select a room and enter the code. The STB polls /api/stb/poll and opens /d/{hotel-slug}/{room-code}/main after pairing.',
             },
         ],
     },
@@ -95,11 +95,11 @@ const sections = [
         blocks: [
             {
                 heading: 'Build and install APK',
-                body: 'From neotiv-stb/:\nchmod +x deploy.sh\n./deploy.sh 192.168.1.100 grand-neoscreen 101 http://127.0.0.1:8000\n\nFor manual install:\nadb connect 192.168.1.100:5555\nadb install -r app/build/outputs/apk/debug/app-debug.apk',
+                body: 'Download the latest APK from /launcher, copy it to the Android STB or Smart TV, then install it from the device file manager. For local testing from neotiv-stb/: adb connect 192.168.1.100:5555 then adb install -r app/build/outputs/apk/release/app-release.apk.',
             },
             {
                 heading: 'Headless ADB provisioning',
-                body: 'Use this for bulk deployment:\nadb shell am start -n com.neotiv.stb/.SetupActivity --es base_url "https://tv.neotiv.com" --es hotel_slug "grand-neoscreen" --es room_code "101"\n\nThe native wrapper stores server URL, hotel slug, and room code before launching the WebView.',
+                body: 'The normal v2 flow pairs from Front Office and avoids typing hotel or room values on the TV. For controlled bulk provisioning, launch SetupActivity with base_url, hotel_slug, room_code, and room_session_token extras so the native wrapper can open the room dashboard directly.',
             },
             {
                 heading: 'Remote control mapping',
@@ -111,7 +111,7 @@ const sections = [
             },
             {
                 heading: 'Bulk deployment pattern',
-                body: 'Create rooms.csv:\n192.168.1.101,grand-neoscreen,101\n192.168.1.102,grand-neoscreen,102\n\nThen loop:\nwhile IFS=, read -r ip slug room; do ./deploy.sh "$ip" "$slug" "$room" "https://tv.neotiv.com"; done < rooms.csv',
+                body: 'For most hotels, use Front Office → STB Pairing room by room so the room token is created safely by the server. Bulk ADB provisioning is only for managed installs where you already have each room session token.',
             },
         ],
     },

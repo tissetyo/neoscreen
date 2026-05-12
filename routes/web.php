@@ -22,6 +22,7 @@ use App\Http\Controllers\Mobile\PortalController as MobilePortalController;
 
 Route::get('/', function () { return inertia('Welcome'); });
 Route::get('/portal', function () { return inertia('Welcome'); })->name('portal');
+Route::get('/launcher', function () { return inertia('Launcher'); })->name('launcher');
 
 // TV Routes — `/d/{slug}/preview` must be registered before `/d/{slug}/{code}` or "preview" is treated as a room code
 Route::get('/d/{slug}/preview', [DashboardController::class, 'preview'])->middleware('auth');
@@ -58,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/rooms', [FrontOfficeController::class, 'storeRoom'])->name('rooms.store');
         Route::put('/rooms/{roomId}', [FrontOfficeController::class, 'updateRoom'])->name('rooms.update');
         Route::delete('/rooms/{roomId}', [FrontOfficeController::class, 'deleteRoom'])->name('rooms.delete');
+        Route::get('/stb', [FrontOfficeController::class, 'stb'])->name('stb');
         Route::get('/iptv', [FrontOfficeController::class, 'iptv'])->name('iptv');
 
         // Chat
