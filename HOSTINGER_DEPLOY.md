@@ -70,6 +70,24 @@ Do not point the domain to the repository root. Laravel must serve from `public`
 
 ## Updating Production
 
+Fast path for normal updates:
+
+```bash
+scripts/hostinger-smart-deploy.sh
+```
+
+The smart deploy script pulls `origin/main`, checks which files changed, and only runs the expensive steps when needed:
+
+- `composer install` only when `composer.json` or `composer.lock` changed.
+- `php artisan migrate --force` only when `database/migrations/*` changed.
+- `php artisan config:cache` only when `config/*` changed.
+- `php artisan route:cache` only when `routes/*` changed.
+- `php artisan view:cache` only when `resources/views/*` changed.
+
+For frontend-only updates where `public/build` is already committed, this usually becomes just a fast Git pull.
+
+Full manual deploy path:
+
 ```bash
 cd neoscreen
 git pull origin main
