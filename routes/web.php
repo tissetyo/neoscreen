@@ -25,6 +25,7 @@ Route::get('/', function () { return inertia('Welcome'); });
 Route::get('/portal', function () { return inertia('Welcome'); })->name('portal');
 Route::get('/launcher', function () { return inertia('Launcher'); })->name('launcher');
 Route::get('/demo', [DemoController::class, 'show'])->name('demo');
+Route::post('/demo', [DemoController::class, 'store'])->name('demo.store');
 
 // TV Routes — `/d/{slug}/preview` must be registered before `/d/{slug}/{code}` or "preview" is treated as a room code
 Route::get('/d/{slug}/preview', [DashboardController::class, 'preview'])->middleware('auth');

@@ -56,14 +56,15 @@ type DemoSlide = {
     note?: string;
 };
 
-type Props = {
-    facts: Facts;
+type PublishedDemo = {
+    slides?: DemoSlide[];
+    themeId?: string;
+    publishedAt?: string | null;
 };
 
-type SlideDraftPayload = {
-    slides: DemoSlide[];
-    factsSignature: string;
-    savedAt: string;
+type Props = {
+    facts: Facts;
+    publishedDemo?: PublishedDemo | null;
 };
 
 const THEMES = {
@@ -143,11 +144,22 @@ type ThemeId = keyof typeof THEMES;
 
 const LEGACY_STORAGE_KEY = 'neoscreen_demo_pitch_slides_v2';
 const LEGACY_SETTINGS_KEY = 'neoscreen_demo_pitch_settings_v1';
-const SESSION_STORAGE_KEY = 'neoscreen_demo_pitch_session_slides_v1';
-const SESSION_SETTINGS_KEY = 'neoscreen_demo_pitch_session_settings_v1';
 const nf = new Intl.NumberFormat('id-ID');
 
 const fmt = (value: number) => nf.format(value || 0);
+const isThemeId = (value?: string): value is ThemeId => !!value && Object.prototype.hasOwnProperty.call(THEMES, value);
+const publishedAtLabel = (publishedAt?: string | null) => {
+    if (!publishedAt) return '';
+
+    try {
+        return new Intl.DateTimeFormat('id-ID', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+        }).format(new Date(publishedAt));
+    } catch {
+        return publishedAt;
+    }
+};
 
 function buildSlides(facts: Facts): DemoSlide[] {
     const dailySavedMinutes = 50 * 2;
@@ -320,17 +332,24 @@ function buildSlides(facts: Facts): DemoSlide[] {
     ];
 }
 
-export default function Demo({ facts }: Props) {
+export default function Demo({ facts, publishedDemo }: Props) {
     const baseSlides = useMemo(() => buildSlides(facts), [facts]);
-    const factsSignature = useMemo(() => JSON.stringify(facts), [facts]);
-    const [slides, setSlides] = useState<DemoSlide[]>(baseSlides);
+    const initialSlides = useMemo(
+        () => publishedDemo?.slides?.length ? publishedDemo.slides : baseSlides,
+        [baseSlides, publishedDemo?.slides],
+    );
+    const initialThemeId = isThemeId(publishedDemo?.themeId) ? publishedDemo.themeId : 'teal';
+    const [slides, setSlides] = useState<DemoSlide[]>(initialSlides);
     const [activeIndex, setActiveIndex] = useState(0);
     const [studioOpen, setStudioOpen] = useState(false);
     const [pinOpen, setPinOpen] = useState(false);
     const [pin, setPin] = useState('');
     const [pinError, setPinError] = useState('');
-    const [themeId, setThemeId] = useState<ThemeId>('teal');
-    const [saveNotice, setSaveNotice] = useState('');
+    const [themeId, setThemeId] = useState<ThemeId>(initialThemeId);
+    const [saveNotice, setSaveNotice] = useState(
+        publishedDemo?.publishedAt ? `Update server terakhir: ${publishedAtLabel(publishedDemo.publishedAt)}.` : '',
+    );
+    const [isPublishing, setIsPublishing] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const activeSlide = slides[activeIndex] ?? slides[0];
@@ -339,31 +358,15 @@ export default function Demo({ facts }: Props) {
     useEffect(() => {
         window.localStorage.removeItem(LEGACY_STORAGE_KEY);
         window.localStorage.removeItem(LEGACY_SETTINGS_KEY);
+        window.sessionStorage.removeItem('neoscreen_demo_pitch_session_slides_v1');
+        window.sessionStorage.removeItem('neoscreen_demo_pitch_session_settings_v1');
+    }, []);
 
-        const savedSettings = window.sessionStorage.getItem(SESSION_SETTINGS_KEY);
-        if (savedSettings) {
-            try {
-                const parsed = JSON.parse(savedSettings);
-                if (parsed.themeId && THEMES[parsed.themeId as ThemeId]) {
-                    setThemeId(parsed.themeId as ThemeId);
-                }
-            } catch {}
-        }
-
-        const savedSlides = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
-        if (savedSlides) {
-            try {
-                const parsed = JSON.parse(savedSlides) as SlideDraftPayload;
-                if (parsed.factsSignature === factsSignature && Array.isArray(parsed.slides) && parsed.slides.length) {
-                    setSlides(parsed.slides);
-                } else {
-                    window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
-                }
-            } catch {
-                window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
-            }
-        }
-    }, [factsSignature]);
+    useEffect(() => {
+        setSlides(initialSlides);
+        setThemeId(initialThemeId);
+        setSaveNotice(publishedDemo?.publishedAt ? `Update server terakhir: ${publishedAtLabel(publishedDemo.publishedAt)}.` : '');
+    }, [initialSlides, initialThemeId, publishedDemo?.publishedAt]);
 
     useEffect(() => {
         const onKey = (event: KeyboardEvent) => {
@@ -386,24 +389,14 @@ export default function Demo({ facts }: Props) {
         return () => window.removeEventListener('keydown', onKey);
     }, [slides.length]);
 
-    const saveSessionDraft = (nextSlides: DemoSlide[]) => {
-        window.sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
-            slides: nextSlides,
-            factsSignature,
-            savedAt: new Date().toISOString(),
-        } satisfies SlideDraftPayload));
-    };
-
     const persistSlides = (nextSlides: DemoSlide[]) => {
         setSlides(nextSlides);
-        saveSessionDraft(nextSlides);
-        setSaveNotice('Perubahan otomatis tersimpan hanya untuk sesi browser ini.');
+        setSaveNotice('Draft berubah. Klik Publikasikan Update agar berlaku untuk semua browser.');
     };
 
     const updateTheme = (newTheme: ThemeId) => {
         setThemeId(newTheme);
-        window.sessionStorage.setItem(SESSION_SETTINGS_KEY, JSON.stringify({ themeId: newTheme }));
-        setSaveNotice('Tema diterapkan untuk sesi browser ini.');
+        setSaveNotice('Draft tema berubah. Klik Publikasikan Update agar berlaku untuk semua browser.');
     };
 
     const updateActiveSlide = (patch: Partial<DemoSlide>) => {
@@ -433,16 +426,44 @@ export default function Demo({ facts }: Props) {
     };
 
     const resetSlides = () => {
-        window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
         setSlides(baseSlides);
         setActiveIndex(0);
-        setSaveNotice('Draft sesi dihapus. Konten kembali mengikuti data terbaru.');
+        setSaveNotice('Draft kembali ke data sistem. Klik Publikasikan Update untuk menjadikannya versi terbaru.');
     };
 
-    const applySessionDraft = () => {
-        saveSessionDraft(slides);
-        setSaveNotice('Draft sesi diterapkan. Data utama tidak berubah.');
-        setStudioOpen(false);
+    const publishUpdate = async () => {
+        const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
+
+        setIsPublishing(true);
+        setSaveNotice('Mempublikasikan update demo...');
+
+        try {
+            const response = await fetch('/demo', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                },
+                body: JSON.stringify({
+                    pin: facts.demoPin,
+                    slides,
+                    themeId,
+                }),
+            });
+            const payload = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(payload.message || 'Update belum berhasil dipublikasikan.');
+            }
+
+            setSaveNotice(`Update berhasil dipublikasikan: ${publishedAtLabel(payload.publishedAt)}. Semua browser akan membaca versi ini.`);
+            setStudioOpen(false);
+        } catch (error) {
+            setSaveNotice(error instanceof Error ? error.message : 'Update belum berhasil dipublikasikan.');
+        } finally {
+            setIsPublishing(false);
+        }
     };
 
     const handleImageUpload = (file: File | undefined) => {
@@ -667,7 +688,7 @@ export default function Demo({ facts }: Props) {
                                         <div>
                                             <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">Global Warna Tema</p>
                                             <p className="mt-2 text-xs leading-relaxed text-zinc-500">
-                                                Perubahan demo bersifat sementara di browser ini, sehingga data pitch tetap bisa mengikuti update sistem dari waktu ke waktu.
+                                                Edit di studio menjadi draft terlebih dahulu. Klik Publikasikan Update agar menjadi versi terbaru untuk semua browser dan perangkat.
                                             </p>
                                             <div className="mt-4 flex flex-wrap gap-4">
                                                 {Object.values(THEMES).map((t) => (
@@ -734,10 +755,11 @@ export default function Demo({ facts }: Props) {
                                         <div className="flex gap-4 pt-4 border-t border-zinc-800">
                                             <button
                                                 type="button"
-                                                onClick={applySessionDraft}
-                                                className={`flex-1 rounded-xl px-5 py-3.5 text-sm font-medium text-white transition-all ${activeTheme.bgSolid} ${activeTheme.bgSolidHover}`}
+                                                onClick={publishUpdate}
+                                                disabled={isPublishing}
+                                                className={`flex-1 rounded-xl px-5 py-3.5 text-sm font-medium text-white transition-all disabled:cursor-wait disabled:opacity-70 ${activeTheme.bgSolid} ${activeTheme.bgSolidHover}`}
                                             >
-                                                Terapkan Sesi Ini
+                                                {isPublishing ? 'Mempublikasikan...' : 'Publikasikan Update'}
                                             </button>
                                             <button
                                                 type="button"

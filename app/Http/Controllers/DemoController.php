@@ -14,12 +14,17 @@ use App\Models\ServiceOption;
 use App\Models\ServiceRequest;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DemoController extends Controller
 {
+    private const STORAGE_PATH = 'demo/pitch.json';
+
     public function show(): Response
     {
         $countryPacks = $this->countRows(IptvCountry::class);
@@ -72,7 +77,62 @@ class DemoController extends Controller
 
         return Inertia::render('Demo', [
             'facts' => $facts,
+            'publishedDemo' => $this->publishedDemo(),
         ]);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $payload = $request->validate([
+            'pin' => ['required', 'string', 'in:2026'],
+            'slides' => ['required', 'array', 'min:1', 'max:20'],
+            'slides.*.id' => ['required', 'string', 'max:80'],
+            'slides.*.eyebrow' => ['required', 'string', 'max:120'],
+            'slides.*.title' => ['required', 'string', 'max:220'],
+            'slides.*.body' => ['required', 'string', 'max:1200'],
+            'slides.*.imageUrl' => ['required', 'string'],
+            'slides.*.imageLabel' => ['required', 'string', 'max:160'],
+            'slides.*.metrics' => ['required', 'array', 'max:6'],
+            'slides.*.metrics.*.label' => ['required', 'string', 'max:80'],
+            'slides.*.metrics.*.value' => ['required', 'string', 'max:80'],
+            'slides.*.metrics.*.detail' => ['required', 'string', 'max:160'],
+            'slides.*.bullets' => ['required', 'array', 'max:8'],
+            'slides.*.bullets.*' => ['required', 'string', 'max:300'],
+            'slides.*.note' => ['nullable', 'string', 'max:500'],
+            'themeId' => ['required', 'string', 'in:teal,blue,violet,rose,amber'],
+        ]);
+
+        $published = [
+            'slides' => $payload['slides'],
+            'themeId' => $payload['themeId'],
+            'publishedAt' => now()->toIso8601String(),
+        ];
+
+        Storage::disk('local')->put(
+            self::STORAGE_PATH,
+            json_encode($published, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+        );
+
+        return response()->json($published);
+    }
+
+    private function publishedDemo(): ?array
+    {
+        if (! Storage::disk('local')->exists(self::STORAGE_PATH)) {
+            return null;
+        }
+
+        $payload = json_decode(Storage::disk('local')->get(self::STORAGE_PATH), true);
+
+        if (! is_array($payload) || ! isset($payload['slides']) || ! is_array($payload['slides'])) {
+            return null;
+        }
+
+        return [
+            'slides' => $payload['slides'],
+            'themeId' => $payload['themeId'] ?? 'teal',
+            'publishedAt' => $payload['publishedAt'] ?? null,
+        ];
     }
 
     private function countRows(string $modelClass): int
