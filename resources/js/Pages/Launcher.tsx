@@ -12,6 +12,34 @@ import {
 
 const versions = [
     {
+        version: '2.0.2',
+        label: 'STB Launcher v2',
+        date: '13 Mei 2026',
+        file: '/downloads/neoscreen-stb-launcher-v2.0.2.apk',
+        notes: [
+            'Otomatis terhubung ke cloud Neoscreen',
+            'Pairing via Front Office dengan 6-digit kode',
+            'Auto-boot langsung ke dashboard kamar',
+            'Mendeteksi paket Android TV dan paket mobile untuk aplikasi eksternal',
+            'Jika aplikasi eksternal belum terpasang, diarahkan ke Play Store',
+        ],
+        latest: true,
+    },
+    {
+        version: '2.0.1',
+        label: 'STB Launcher v2',
+        date: '13 Mei 2026',
+        file: '/downloads/neoscreen-stb-launcher-v2.0.1.apk',
+        notes: [
+            'Otomatis terhubung ke cloud Neoscreen',
+            'Pairing via Front Office dengan 6-digit kode',
+            'Auto-boot langsung ke dashboard kamar',
+            'Bisa dipilih sebagai default Android TV launcher',
+            'Jika aplikasi eksternal belum terpasang, diarahkan ke Play Store',
+        ],
+        latest: false,
+    },
+    {
         version: '2.0.0',
         label: 'STB Launcher v2',
         date: '12 Mei 2026',
@@ -22,7 +50,7 @@ const versions = [
             'Auto-boot langsung ke dashboard kamar',
             'Bisa disetel sebagai default Android TV launcher',
         ],
-        latest: true,
+        latest: false,
     },
     {
         version: '1.4.0',

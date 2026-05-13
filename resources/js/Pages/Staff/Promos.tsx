@@ -61,6 +61,7 @@ export default function Promos({ slug, promos: initialPromos }: Props) {
                 setEndDate('');
                 setShowForm(false);
                 setSaving(false);
+                router.reload({ only: ['promos'], preserveScroll: true, preserveState: false });
             },
             onError: () => setSaving(false),
         });

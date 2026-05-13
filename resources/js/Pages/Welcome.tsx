@@ -161,7 +161,7 @@ export default function Welcome() {
                         {/* Right Column (Portal Cards) */}
                         <div className="grid gap-4 sm:grid-cols-2 lg:col-span-7">
                             {portals.map((portal) => (
-                                <Link
+                                <a
                                     key={portal.title}
                                     href={portal.href}
                                     className={`group flex flex-col justify-between rounded-[24px] border border-zinc-800/60 p-6 transition-all hover:bg-zinc-900/80 ${
@@ -201,7 +201,7 @@ export default function Welcome() {
                                             Buka Portal <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
                                         </div>
                                     </div>
-                                </Link>
+                                </a>
                             ))}
                         </div>
                     </div>

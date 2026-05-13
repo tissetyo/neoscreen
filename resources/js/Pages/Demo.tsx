@@ -3,10 +3,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
     ArrowLeft,
     ArrowRight,
+    Copy,
+    Plus,
     ImageUp,
     Lock,
     Pencil,
     RotateCcw,
+    Trash2,
     Tv,
     X,
 } from 'lucide-react';
@@ -144,6 +147,7 @@ type ThemeId = keyof typeof THEMES;
 
 const LEGACY_STORAGE_KEY = 'neoscreen_demo_pitch_slides_v2';
 const LEGACY_SETTINGS_KEY = 'neoscreen_demo_pitch_settings_v1';
+const STUDIO_UNLOCK_KEY = 'neoscreen_demo_studio_unlocked_v1';
 const nf = new Intl.NumberFormat('id-ID');
 
 const fmt = (value: number) => nf.format(value || 0);
@@ -360,6 +364,11 @@ export default function Demo({ facts, publishedDemo }: Props) {
         window.localStorage.removeItem(LEGACY_SETTINGS_KEY);
         window.sessionStorage.removeItem('neoscreen_demo_pitch_session_slides_v1');
         window.sessionStorage.removeItem('neoscreen_demo_pitch_session_settings_v1');
+
+        if (window.sessionStorage.getItem(STUDIO_UNLOCK_KEY) === facts.demoPin) {
+            setPinOpen(false);
+            setStudioOpen(true);
+        }
     }, []);
 
     useEffect(() => {
@@ -415,6 +424,7 @@ export default function Demo({ facts, publishedDemo }: Props) {
 
     const unlockStudio = () => {
         if (pin === facts.demoPin) {
+            window.sessionStorage.setItem(STUDIO_UNLOCK_KEY, facts.demoPin);
             setPin('');
             setPinError('');
             setPinOpen(false);
@@ -429,6 +439,60 @@ export default function Demo({ facts, publishedDemo }: Props) {
         setSlides(baseSlides);
         setActiveIndex(0);
         setSaveNotice('Draft kembali ke data sistem. Klik Publikasikan Update untuk menjadikannya versi terbaru.');
+    };
+
+    const addSlide = () => {
+        const nextSlide: DemoSlide = {
+            id: `custom-${Date.now()}`,
+            eyebrow: '',
+            title: '',
+            body: '',
+            imageUrl: '',
+            imageLabel: '',
+            metrics: [],
+            bullets: [],
+            note: '',
+        };
+        const nextSlides = [...slides, nextSlide];
+        persistSlides(nextSlides);
+        setActiveIndex(nextSlides.length - 1);
+    };
+
+    const duplicateSlide = () => {
+        const clone = {
+            ...activeSlide,
+            id: `${activeSlide.id || 'slide'}-${Date.now()}`,
+            title: activeSlide.title ? `${activeSlide.title} Copy` : '',
+        };
+        const nextSlides = [...slides.slice(0, activeIndex + 1), clone, ...slides.slice(activeIndex + 1)];
+        persistSlides(nextSlides);
+        setActiveIndex(activeIndex + 1);
+    };
+
+    const deleteSlide = () => {
+        if (slides.length <= 1) {
+            setSaveNotice('Minimal satu slide harus tetap ada.');
+            return;
+        }
+        const nextSlides = slides.filter((_, index) => index !== activeIndex);
+        persistSlides(nextSlides);
+        setActiveIndex(Math.max(0, activeIndex - 1));
+    };
+
+    const addMetric = () => {
+        updateActiveSlide({ metrics: [...(activeSlide.metrics ?? []), { label: '', value: '', detail: '' }] });
+    };
+
+    const deleteMetric = (metricIndex: number) => {
+        updateActiveSlide({ metrics: activeSlide.metrics.filter((_, index) => index !== metricIndex) });
+    };
+
+    const addBullet = () => {
+        updateActiveSlide({ bullets: [...(activeSlide.bullets ?? []), ''] });
+    };
+
+    const deleteBullet = (bulletIndex: number) => {
+        updateActiveSlide({ bullets: activeSlide.bullets.filter((_, index) => index !== bulletIndex) });
     };
 
     const publishUpdate = async () => {
@@ -613,7 +677,13 @@ export default function Demo({ facts, publishedDemo }: Props) {
                                                 </div>
                                                 <p className="ml-3 truncate text-[10px] font-medium uppercase tracking-widest text-zinc-500">{activeSlide.imageLabel}</p>
                                             </div>
-                                            <img src={activeSlide.imageUrl} alt={activeSlide.imageLabel} className="h-auto w-full object-cover" />
+                                            {activeSlide.imageUrl ? (
+                                                <img src={activeSlide.imageUrl} alt={activeSlide.imageLabel} className="h-auto w-full object-cover" />
+                                            ) : (
+                                                <div className="flex aspect-video w-full items-center justify-center bg-zinc-900 text-sm text-zinc-500">
+                                                    Belum ada gambar
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -706,6 +776,21 @@ export default function Demo({ facts, publishedDemo }: Props) {
 
                                         <hr className="border-zinc-800" />
 
+                                        <div>
+                                            <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">Slide Aktif</p>
+                                            <div className="mt-3 grid grid-cols-3 gap-2">
+                                                <button type="button" onClick={addSlide} className="rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800">
+                                                    <Plus size={14} className="mx-auto mb-1" /> Tambah
+                                                </button>
+                                                <button type="button" onClick={duplicateSlide} className="rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800">
+                                                    <Copy size={14} className="mx-auto mb-1" /> Duplikat
+                                                </button>
+                                                <button type="button" onClick={deleteSlide} className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-300 hover:bg-red-500/20">
+                                                    <Trash2 size={14} className="mx-auto mb-1" /> Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+
                                         <div className="space-y-4">
                                             <StudioField label="Kategori (Eyebrow)" value={activeSlide.eyebrow} onChange={(value) => updateActiveSlide({ eyebrow: value })} />
                                             <StudioArea label="Judul Utama" value={activeSlide.title} onChange={(value) => updateActiveSlide({ title: value })} rows={3} />
@@ -732,14 +817,22 @@ export default function Demo({ facts, publishedDemo }: Props) {
                                             <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">Data Statistik</p>
                                             <div className="mt-4 space-y-4">
                                                 {activeSlide.metrics.map((metric, index) => (
-                                                    <div key={`${index}-${metric.label}`} className="grid grid-cols-2 gap-3 rounded-xl bg-zinc-900 p-4">
-                                                        <div className="col-span-2">
+                                                    <div key={`metric-${index}`} className="grid grid-cols-2 gap-3 rounded-xl bg-zinc-900 p-4">
+                                                        <div className="col-span-2 flex items-start gap-2">
+                                                            <div className="flex-1">
                                                             <StudioField label="Nilai (Besar)" value={metric.value} onChange={(value) => updateMetric(index, { value })} />
+                                                            </div>
+                                                            <button type="button" onClick={() => deleteMetric(index)} className="mt-6 rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-red-300" aria-label="Hapus statistik">
+                                                                <Trash2 size={15} />
+                                                            </button>
                                                         </div>
                                                         <StudioField label="Label" value={metric.label} onChange={(value) => updateMetric(index, { label: value })} />
                                                         <StudioField label="Detail Kecil" value={metric.detail} onChange={(value) => updateMetric(index, { detail: value })} />
                                                     </div>
                                                 ))}
+                                                <button type="button" onClick={addMetric} className="w-full rounded-xl border border-dashed border-zinc-700 px-4 py-3 text-xs font-medium text-zinc-400 hover:border-zinc-500 hover:text-white">
+                                                    <Plus size={14} className="mr-2 inline" /> Tambah statistik
+                                                </button>
                                             </div>
                                         </div>
 
@@ -747,8 +840,18 @@ export default function Demo({ facts, publishedDemo }: Props) {
                                             <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">Poin Utama</p>
                                             <div className="mt-4 space-y-4">
                                                 {activeSlide.bullets.map((bullet, index) => (
-                                                    <StudioArea key={index} label={`Poin ${index + 1}`} value={bullet} onChange={(value) => updateBullet(index, value)} rows={2} />
+                                                    <div key={`bullet-${index}`} className="flex items-start gap-2">
+                                                        <div className="flex-1">
+                                                            <StudioArea label={`Poin ${index + 1}`} value={bullet} onChange={(value) => updateBullet(index, value)} rows={2} />
+                                                        </div>
+                                                        <button type="button" onClick={() => deleteBullet(index)} className="mt-6 rounded-lg p-2 text-zinc-500 hover:bg-red-500/10 hover:text-red-300" aria-label="Hapus poin">
+                                                            <Trash2 size={15} />
+                                                        </button>
+                                                    </div>
                                                 ))}
+                                                <button type="button" onClick={addBullet} className="w-full rounded-xl border border-dashed border-zinc-700 px-4 py-3 text-xs font-medium text-zinc-400 hover:border-zinc-500 hover:text-white">
+                                                    <Plus size={14} className="mr-2 inline" /> Tambah poin
+                                                </button>
                                             </div>
                                         </div>
 

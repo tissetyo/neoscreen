@@ -44,6 +44,20 @@ const DEFAULT_APPS = [
   { id: 'iptv', name: 'IPTV', url: 'neotiv://iptv', icon: '', subtitle: 'Countries', brandColor: '#0891b2', iconScale: 1, enabled: true, embeddable: false },
 ];
 
+const ANDROID_TV_APP_PACKAGES: Record<string, string[]> = {
+  youtube: ['com.google.android.youtube.tv', 'com.google.android.youtube', 'com.google.android.apps.youtube.kids'],
+  netflix: ['com.netflix.ninja', 'com.netflix.mediaclient'],
+  disney: ['com.disney.disneyplus'],
+  prime: ['com.amazon.amazonvideo.livingroom', 'com.amazon.avod.thirdpartyclient'],
+  spotify: ['com.spotify.tv.android', 'com.spotify.music'],
+};
+
+const getAndroidLaunchPackages = (app: any, primaryPackage: string) => {
+  const key = String(app?.id || app?.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const knownPackages = ANDROID_TV_APP_PACKAGES[key] ?? [];
+  return Array.from(new Set([primaryPackage, ...knownPackages].map(pkg => pkg?.trim()).filter(Boolean)));
+};
+
 const mergeSystemApps = (savedApps: any) => {
   if (!Array.isArray(savedApps)) return DEFAULT_APPS;
 
@@ -125,6 +139,17 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
   }, []);
 
   useDpadNavigation({ enabled: mounted && !activeModal && !launchApp && !detailWidget, onEscape: handleEscape });
+
+  useEffect(() => {
+    if (!mounted || activeModal || launchApp || detailWidget) return;
+    const timer = window.setTimeout(() => {
+      const focused = document.activeElement as HTMLElement | null;
+      if (!focused || !focused.matches('.tv-focusable')) {
+        document.querySelector<HTMLElement>('.tv-focusable')?.focus();
+      }
+    }, 120);
+    return () => window.clearTimeout(timer);
+  }, [mounted, activeModal, launchApp, detailWidget]);
 
   // Block right-click context menu on TV dashboard
   useEffect(() => {
@@ -251,18 +276,25 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
 
     if (app.url && !app.url.startsWith('http') && !app.url.startsWith('intent://')) {
       const pkg = app.url.trim();
+      const packages = getAndroidLaunchPackages(app, pkg);
+      const launchRequest = JSON.stringify({
+        packageName: pkg,
+        packages,
+        storePackage: packages[0] || pkg,
+      });
 
       // Reliable STB Native App Launch
       if (typeof window !== 'undefined' && (window as any).NeotivNative?.launchExternalApp) {
-        (window as any).NeotivNative.launchExternalApp(pkg);
+        (window as any).NeotivNative.launchExternalApp(launchRequest);
         return;
       }
 
       // Standard Browser Fallback
-      const intentUrl = `intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LEANBACK_LAUNCHER;package=${pkg};S.browser_fallback_url=market://details?id=${pkg};end;`;
+      const fallbackPkg = packages[0] || pkg;
+      const intentUrl = `intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LEANBACK_LAUNCHER;package=${fallbackPkg};S.browser_fallback_url=market://details?id=${fallbackPkg};end;`;
       window.location.href = intentUrl;
       setTimeout(() => {
-        window.location.href = `intent://#Intent;package=${pkg};scheme=https;S.browser_fallback_url=https://play.google.com/store/apps/details?id=${pkg};end;`;
+        window.location.href = `intent://#Intent;package=${fallbackPkg};scheme=https;S.browser_fallback_url=https://play.google.com/store/apps/details?id=${fallbackPkg};end;`;
       }, 2000);
       return;
     }
@@ -631,8 +663,8 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
           isModalOpen={activeModal !== null || launchApp !== null || detailWidget !== null}
           onAction={handleAction}
           onLaunchApp={handleLaunchApp}
-          onOpenPromos={() => handleAction('promo')}
-          onOpenServices={() => handleAction('service')}
+          onOpenPromos={() => handleAction('promos')}
+          onOpenServices={() => handleAction('services')}
         />
         {renderBrandLogo(true)}
         {/* Modals — same as grid mode */}
@@ -640,12 +672,12 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
         <IptvModal isOpen={activeModal === 'iptv'} onClose={() => setActiveModal(null)} />
         <ChatModal isOpen={activeModal === 'chat'} onClose={() => setActiveModal(null)} />
         <AlarmModal isOpen={activeModal === 'alarm'} onClose={() => setActiveModal(null)} />
-        <PromoModal isOpen={activeModal === 'promo'} onClose={() => setActiveModal(null)} />
+        <PromoModal isOpen={activeModal === 'promos'} onClose={() => setActiveModal(null)} />
         <NotificationsModal isOpen={activeModal === 'notif'} onClose={() => setActiveModal(null)} />
         <SettingsPage isOpen={activeModal === 'settings'} onClose={() => setActiveModal(null)} onOpenAlarm={() => { setActiveModal(null); setTimeout(() => setActiveModal('alarm'), 100); }} />
         <GuestLogoutModal isOpen={activeModal === 'logout'} onClose={() => setActiveModal(null)} />
         {isCheckoutDay && <CheckoutModal isOpen={activeModal === 'checkout-reminder'} onClose={() => setActiveModal(null)} />}
-        <ServiceRequestModal isOpen={activeModal === 'service'} onClose={() => setActiveModal(null)} onOrderComplete={() => setActiveModal('chat')} />
+        <ServiceRequestModal isOpen={activeModal === 'services'} onClose={() => setActiveModal(null)} onOrderComplete={() => setActiveModal('chat')} />
         {renderWidgetDetail()}
         <ConnectionStatus />
       </div>

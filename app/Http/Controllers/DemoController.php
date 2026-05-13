@@ -86,24 +86,48 @@ class DemoController extends Controller
         $payload = $request->validate([
             'pin' => ['required', 'string', 'in:2026'],
             'slides' => ['required', 'array', 'min:1', 'max:20'],
-            'slides.*.id' => ['required', 'string', 'max:80'],
-            'slides.*.eyebrow' => ['required', 'string', 'max:120'],
-            'slides.*.title' => ['required', 'string', 'max:220'],
-            'slides.*.body' => ['required', 'string', 'max:1200'],
-            'slides.*.imageUrl' => ['required', 'string'],
-            'slides.*.imageLabel' => ['required', 'string', 'max:160'],
-            'slides.*.metrics' => ['required', 'array', 'max:6'],
-            'slides.*.metrics.*.label' => ['required', 'string', 'max:80'],
-            'slides.*.metrics.*.value' => ['required', 'string', 'max:80'],
-            'slides.*.metrics.*.detail' => ['required', 'string', 'max:160'],
-            'slides.*.bullets' => ['required', 'array', 'max:8'],
-            'slides.*.bullets.*' => ['required', 'string', 'max:300'],
+            'slides.*.id' => ['nullable', 'string', 'max:80'],
+            'slides.*.eyebrow' => ['nullable', 'string', 'max:120'],
+            'slides.*.title' => ['nullable', 'string', 'max:220'],
+            'slides.*.body' => ['nullable', 'string', 'max:1200'],
+            'slides.*.imageUrl' => ['nullable', 'string'],
+            'slides.*.imageLabel' => ['nullable', 'string', 'max:160'],
+            'slides.*.metrics' => ['nullable', 'array', 'max:6'],
+            'slides.*.metrics.*.label' => ['nullable', 'string', 'max:80'],
+            'slides.*.metrics.*.value' => ['nullable', 'string', 'max:80'],
+            'slides.*.metrics.*.detail' => ['nullable', 'string', 'max:160'],
+            'slides.*.bullets' => ['nullable', 'array', 'max:8'],
+            'slides.*.bullets.*' => ['nullable', 'string', 'max:300'],
             'slides.*.note' => ['nullable', 'string', 'max:500'],
             'themeId' => ['required', 'string', 'in:teal,blue,violet,rose,amber'],
         ]);
 
         $published = [
-            'slides' => $payload['slides'],
+            'slides' => collect($payload['slides'])
+                ->values()
+                ->map(function (array $slide, int $index) {
+                    $metrics = collect($slide['metrics'] ?? [])
+                        ->values()
+                        ->map(fn (array $metric) => [
+                            'label' => $metric['label'] ?? '',
+                            'value' => $metric['value'] ?? '',
+                            'detail' => $metric['detail'] ?? '',
+                        ])
+                        ->all();
+
+                    return [
+                        'id' => $slide['id'] ?? ('slide-' . ($index + 1)),
+                        'eyebrow' => $slide['eyebrow'] ?? '',
+                        'title' => $slide['title'] ?? '',
+                        'body' => $slide['body'] ?? '',
+                        'imageUrl' => $slide['imageUrl'] ?? '',
+                        'imageLabel' => $slide['imageLabel'] ?? '',
+                        'metrics' => $metrics,
+                        'bullets' => array_values($slide['bullets'] ?? []),
+                        'note' => $slide['note'] ?? '',
+                    ];
+                })
+                ->all(),
             'themeId' => $payload['themeId'],
             'publishedAt' => now()->toIso8601String(),
         ];

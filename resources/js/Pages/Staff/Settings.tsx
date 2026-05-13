@@ -51,8 +51,8 @@ export default function Settings({ slug, hotel: initialHotel, announcements: ini
     const save = (data: Record<string, any>) => {
         setSaving(true);
         router.patch(`/${slug}/frontoffice/settings`, data, {
-            onSuccess: () => setSaving(false),
-            onError: () => setSaving(false),
+            onSuccess: () => router.reload({ only: ['hotel'], preserveScroll: true, preserveState: false }),
+            onFinish: () => setSaving(false),
             preserveScroll: true,
         });
     };
@@ -60,7 +60,10 @@ export default function Settings({ slug, hotel: initialHotel, announcements: ini
     const addAnnouncement = () => {
         if (!newAnn.trim()) return;
         router.post(`/${slug}/frontoffice/settings/announcements`, { text: newAnn }, {
-            onSuccess: () => setNewAnn(''),
+            onSuccess: () => {
+                setNewAnn('');
+                router.reload({ only: ['announcements'], preserveScroll: true, preserveState: false });
+            },
             preserveScroll: true,
         });
     };
@@ -78,7 +81,10 @@ export default function Settings({ slug, hotel: initialHotel, announcements: ini
             screenMode,
             slideshow,
             startup_video_url: startupVideoUrl,
-        }, { preserveScroll: true });
+        }, {
+            preserveScroll: true,
+            onSuccess: () => router.reload({ only: ['hotel', 'mediaItems'], preserveScroll: true, preserveState: false }),
+        });
     };
 
     const refreshMedia = () => router.reload({ only: ['mediaItems', 'hotel'], preserveScroll: true, preserveState: false });
