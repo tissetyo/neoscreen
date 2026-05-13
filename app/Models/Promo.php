@@ -12,6 +12,8 @@ class Promo extends Model
 
     protected $fillable = ['hotel_id', 'title', 'description', 'image_url', 'start_date', 'end_date', 'is_active'];
 
+    protected $appends = ['poster_url', 'valid_from', 'valid_until'];
+
     protected $casts = [
         'is_active' => 'boolean',
         'start_date' => 'date',
@@ -21,6 +23,21 @@ class Promo extends Model
     public function hotel(): BelongsTo
     {
         return $this->belongsTo(Hotel::class);
+    }
+
+    public function getPosterUrlAttribute(): ?string
+    {
+        return $this->image_url;
+    }
+
+    public function getValidFromAttribute(): ?string
+    {
+        return $this->start_date?->toDateString();
+    }
+
+    public function getValidUntilAttribute(): ?string
+    {
+        return $this->end_date?->toDateString();
     }
 
     public function isCurrentlyActive(): bool

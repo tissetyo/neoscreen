@@ -10,6 +10,7 @@ interface Promo {
   id: string;
   title: string;
   description: string | null;
+  image_url?: string | null;
   poster_url: string | null;
   valid_from: string | null;
   valid_until: string | null;
@@ -103,6 +104,7 @@ export default function PromoModal({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   const total = promos?.length ?? 0;
+  const promoPoster = (promo: Promo | null | undefined) => promo?.poster_url || promo?.image_url || null;
 
   return (
     <AnimatePresence>
@@ -156,11 +158,18 @@ export default function PromoModal({ isOpen, onClose }: Props) {
                   >
                     {/* Large image */}
                     <div className="w-[35vw] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0" style={{ aspectRatio: '3/4' }}>
-                      <img
-                        src={selectedPromo.poster_url!}
-                        alt={selectedPromo.title}
-                        className="w-full h-full object-cover"
-                      />
+                      {promoPoster(selectedPromo) ? (
+                        <img
+                          src={promoPoster(selectedPromo)!}
+                          alt={selectedPromo.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-rose-500/30 to-amber-400/20 p-[2vw] text-center">
+                          <Sparkles className="mb-[1vh] h-[4vw] w-[4vw] text-white/55" />
+                          <p className="text-white text-[1.4vw] font-bold">{selectedPromo.title}</p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Detail text */}
@@ -282,12 +291,19 @@ export default function PromoModal({ isOpen, onClose }: Props) {
                               }
                             }}
                           >
-                            <img
-                              src={promo.poster_url!}
-                              alt={promo.title}
-                              className="w-full h-full object-cover"
-                              draggable={false}
-                            />
+                            {promoPoster(promo) ? (
+                              <img
+                                src={promoPoster(promo)!}
+                                alt={promo.title}
+                                className="w-full h-full object-cover"
+                                draggable={false}
+                              />
+                            ) : (
+                              <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-rose-500/30 to-amber-400/20 p-[1vw] text-center">
+                                <Sparkles className="mb-[1vh] h-[3vw] w-[3vw] text-white/55" />
+                                <p className="line-clamp-3 text-white text-[1vw] font-bold">{promo.title}</p>
+                              </div>
+                            )}
                             {/* Title overlay */}
                             {isCenter && (
                               <div className="absolute bottom-0 left-0 right-0 p-[1vw]" style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.7))' }}>

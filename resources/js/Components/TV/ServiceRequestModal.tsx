@@ -6,8 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { QRCode } from 'react-qr-code';
 import { useRoomStore } from '@/stores/roomStore';
 import {
+  Baby,
   Utensils, Car, Shirt, Coffee, Sparkles, Scissors, ShoppingBag, Map, Briefcase, Bell,
-  ConciergeBell, Plus, Minus, ShoppingCart, CheckCircle2, ArrowLeft, X, ChevronLeft, ChevronRight, QrCode
+  ConciergeBell, Plus, Minus, ShoppingCart, CheckCircle2, ArrowLeft, X, ChevronLeft, ChevronRight, QrCode,
+  Plane, Dumbbell, HeartPulse, Bike, Wine, Luggage, ShowerHead
 } from 'lucide-react';
 import { useDpadNavigation } from '@/lib/hooks/useDpadNavigation';
 import type { Service, ServiceOption } from '@/types';
@@ -24,6 +26,14 @@ const ICONS: Record<string, React.ReactNode> = {
   Map: <Map className="w-5 h-5" />,
   Briefcase: <Briefcase className="w-5 h-5" />,
   Bell: <Bell className="w-5 h-5" />,
+  Plane: <Plane className="w-5 h-5" />,
+  Dumbbell: <Dumbbell className="w-5 h-5" />,
+  HeartPulse: <HeartPulse className="w-5 h-5" />,
+  Baby: <Baby className="w-5 h-5" />,
+  Bike: <Bike className="w-5 h-5" />,
+  Wine: <Wine className="w-5 h-5" />,
+  Luggage: <Luggage className="w-5 h-5" />,
+  ShowerHead: <ShowerHead className="w-5 h-5" />,
 };
 
 const LARGE_ICONS: Record<string, React.ReactNode> = {
@@ -37,6 +47,14 @@ const LARGE_ICONS: Record<string, React.ReactNode> = {
   Map: <Map className="w-16 h-16" />,
   Briefcase: <Briefcase className="w-16 h-16" />,
   Bell: <Bell className="w-16 h-16" />,
+  Plane: <Plane className="w-16 h-16" />,
+  Dumbbell: <Dumbbell className="w-16 h-16" />,
+  HeartPulse: <HeartPulse className="w-16 h-16" />,
+  Baby: <Baby className="w-16 h-16" />,
+  Bike: <Bike className="w-16 h-16" />,
+  Wine: <Wine className="w-16 h-16" />,
+  Luggage: <Luggage className="w-16 h-16" />,
+  ShowerHead: <ShowerHead className="w-16 h-16" />,
 };
 
 const MED_ICONS: Record<string, React.ReactNode> = {
@@ -50,13 +68,21 @@ const MED_ICONS: Record<string, React.ReactNode> = {
   Map: <Map className="w-8 h-8" />,
   Briefcase: <Briefcase className="w-8 h-8" />,
   Bell: <Bell className="w-8 h-8" />,
+  Plane: <Plane className="w-8 h-8" />,
+  Dumbbell: <Dumbbell className="w-8 h-8" />,
+  HeartPulse: <HeartPulse className="w-8 h-8" />,
+  Baby: <Baby className="w-8 h-8" />,
+  Bike: <Bike className="w-8 h-8" />,
+  Wine: <Wine className="w-8 h-8" />,
+  Luggage: <Luggage className="w-8 h-8" />,
+  ShowerHead: <ShowerHead className="w-8 h-8" />,
 };
 
 /** Render icon — tries Lucide map first, falls back to raw text (emoji) */
 function renderIcon(icon: string | null | undefined, size: 'sm' | 'md' | 'lg' = 'sm') {
   if (!icon) return <ConciergeBell className={size === 'lg' ? 'w-16 h-16' : size === 'md' ? 'w-8 h-8' : 'w-5 h-5'} />;
   const map = size === 'lg' ? LARGE_ICONS : size === 'md' ? MED_ICONS : ICONS;
-  return map[icon] || <span className={size === 'lg' ? 'text-6xl' : size === 'md' ? 'text-3xl' : 'text-xl'}>{icon}</span>;
+  return map[icon] || <ConciergeBell className={size === 'lg' ? 'w-16 h-16' : size === 'md' ? 'w-8 h-8' : 'w-5 h-5'} />;
 }
 
 interface CartItem {
@@ -417,7 +443,7 @@ export default function ServiceRequestModal({ isOpen, onClose, onOrderComplete }
                               >
                                 {/* Card face — with selected border on center card */}
                                 <div
-                                  className="w-full h-full flex flex-col items-center justify-center gap-[2vh] transition-all group-focus:ring-2 group-focus:ring-[#d4af37] group-focus:ring-offset-4 group-focus:ring-offset-slate-900"
+                                  className="relative w-full h-full flex flex-col items-center justify-center gap-[2vh] transition-all group-focus:ring-2 group-focus:ring-[#d4af37] group-focus:ring-offset-4 group-focus:ring-offset-slate-900"
                                   style={{
                                     background: isCenter
                                       ? 'linear-gradient(135deg, rgba(20,184,166,0.25) 0%, rgba(15,23,42,0.7) 100%)'
@@ -429,16 +455,22 @@ export default function ServiceRequestModal({ isOpen, onClose, onOrderComplete }
                                     borderRadius: 'inherit',
                                   }}
                                 >
-                                  <div className={`w-[6vw] h-[6vw] rounded-2xl flex items-center justify-center ${
+                                  {cat.image_url && (
+                                    <>
+                                      <img src={cat.image_url} alt="" className="absolute inset-0 h-full w-full object-cover opacity-40" />
+                                      <div className="absolute inset-0 bg-slate-950/45" />
+                                    </>
+                                  )}
+                                  <div className={`relative z-10 w-[6vw] h-[6vw] rounded-2xl flex items-center justify-center ${
                                     isCenter ? 'bg-[#d4af37]/20 text-[#f3e5ab]' : 'bg-white/10 text-white/60'
                                   }`}>
                                     {renderIcon(cat.icon, 'lg')}
                                   </div>
-                                  <p className={`text-[1.2vw] font-bold tracking-tight ${
+                                  <p className={`relative z-10 text-[1.2vw] font-bold tracking-tight ${
                                     isCenter ? 'text-white' : 'text-white/60'
                                   }`}>{cat.name}</p>
                                   {isCenter && (
-                                    <span className="text-[#d4af37]/60 text-[0.6vw] uppercase tracking-widest font-semibold">Press Enter to open</span>
+                                    <span className="relative z-10 text-[#d4af37]/60 text-[0.6vw] uppercase tracking-widest font-semibold">Press Enter to open</span>
                                   )}
                                 </div>
                               </motion.div>

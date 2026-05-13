@@ -28,6 +28,26 @@ class PortalApiController extends Controller
         return response()->json(['services' => $services]);
     }
 
+    public function promos(string $slug): JsonResponse
+    {
+        $hotel = Hotel::where('slug', $slug)->where('is_active', true)->firstOrFail();
+
+        $promos = $hotel->promos()
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('start_date')
+                    ->orWhere('start_date', '<=', now());
+            })
+            ->where(function ($query) {
+                $query->whereNull('end_date')
+                    ->orWhere('end_date', '>=', now());
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json(['promos' => $promos]);
+    }
+
     public function serviceOptions(string $serviceId): JsonResponse
     {
         $options = ServiceOption::where('service_id', $serviceId)

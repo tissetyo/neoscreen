@@ -99,7 +99,10 @@ export interface Promo {
   hotel_id: string;
   title: string;
   description: string | null;
+  image_url: string | null;
   poster_url: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
   valid_from: string | null;
   valid_until: string | null;
   is_active: boolean;
@@ -113,6 +116,7 @@ export interface Service {
   icon: string | null;
   color_theme: string | null;
   description: string | null;
+  image_url: string | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;

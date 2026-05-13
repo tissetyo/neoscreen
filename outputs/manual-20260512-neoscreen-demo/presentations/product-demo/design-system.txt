@@ -1,0 +1,9 @@
+Slide size: 1280x720.
+Background: deep ink #07101F with teal and amber accents.
+Typography: Aptos Display for claims, Aptos for labels/body, Aptos Mono for URLs and file names.
+Color use: teal for platform/navigation, amber for STB/TV focus, white for main claims, slate for support copy.
+Screenshot grammar: screenshots are large proof objects with thin teal/white frame rules; avoid decorative nested cards.
+Diagram grammar: simple lanes and numbered steps; arrows indicate actual workflow direction only.
+Footer: quiet page marker and "Neoscreen product demo" label.
+Title grammar: kicker label, claim title, proof note.
+Banned motifs: stock imagery, fake logo marks, decorative blob backgrounds, generic feature-card grids.

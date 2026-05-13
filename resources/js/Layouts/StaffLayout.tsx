@@ -137,7 +137,7 @@ export default function StaffLayout({ children, header, fullBleed = false }: Pro
                 )}
                 {navItems.map(item => <NavLink key={item.href} item={item} />)}
 
-                {isManager && !isAdmin && slug && (
+                {!isAdmin && slug && (
                     <div className="pt-4 mt-4 border-t border-white/5">
                         {!collapsed && (
                             <p className="text-[10px] font-medium uppercase tracking-widest text-slate-500 px-3 mb-3">Management</p>
@@ -145,7 +145,7 @@ export default function StaffLayout({ children, header, fullBleed = false }: Pro
                         {[
                             { label: 'Services', icon: Wrench, href: `/${slug}/frontoffice/services` },
                             { label: 'Settings', icon: Settings, href: `/${slug}/frontoffice/settings` },
-                            { label: 'Team', icon: Users, href: `/${slug}/frontoffice/team` },
+                            ...(isManager ? [{ label: 'Team', icon: Users, href: `/${slug}/frontoffice/team` }] : []),
                         ].map(item => <NavLink key={item.href} item={item} />)}
                     </div>
                 )}

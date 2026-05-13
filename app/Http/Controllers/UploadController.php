@@ -16,6 +16,7 @@ class UploadController extends Controller
         'media-image' => ['maxSize' => 5120, 'mimes' => 'jpeg,jpg,png,webp', 'directory' => 'media-images'],
         'media-video' => ['maxSize' => 51200, 'mimes' => 'mp4,webm', 'directory' => 'media-videos'],
         'promo-poster' => ['maxSize' => 5120, 'mimes' => 'jpeg,jpg,png,webp', 'directory' => 'promo-posters'],
+        'service-photo' => ['maxSize' => 5120, 'mimes' => 'jpeg,jpg,png,webp', 'directory' => 'service-photos'],
         'tv-app-icon' => ['maxSize' => 2048, 'mimes' => 'jpeg,jpg,png,webp,svg', 'directory' => 'tv-app-icons'],
         'tv-brand-logo' => ['maxSize' => 2048, 'mimes' => 'jpeg,jpg,png,webp,svg', 'directory' => 'tv-brand-logos'],
     ];
