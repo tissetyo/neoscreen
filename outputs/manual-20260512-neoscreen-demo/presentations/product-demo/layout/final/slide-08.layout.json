@@ -1,0 +1,735 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/7nwx0y",
+    "id": "7nwx0y",
+    "slide": 8,
+    "layoutId": "063ce6b9-acbf-414d-b0d7-292c448eb1a9",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "27718132-40bb-42d5-b9ad-328a481f09a1",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display",
+      "Aptos Mono"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "063ce6b9-acbf-414d-b0d7-292c448eb1a9",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "27718132-40bb-42d5-b9ad-328a481f09a1",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "27718132-40bb-42d5-b9ad-328a481f09a1",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1kre1w7m",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#07101F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/uxc3ylc7",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        92
+      ],
+      "geometry": "rect",
+      "fillColor": "#0A1324",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ji5snelo",
+      "id": "3",
+      "bbox": [
+        0,
+        91,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#29405F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/crmhk3q5",
+      "id": "4",
+      "name": "kicker-marker",
+      "bbox": [
+        48,
+        36,
+        28,
+        3
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1cfa9w3m",
+      "id": "5",
+      "name": "kicker-label",
+      "bbox": [
+        88,
+        24,
+        360,
+        28
+      ],
+      "geometry": "rect",
+      "text": "GUEST SERVICE",
+      "textPreview": "GUEST SERVICE",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "GUEST SERVICE"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "GUEST SERVICE",
+          "runs": [
+            {
+              "index": 1,
+              "text": "GUEST SERVICE",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#29D5C7",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ulwval87",
+      "id": "6",
+      "bbox": [
+        48,
+        108,
+        520,
+        104
+      ],
+      "geometry": "rect",
+      "text": "Chat and QR mobile access turn the TV into a two-way service channel.",
+      "textPreview": "Chat and QR mobile access turn the TV into a two-way service channel.",
+      "resolvedFontSize": 30,
+      "resolvedTextStyle": {
+        "fontSize": 30,
+        "typeface": "Aptos Display",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Chat and QR mobile access turn the"
+          },
+          {
+            "index": 2,
+            "text": "TV into a two-way service channel."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Chat and QR mobile access turn the TV into a two-way service channel.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Chat and QR mobile access turn the TV into a two-way service channel.",
+              "fontSize": 30,
+              "typeface": "Aptos Display",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/j6tovaho",
+      "id": "7",
+      "bbox": [
+        50,
+        218,
+        500,
+        38
+      ],
+      "geometry": "rect",
+      "text": "Guests can move from the TV to their phone without creating a public login surface.",
+      "textPreview": "Guests can move from the TV to their phone without creating a public login surface.",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Guests can move from the TV to their phone without creating a public"
+          },
+          {
+            "index": 2,
+            "text": "login surface."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Guests can move from the TV to their phone without creating a public login surface.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Guests can move from the TV to their phone without creating a public login surface.",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8nqxs72x",
+      "id": "8",
+      "bbox": [
+        56,
+        292,
+        504,
+        268
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E1A2E",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/18jqh0fe",
+      "id": "9",
+      "bbox": [
+        58,
+        268,
+        500,
+        18
+      ],
+      "geometry": "rect",
+      "text": "Staff chat",
+      "textPreview": "Staff chat",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Staff chat"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Staff chat",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Staff chat",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/qh0fepkz",
+      "id": "10",
+      "bbox": [
+        58,
+        294,
+        500,
+        264
+      ],
+      "alt": "15-frontoffice-chat.png",
+      "contentType": "image/png",
+      "asset": {
+        "assetId": "6b58a4a1-8a20-4119-9dcb-810aef46f36a",
+        "contentType": "image/png",
+        "byteLength": 83888
+      }
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/w7mp0bi9",
+      "id": "11",
+      "bbox": [
+        644,
+        292,
+        504,
+        268
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E1A2E",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7mp0bi9s",
+      "id": "12",
+      "bbox": [
+        646,
+        268,
+        500,
+        18
+      ],
+      "geometry": "rect",
+      "text": "Mobile companion",
+      "textPreview": "Mobile companion",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Mobile companion"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Mobile companion",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Mobile companion",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/18jqh0fe",
+      "id": "13",
+      "bbox": [
+        646,
+        294,
+        500,
+        264
+      ],
+      "alt": "23-mobile-guest-portal.png",
+      "contentType": "image/png",
+      "asset": {
+        "assetId": "a1b32ba1-0901-40e9-aa61-a2408a644720",
+        "contentType": "image/png",
+        "byteLength": 196979
+      }
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pg3ex0nu",
+      "id": "14",
+      "bbox": [
+        72,
+        592,
+        7,
+        7
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wval87ed",
+      "id": "15",
+      "bbox": [
+        90,
+        584,
+        500,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Front Office sees the conversation and room context together.",
+      "textPreview": "Front Office sees the conversation and room context together.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Front Office sees the conversation and room context together."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Front Office sees the conversation and room context together.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Front Office sees the conversation and room context together.",
+              "fontSize": 16,
+              "typeface": "Aptos",
+              "color": "#DCE7F6"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7adsji5s",
+      "id": "16",
+      "bbox": [
+        660,
+        592,
+        7,
+        7
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/epkzupwb",
+      "id": "17",
+      "bbox": [
+        678,
+        584,
+        500,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Guest mobile sessions are QR-linked and room-scoped.",
+      "textPreview": "Guest mobile sessions are QR-linked and room-scoped.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Guest mobile sessions are QR-linked and room-scoped."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Guest mobile sessions are QR-linked and room-scoped.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Guest mobile sessions are QR-linked and room-scoped.",
+              "fontSize": 16,
+              "typeface": "Aptos",
+              "color": "#DCE7F6"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lc7u54zi",
+      "id": "18",
+      "bbox": [
+        570,
+        360,
+        48,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wra5gbq1",
+      "id": "19",
+      "bbox": [
+        610,
+        354,
+        12,
+        12
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/s36hcrmh",
+      "id": "20",
+      "bbox": [
+        48,
+        674,
+        420,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Neoscreen product demo",
+      "textPreview": "Neoscreen product demo",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Neoscreen product demo"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Neoscreen product demo",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Neoscreen product demo",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hoza1gvy",
+      "id": "21",
+      "bbox": [
+        1184,
+        668,
+        48,
+        28
+      ],
+      "geometry": "rect",
+      "text": "08",
+      "textPreview": "08",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos Mono",
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "08"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "08",
+          "runs": [
+            {
+              "index": 1,
+              "text": "08",
+              "fontSize": 14,
+              "typeface": "Aptos Mono",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

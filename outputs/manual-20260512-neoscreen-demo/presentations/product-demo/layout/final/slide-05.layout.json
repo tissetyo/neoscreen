@@ -1,0 +1,758 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/18rdz0",
+    "id": "18rdz0",
+    "slide": 5,
+    "layoutId": "063ce6b9-acbf-414d-b0d7-292c448eb1a9",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "27718132-40bb-42d5-b9ad-328a481f09a1",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display",
+      "Aptos Mono"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "063ce6b9-acbf-414d-b0d7-292c448eb1a9",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "27718132-40bb-42d5-b9ad-328a481f09a1",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "27718132-40bb-42d5-b9ad-328a481f09a1",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d0z61032",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#07101F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/29gr2p8n",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        92
+      ],
+      "geometry": "rect",
+      "fillColor": "#0A1324",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vu9knih4",
+      "id": "3",
+      "bbox": [
+        0,
+        91,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#29405F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/knih4byh",
+      "id": "4",
+      "name": "kicker-marker",
+      "bbox": [
+        48,
+        36,
+        28,
+        3
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d8bat47y",
+      "id": "5",
+      "name": "kicker-label",
+      "bbox": [
+        88,
+        24,
+        360,
+        28
+      ],
+      "geometry": "rect",
+      "text": "IPTV",
+      "textPreview": "IPTV",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "IPTV"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "IPTV",
+          "runs": [
+            {
+              "index": 1,
+              "text": "IPTV",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#29D5C7",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2lszqtcj",
+      "id": "6",
+      "bbox": [
+        48,
+        108,
+        520,
+        104
+      ],
+      "geometry": "rect",
+      "text": "IPTV is a managed hotel feature, not a loose external player.",
+      "textPreview": "IPTV is a managed hotel feature, not a loose external player.",
+      "resolvedFontSize": 30,
+      "resolvedTextStyle": {
+        "fontSize": 30,
+        "typeface": "Aptos Display",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "IPTV is a managed hotel feature, not"
+          },
+          {
+            "index": 2,
+            "text": "a loose external player."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "IPTV is a managed hotel feature, not a loose external player.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "IPTV is a managed hotel feature, not a loose external player.",
+              "fontSize": 30,
+              "typeface": "Aptos Display",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/v6psfil0",
+      "id": "7",
+      "bbox": [
+        50,
+        218,
+        500,
+        38
+      ],
+      "geometry": "rect",
+      "text": "The TV overlay, channel list, and admin controls live inside the same operating model.",
+      "textPreview": "The TV overlay, channel list, and admin controls live inside the same operating model.",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "The TV overlay, channel list, and admin controls live inside the same"
+          },
+          {
+            "index": 2,
+            "text": "operating model."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "The TV overlay, channel list, and admin controls live inside the same operating model.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "The TV overlay, channel list, and admin controls live inside the same operating model.",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kre1w7mp",
+      "id": "8",
+      "bbox": [
+        56,
+        292,
+        524,
+        264
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E1A2E",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dcbulwva",
+      "id": "9",
+      "bbox": [
+        58,
+        268,
+        520,
+        18
+      ],
+      "geometry": "rect",
+      "text": "TV playback overlay",
+      "textPreview": "TV playback overlay",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "TV playback overlay"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "TV playback overlay",
+          "runs": [
+            {
+              "index": 1,
+              "text": "TV playback overlay",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/2p8nqxs7",
+      "id": "10",
+      "bbox": [
+        58,
+        294,
+        520,
+        260
+      ],
+      "alt": "11-room-tv-iptv-modal.png",
+      "contentType": "image/png",
+      "asset": {
+        "assetId": "20418b2b-c038-43f8-a9e3-5b7a5ea233e9",
+        "contentType": "image/png",
+        "byteLength": 28316
+      }
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/s72x4nap",
+      "id": "11",
+      "bbox": [
+        646,
+        292,
+        524,
+        264
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E1A2E",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3m94fu18",
+      "id": "12",
+      "bbox": [
+        648,
+        268,
+        520,
+        18
+      ],
+      "geometry": "rect",
+      "text": "Admin availability controls",
+      "textPreview": "Admin availability controls",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Admin availability controls"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Admin availability controls",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Admin availability controls",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/9gr2p8nq",
+      "id": "13",
+      "bbox": [
+        648,
+        294,
+        520,
+        260
+      ],
+      "alt": "21-superadmin-iptv-controls.png",
+      "contentType": "image/png",
+      "asset": {
+        "assetId": "8cf74bbd-13e1-4a46-9ca7-a99c9ae18925",
+        "contentType": "image/png",
+        "byteLength": 164566
+      }
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h4byhgn2",
+      "id": "14",
+      "bbox": [
+        68,
+        602,
+        7,
+        7
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sji5snel",
+      "id": "15",
+      "bbox": [
+        86,
+        594,
+        480,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Guest sees a TV-native overlay with local clock and brand treatment.",
+      "textPreview": "Guest sees a TV-native overlay with local clock and brand treatment.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Guest sees a TV-native overlay with local clock and brand"
+          },
+          {
+            "index": 2,
+            "text": "treatment."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Guest sees a TV-native overlay with local clock and brand treatment.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Guest sees a TV-native overlay with local clock and brand treatment.",
+              "fontSize": 16,
+              "typeface": "Aptos",
+              "color": "#DCE7F6"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3ylc7u54",
+      "id": "16",
+      "bbox": [
+        658,
+        602,
+        7,
+        7
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/adsji5sn",
+      "id": "17",
+      "bbox": [
+        676,
+        594,
+        480,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Admins can control availability, country packs, and channel health.",
+      "textPreview": "Admins can control availability, country packs, and channel health.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Admins can control availability, country packs, and channel health."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Admins can control availability, country packs, and channel health.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Admins can control availability, country packs, and channel health.",
+              "fontSize": 16,
+              "typeface": "Aptos",
+              "color": "#DCE7F6"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hgn29gr2",
+      "id": "18",
+      "bbox": [
+        646,
+        210,
+        500,
+        50
+      ],
+      "geometry": "rect",
+      "text": "Operational result: hide broken channels, expose the strongest lineup, and keep the TV interface simple.",
+      "textPreview": "Operational result: hide broken channels, expose the strongest lineup, and keep the TV interface simple.",
+      "resolvedFontSize": 17,
+      "resolvedTextStyle": {
+        "fontSize": 17,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Operational result: hide broken channels, expose the strongest"
+          },
+          {
+            "index": 2,
+            "text": "lineup, and keep the TV interface simple."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Operational result: hide broken channels, expose the strongest lineup, and keep the TV interface simple.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Operational result: hide broken channels, expose the strongest lineup, and keep the TV interface simple.",
+              "fontSize": 17,
+              "typeface": "Aptos",
+              "color": "#DCE7F6"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/svu9knih",
+      "id": "19",
+      "bbox": [
+        48,
+        674,
+        420,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Neoscreen product demo",
+      "textPreview": "Neoscreen product demo",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Neoscreen product demo"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Neoscreen product demo",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Neoscreen product demo",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4r65wjud",
+      "id": "20",
+      "bbox": [
+        1184,
+        668,
+        48,
+        28
+      ],
+      "geometry": "rect",
+      "text": "05",
+      "textPreview": "05",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos Mono",
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "05"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "05",
+          "runs": [
+            {
+              "index": 1,
+              "text": "05",
+              "fontSize": 14,
+              "typeface": "Aptos Mono",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

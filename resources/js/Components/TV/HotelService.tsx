@@ -3,8 +3,10 @@
 import useSWR from 'swr';
 import { useRoomStore } from '@/stores/roomStore';
 import {
+  Baby,
   ConciergeBell, Utensils, Car, Shirt, Coffee, Sparkles,
-  Scissors, ShoppingBag, Map, Briefcase, Bell
+  Scissors, ShoppingBag, Map, Briefcase, Bell, Plane, Dumbbell,
+  HeartPulse, Bike, Wine, Luggage, ShowerHead
 } from 'lucide-react';
 import type { Service } from '@/types';
 
@@ -20,6 +22,14 @@ const ICONS: Record<string, React.ReactNode> = {
   Map: <Map className="w-full h-full" />,
   Briefcase: <Briefcase className="w-full h-full" />,
   Bell: <Bell className="w-full h-full" />,
+  Plane: <Plane className="w-full h-full" />,
+  Dumbbell: <Dumbbell className="w-full h-full" />,
+  HeartPulse: <HeartPulse className="w-full h-full" />,
+  Baby: <Baby className="w-full h-full" />,
+  Bike: <Bike className="w-full h-full" />,
+  Wine: <Wine className="w-full h-full" />,
+  Luggage: <Luggage className="w-full h-full" />,
+  ShowerHead: <ShowerHead className="w-full h-full" />,
 };
 
 const CATEGORY_ICON: Record<string, keyof typeof ICONS> = {
@@ -59,7 +69,7 @@ function iconForService(service: Pick<Service, 'name' | 'icon'> & { category?: s
 
 interface Props {
   onOpenServices?: () => void;
-  services?: (Pick<Service, 'id' | 'name' | 'icon'> & { category?: string | null })[];
+  services?: (Pick<Service, 'id' | 'name' | 'icon' | 'image_url'> & { category?: string | null })[];
 }
 
 export default function HotelService({ onOpenServices, services: initialServices }: Props) {
@@ -72,13 +82,14 @@ export default function HotelService({ onOpenServices, services: initialServices
       const res = await fetch(`/api/hotel/${store.hotelSlug}/tv-config${roomId}`);
       if (!res.ok) return [];
       const data = await res.json();
-      return (data.services || []) as (Pick<Service, 'id' | 'name' | 'icon'> & { category?: string | null })[];
+      return (data.services || []) as (Pick<Service, 'id' | 'name' | 'icon' | 'image_url'> & { category?: string | null })[];
     },
     { refreshInterval: 120000 }
   );
 
   const services = initialServices?.length ? initialServices : fetchedServices;
   const visibleServices = (services || []).slice(0, 8);
+  const heroService = visibleServices.find((service) => service.image_url);
 
   return (
     <button
@@ -86,11 +97,17 @@ export default function HotelService({ onOpenServices, services: initialServices
       tabIndex={0}
       onClick={onOpenServices}
     >
-      <span className="hotel-service-title text-white text-[clamp(20px,min(3.5cqw,24cqh),64px)] font-medium tracking-wide truncate max-w-full">
+      {heroService?.image_url && (
+        <>
+          <img src={heroService.image_url} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+          <div className="absolute inset-0 bg-black/45" />
+        </>
+      )}
+      <span className="hotel-service-title relative z-10 text-white text-[clamp(20px,min(3.5cqw,24cqh),64px)] font-medium tracking-wide truncate max-w-full">
         Hotel Service
       </span>
 
-      <div className="hotel-service-icons flex max-w-full flex-wrap items-center gap-x-[clamp(16px,2.5cqw,48px)] gap-y-[clamp(10px,1.5cqh,20px)] overflow-hidden text-[#ffa62a]">
+      <div className="hotel-service-icons relative z-10 flex max-w-full flex-wrap items-center gap-x-[clamp(16px,2.5cqw,48px)] gap-y-[clamp(10px,1.5cqh,20px)] overflow-hidden text-[#ffa62a]">
         {visibleServices.length > 0 ? (
           visibleServices.map((service) => (
             <div

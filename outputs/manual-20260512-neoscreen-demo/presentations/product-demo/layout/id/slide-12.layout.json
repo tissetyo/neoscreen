@@ -1,0 +1,1338 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/jqmmjv",
+    "id": "jqmmjv",
+    "slide": 12,
+    "layoutId": "ce605723-619f-4f2d-9403-72505fdfd01c",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "34b61882-96b9-43ee-ae2d-a71c8a5da4fa",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display",
+      "Aptos Mono"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "ce605723-619f-4f2d-9403-72505fdfd01c",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "34b61882-96b9-43ee-ae2d-a71c8a5da4fa",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "34b61882-96b9-43ee-ae2d-a71c8a5da4fa",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rytsvu9k",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#07101F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gfmlkjm1",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        92
+      ],
+      "geometry": "rect",
+      "fillColor": "#0A1324",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/90je9cvi",
+      "id": "3",
+      "bbox": [
+        0,
+        91,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#29405F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/y1kre1w7",
+      "id": "4",
+      "name": "kicker-marker",
+      "bbox": [
+        48,
+        36,
+        28,
+        3
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rmhk3q5o",
+      "id": "5",
+      "name": "kicker-label",
+      "bbox": [
+        88,
+        24,
+        360,
+        28
+      ],
+      "geometry": "rect",
+      "text": "RENCANA PILOT",
+      "textPreview": "RENCANA PILOT",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "RENCANA PILOT"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "RENCANA PILOT",
+          "runs": [
+            {
+              "index": 1,
+              "text": "RENCANA PILOT",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#29D5C7",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/g7adsji5",
+      "id": "6",
+      "bbox": [
+        48,
+        108,
+        520,
+        104
+      ],
+      "geometry": "rect",
+      "text": "Demo berikutnya sebaiknya pilot room nyata: install, pair, test, observe.",
+      "textPreview": "Demo berikutnya sebaiknya pilot room nyata: install, pair, test, observe.",
+      "resolvedFontSize": 30,
+      "resolvedTextStyle": {
+        "fontSize": 30,
+        "typeface": "Aptos Display",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Demo berikutnya sebaiknya pilot"
+          },
+          {
+            "index": 2,
+            "text": "room nyata: install, pair, test,"
+          },
+          {
+            "index": 3,
+            "text": "observe."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Demo berikutnya sebaiknya pilot room nyata: install, pair, test, observe.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Demo berikutnya sebaiknya pilot room nyata: install, pair, test, observe.",
+              "fontSize": 30,
+              "typeface": "Aptos Display",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9s36hcrm",
+      "id": "7",
+      "bbox": [
+        50,
+        218,
+        500,
+        38
+      ],
+      "geometry": "rect",
+      "text": "Produk siap untuk validasi STB dengan set room kecil.",
+      "textPreview": "Produk siap untuk validasi STB dengan set room kecil.",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Produk siap untuk validasi STB dengan set room kecil."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Produk siap untuk validasi STB dengan set room kecil.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Produk siap untuk validasi STB dengan set room kecil.",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yxobm58z",
+      "id": "8",
+      "bbox": [
+        80,
+        292,
+        210,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nih4byhg",
+      "id": "9",
+      "bbox": [
+        96,
+        308,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/72x4nap4",
+      "id": "10",
+      "bbox": [
+        96,
+        313,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "1",
+      "textPreview": "1",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1",
+          "runs": [
+            {
+              "index": 1,
+              "text": "1",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ih4byhgn",
+      "id": "11",
+      "bbox": [
+        138,
+        307,
+        136,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Install",
+      "textPreview": "Install",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Install"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Install",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Install",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p8nqxs72",
+      "id": "12",
+      "bbox": [
+        98,
+        348,
+        174,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Download STB Launcher v2 dari /launcher.",
+      "textPreview": "Download STB Launcher v2 dari /launcher.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Download STB Launcher v2 dari"
+          },
+          {
+            "index": 2,
+            "text": "/launcher."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Download STB Launcher v2 dari /launcher.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Download STB Launcher v2 dari /launcher.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0nuxc3yl",
+      "id": "13",
+      "bbox": [
+        320,
+        292,
+        210,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7ed8bat4",
+      "id": "14",
+      "bbox": [
+        336,
+        308,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/itgfmlkj",
+      "id": "15",
+      "bbox": [
+        336,
+        313,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "2",
+      "textPreview": "2",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "2"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "2",
+          "runs": [
+            {
+              "index": 1,
+              "text": "2",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pkzupwb2",
+      "id": "16",
+      "bbox": [
+        378,
+        307,
+        136,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Pair",
+      "textPreview": "Pair",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Pair"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Pair",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Pair",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0z61032l",
+      "id": "17",
+      "bbox": [
+        338,
+        348,
+        174,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Gunakan STB Pairing Front Office dengan kode TV.",
+      "textPreview": "Gunakan STB Pairing Front Office dengan kode TV.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Gunakan STB Pairing Front"
+          },
+          {
+            "index": 2,
+            "text": "Office dengan kode TV."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Gunakan STB Pairing Front Office dengan kode TV.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Gunakan STB Pairing Front Office dengan kode TV.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7qpg3ex0",
+      "id": "18",
+      "bbox": [
+        560,
+        292,
+        210,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i5sneloj",
+      "id": "19",
+      "bbox": [
+        576,
+        308,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m94fu18j",
+      "id": "20",
+      "bbox": [
+        576,
+        313,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "3",
+      "textPreview": "3",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "3"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "3",
+          "runs": [
+            {
+              "index": 1,
+              "text": "3",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fu18jqh0",
+      "id": "21",
+      "bbox": [
+        618,
+        307,
+        136,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Validasi",
+      "textPreview": "Validasi",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Validasi"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Validasi",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Validasi",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4fu18jqh",
+      "id": "22",
+      "bbox": [
+        578,
+        348,
+        174,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Cek Room TV, IPTV, chat, alarm, services, dan QR mobile.",
+      "textPreview": "Cek Room TV, IPTV, chat, alarm, services, dan QR mobile.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Cek Room TV, IPTV, chat, alarm,"
+          },
+          {
+            "index": 2,
+            "text": "services, dan QR mobile."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Cek Room TV, IPTV, chat, alarm, services, dan QR mobile.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Cek Room TV, IPTV, chat, alarm, services, dan QR mobile.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/x0nuxc3y",
+      "id": "23",
+      "bbox": [
+        800,
+        292,
+        210,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qxs72x4n",
+      "id": "24",
+      "bbox": [
+        816,
+        308,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fil0rqd4",
+      "id": "25",
+      "bbox": [
+        816,
+        313,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "4",
+      "textPreview": "4",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "4"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "4",
+          "runs": [
+            {
+              "index": 1,
+              "text": "4",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/83itgfml",
+      "id": "26",
+      "bbox": [
+        858,
+        307,
+        136,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Monitor",
+      "textPreview": "Monitor",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Monitor"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Monitor",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Monitor",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xobm58z2",
+      "id": "27",
+      "bbox": [
+        818,
+        348,
+        174,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Review analytics, channel report, dan STB fleet status.",
+      "textPreview": "Review analytics, channel report, dan STB fleet status.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Review analytics, channel"
+          },
+          {
+            "index": 2,
+            "text": "report, dan STB fleet status."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Review analytics, channel report, dan STB fleet status.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Review analytics, channel report, dan STB fleet status.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mtwra5gb",
+      "id": "28",
+      "bbox": [
+        80,
+        480,
+        930,
+        92
+      ],
+      "geometry": "rect",
+      "fillColor": "#14243B",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fepkzupw",
+      "id": "29",
+      "bbox": [
+        108,
+        502,
+        874,
+        46
+      ],
+      "geometry": "rect",
+      "text": "Pilot rekomendasi: 3 room, 2 model STB, 1 shift staf, dan satu country pack IPTV. Catat buffering, friction remote, dan waktu pairing per room.",
+      "textPreview": "Pilot rekomendasi: 3 room, 2 model STB, 1 shift staf, dan satu country pack IPTV. Catat buffering, friction remote, dan waktu pairing per...",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Pilot rekomendasi: 3 room, 2 model STB, 1 shift staf, dan satu country pack IPTV. Catat buffering,"
+          },
+          {
+            "index": 2,
+            "text": "friction remote, dan waktu pairing per room."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Pilot rekomendasi: 3 room, 2 model STB, 1 shift staf, dan satu country pack IPTV. Catat buffering, friction remote, dan waktu pairing per room.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Pilot rekomendasi: 3 room, 2 model STB, 1 shift staf, dan satu country pack IPTV. Catat buffering, friction remote, dan waktu pairing per room.",
+              "fontSize": 18,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5gbq1ory",
+      "id": "30",
+      "bbox": [
+        98,
+        604,
+        7,
+        7
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cvixczed",
+      "id": "31",
+      "bbox": [
+        116,
+        596,
+        780,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Deliverable hari ini: screenshot, GIF demo, PPTX editable, dan halaman download APK.",
+      "textPreview": "Deliverable hari ini: screenshot, GIF demo, PPTX editable, dan halaman download APK.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Deliverable hari ini: screenshot, GIF demo, PPTX editable, dan halaman download APK."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Deliverable hari ini: screenshot, GIF demo, PPTX editable, dan halaman download APK.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Deliverable hari ini: screenshot, GIF demo, PPTX editable, dan halaman download APK.",
+              "fontSize": 16,
+              "typeface": "Aptos",
+              "color": "#DCE7F6"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nap4r65w",
+      "id": "32",
+      "bbox": [
+        920,
+        596,
+        260,
+        24
+      ],
+      "geometry": "rect",
+      "text": "neoscreen.site/launcher",
+      "textPreview": "neoscreen.site/launcher",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Aptos Mono",
+        "bold": true,
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "neoscreen.site/launcher"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "neoscreen.site/launcher",
+          "runs": [
+            {
+              "index": 1,
+              "text": "neoscreen.site/launcher",
+              "fontSize": 18,
+              "typeface": "Aptos Mono",
+              "color": "#D5B84A",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/upwb2hwf",
+      "id": "33",
+      "bbox": [
+        48,
+        674,
+        420,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Demo produk Neoscreen",
+      "textPreview": "Demo produk Neoscreen",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Demo produk Neoscreen"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Demo produk Neoscreen",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Demo produk Neoscreen",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/54zidony",
+      "id": "34",
+      "bbox": [
+        1184,
+        668,
+        48,
+        28
+      ],
+      "geometry": "rect",
+      "text": "12",
+      "textPreview": "12",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos Mono",
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "12"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "12",
+          "runs": [
+            {
+              "index": 1,
+              "text": "12",
+              "fontSize": 14,
+              "typeface": "Aptos Mono",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

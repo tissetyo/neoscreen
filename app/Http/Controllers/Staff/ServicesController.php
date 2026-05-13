@@ -37,12 +37,33 @@ class ServicesController extends Controller
             'name' => 'required|string|max:100',
             'icon' => 'nullable|string|max:50',
             'color_theme' => 'nullable|string|max:30',
+            'description' => 'nullable|string|max:1000',
+            'image_url' => 'nullable|string|max:2048',
         ]);
 
         $sort = Service::where('hotel_id', $hotel->id)->max('sort_order') + 1;
         Service::create(array_merge($data, ['hotel_id' => $hotel->id, 'is_active' => true, 'sort_order' => $sort]));
 
         return back()->with('success', 'Service category created.');
+    }
+
+    public function update(Request $request, string $slug, string $serviceId)
+    {
+        $hotel = $this->getHotel($slug);
+        $service = Service::where('hotel_id', $hotel->id)->findOrFail($serviceId);
+
+        $data = $request->validate([
+            'name' => 'required|string|max:100',
+            'icon' => 'nullable|string|max:50',
+            'color_theme' => 'nullable|string|max:30',
+            'description' => 'nullable|string|max:1000',
+            'image_url' => 'nullable|string|max:2048',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $service->update($data);
+
+        return back()->with('success', 'Service category updated.');
     }
 
     public function destroy(string $slug, string $serviceId)

@@ -53,6 +53,7 @@ Route::post('/stb/pair', [STBController::class, 'pair'])->middleware(['web', 'au
 Route::get('/stb/poll', [STBController::class, 'poll'])->middleware('throttle:60,1');
 
 Route::get('/hotel/{slug}/services', [PortalApiController::class, 'services'])->middleware('throttle:120,1');
+Route::get('/hotel/{slug}/promos', [PortalApiController::class, 'promos'])->middleware('throttle:120,1');
 Route::get('/services/{serviceId}/options', [PortalApiController::class, 'serviceOptions'])->middleware('throttle:120,1');
 Route::get('/mobile/{sessionId}/chat', [PortalApiController::class, 'chat'])->middleware('throttle:120,1');
 Route::post('/mobile/{sessionId}/chat', [PortalApiController::class, 'sendChat'])->middleware('throttle:60,1');

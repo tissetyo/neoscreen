@@ -1,0 +1,21 @@
+Neoscreen product demo QA
+
+Generated on: 2026-05-12, Asia/Jakarta
+Profile: product-platform
+
+Deliverables
+- Editable presentation: output/neoscreen-product-demo.pptx
+- Screenshots: assets/screenshots/*.png (23 captured screens)
+- Demo clips: assets/videos/neoscreen-tv-experience-demo.gif and assets/videos/neoscreen-operations-demo.gif
+- Slide previews: preview/slide-01.png through preview/slide-12.png
+- Contact sheet: preview/contact-sheet.png
+
+Checks
+- Presentation build completed: 12 slides, 1280x720.
+- Layout quality check completed: 0 errors, 2 minor tight-text warnings.
+- Visual pass completed on contact sheet and key corrected slides.
+- Recaptured TV Dashboard Canvas after replacing an earlier 404 capture.
+
+Notes
+- MP4 export was not produced because ffmpeg is not available in this local environment.
+- The demo videos are animated GIF clips saved as separate media files and referenced in the deck.

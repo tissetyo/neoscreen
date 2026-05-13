@@ -1,0 +1,1686 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/8g9v4a",
+    "id": "8g9v4a",
+    "slide": 10,
+    "layoutId": "ce605723-619f-4f2d-9403-72505fdfd01c",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "34b61882-96b9-43ee-ae2d-a71c8a5da4fa",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display",
+      "Aptos Mono"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "ce605723-619f-4f2d-9403-72505fdfd01c",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "34b61882-96b9-43ee-ae2d-a71c8a5da4fa",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "34b61882-96b9-43ee-ae2d-a71c8a5da4fa",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p8nqxs72",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#07101F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ih4byhgn",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        1280,
+        92
+      ],
+      "geometry": "rect",
+      "fillColor": "#0A1324",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/72x4nap4",
+      "id": "3",
+      "bbox": [
+        0,
+        91,
+        1280,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#29405F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0z61032l",
+      "id": "4",
+      "name": "kicker-marker",
+      "bbox": [
+        48,
+        36,
+        28,
+        3
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pkzupwb2",
+      "id": "5",
+      "name": "kicker-label",
+      "bbox": [
+        88,
+        24,
+        360,
+        28
+      ],
+      "geometry": "rect",
+      "text": "ARSITEKTUR",
+      "textPreview": "ARSITEKTUR",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "ARSITEKTUR"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "ARSITEKTUR",
+          "runs": [
+            {
+              "index": 1,
+              "text": "ARSITEKTUR",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#29D5C7",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/itgfmlkj",
+      "id": "6",
+      "bbox": [
+        48,
+        108,
+        520,
+        104
+      ],
+      "geometry": "rect",
+      "text": "APK native tetap kecil, sementara web app membawa produk live.",
+      "textPreview": "APK native tetap kecil, sementara web app membawa produk live.",
+      "resolvedFontSize": 30,
+      "resolvedTextStyle": {
+        "fontSize": 30,
+        "typeface": "Aptos Display",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "APK native tetap kecil, sementara"
+          },
+          {
+            "index": 2,
+            "text": "web app membawa produk live."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "APK native tetap kecil, sementara web app membawa produk live.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "APK native tetap kecil, sementara web app membawa produk live.",
+              "fontSize": 30,
+              "typeface": "Aptos Display",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7ed8bat4",
+      "id": "7",
+      "bbox": [
+        50,
+        218,
+        500,
+        38
+      ],
+      "geometry": "rect",
+      "text": "Instalasi lebih stabil dan fitur room bisa update lewat website.",
+      "textPreview": "Instalasi lebih stabil dan fitur room bisa update lewat website.",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Instalasi lebih stabil dan fitur room bisa update lewat website."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Instalasi lebih stabil dan fitur room bisa update lewat website.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Instalasi lebih stabil dan fitur room bisa update lewat website.",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0bi9s36h",
+      "id": "8",
+      "bbox": [
+        70,
+        304,
+        190,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pwb2hwfy",
+      "id": "9",
+      "bbox": [
+        86,
+        320,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/94fu18jq",
+      "id": "10",
+      "bbox": [
+        86,
+        325,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "1",
+      "textPreview": "1",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1",
+          "runs": [
+            {
+              "index": 1,
+              "text": "1",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kjm1cfa9",
+      "id": "11",
+      "bbox": [
+        128,
+        319,
+        116,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Android STB",
+      "textPreview": "Android STB",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Android STB"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Android STB",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Android STB",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/r2p8nqxs",
+      "id": "12",
+      "bbox": [
+        88,
+        360,
+        154,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Neoscreen Launcher boot fullscreen dan memuat setup.",
+      "textPreview": "Neoscreen Launcher boot fullscreen dan memuat setup.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Neoscreen Launcher boot"
+          },
+          {
+            "index": 2,
+            "text": "fullscreen dan memuat"
+          },
+          {
+            "index": 3,
+            "text": "setup."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Neoscreen Launcher boot fullscreen dan memuat setup.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Neoscreen Launcher boot fullscreen dan memuat setup.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2hwfyxob",
+      "id": "13",
+      "bbox": [
+        306,
+        304,
+        190,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9gr2p8nq",
+      "id": "14",
+      "bbox": [
+        322,
+        320,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gvy90je9",
+      "id": "15",
+      "bbox": [
+        322,
+        325,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "2",
+      "textPreview": "2",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "2"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "2",
+          "runs": [
+            {
+              "index": 1,
+              "text": "2",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ra5gbq1o",
+      "id": "16",
+      "bbox": [
+        364,
+        319,
+        116,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Setup screen",
+      "textPreview": "Setup screen",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Setup screen"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Setup screen",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Setup screen",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/2p8nqxs7",
+      "id": "17",
+      "bbox": [
+        324,
+        360,
+        154,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Membuat kode pairing pendek via /api/stb.",
+      "textPreview": "Membuat kode pairing pendek via /api/stb.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Membuat kode pairing"
+          },
+          {
+            "index": 2,
+            "text": "pendek via /api/stb."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Membuat kode pairing pendek via /api/stb.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Membuat kode pairing pendek via /api/stb.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9knih4by",
+      "id": "18",
+      "bbox": [
+        542,
+        304,
+        190,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kzupwb2h",
+      "id": "19",
+      "bbox": [
+        558,
+        320,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0nuxc3yl",
+      "id": "20",
+      "bbox": [
+        558,
+        325,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "3",
+      "textPreview": "3",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "3"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "3",
+          "runs": [
+            {
+              "index": 1,
+              "text": "3",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p8nqxs72",
+      "id": "21",
+      "bbox": [
+        600,
+        319,
+        116,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Front Office",
+      "textPreview": "Front Office",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Front Office"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Front Office",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Front Office",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ih4byhgn",
+      "id": "22",
+      "bbox": [
+        560,
+        360,
+        154,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Memilih room dan submit kode TV.",
+      "textPreview": "Memilih room dan submit kode TV.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Memilih room dan submit"
+          },
+          {
+            "index": 2,
+            "text": "kode TV."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Memilih room dan submit kode TV.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Memilih room dan submit kode TV.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/72x4nap4",
+      "id": "23",
+      "bbox": [
+        778,
+        304,
+        190,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0z61032l",
+      "id": "24",
+      "bbox": [
+        794,
+        320,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pkzupwb2",
+      "id": "25",
+      "bbox": [
+        794,
+        325,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "4",
+      "textPreview": "4",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "4"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "4",
+          "runs": [
+            {
+              "index": 1,
+              "text": "4",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/itgfmlkj",
+      "id": "26",
+      "bbox": [
+        836,
+        319,
+        116,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Room session",
+      "textPreview": "Room session",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Room session"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Room session",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Room session",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7ed8bat4",
+      "id": "27",
+      "bbox": [
+        796,
+        360,
+        154,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Server mengirim hotel, room, dan session token.",
+      "textPreview": "Server mengirim hotel, room, dan session token.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Server mengirim hotel,"
+          },
+          {
+            "index": 2,
+            "text": "room, dan session token."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Server mengirim hotel, room, dan session token.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Server mengirim hotel, room, dan session token.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0bi9s36h",
+      "id": "28",
+      "bbox": [
+        1014,
+        304,
+        190,
+        120
+      ],
+      "geometry": "rect",
+      "fillColor": "#101B31",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pwb2hwfy",
+      "id": "29",
+      "bbox": [
+        1030,
+        320,
+        30,
+        30
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fu18jqh0",
+      "id": "30",
+      "bbox": [
+        1030,
+        325,
+        30,
+        18
+      ],
+      "geometry": "rect",
+      "text": "5",
+      "textPreview": "5",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "5"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "5",
+          "runs": [
+            {
+              "index": 1,
+              "text": "5",
+              "fontSize": 13,
+              "typeface": "Aptos",
+              "color": "#07101F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m94fu18j",
+      "id": "31",
+      "bbox": [
+        1072,
+        319,
+        116,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Room TV",
+      "textPreview": "Room TV",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Room TV"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Room TV",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Room TV",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/x0nuxc3y",
+      "id": "32",
+      "bbox": [
+        1032,
+        360,
+        154,
+        42
+      ],
+      "geometry": "rect",
+      "text": "APK membuka /d/{hotel}/{room}/main dengan cookie.",
+      "textPreview": "APK membuka /d/{hotel}/{room}/main dengan cookie.",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "APK membuka"
+          },
+          {
+            "index": 2,
+            "text": "/d/{hotel}/{room}/main"
+          },
+          {
+            "index": 3,
+            "text": "dengan cookie."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "APK membuka /d/{hotel}/{room}/main dengan cookie.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "APK membuka /d/{hotel}/{room}/main dengan cookie.",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4fu18jqh",
+      "id": "33",
+      "bbox": [
+        260,
+        358,
+        46,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fil0rqd4",
+      "id": "34",
+      "bbox": [
+        298,
+        353,
+        10,
+        10
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 35,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qxs72x4n",
+      "id": "35",
+      "bbox": [
+        496,
+        358,
+        46,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 36,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xobm58z2",
+      "id": "36",
+      "bbox": [
+        534,
+        353,
+        10,
+        10
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 37,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/83itgfml",
+      "id": "37",
+      "bbox": [
+        732,
+        358,
+        46,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 38,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fepkzupw",
+      "id": "38",
+      "bbox": [
+        770,
+        353,
+        10,
+        10
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 39,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mtwra5gb",
+      "id": "39",
+      "bbox": [
+        968,
+        358,
+        46,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 40,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6tovahoz",
+      "id": "40",
+      "bbox": [
+        1006,
+        353,
+        10,
+        10
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 41,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vahoza1g",
+      "id": "41",
+      "bbox": [
+        72,
+        500,
+        1134,
+        88
+      ],
+      "geometry": "rect",
+      "fillColor": "#14243B",
+      "lineColor": "#29405F",
+      "lineWidth": 1
+    },
+    {
+      "order": 42,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ovahoza1",
+      "id": "42",
+      "bbox": [
+        98,
+        520,
+        1082,
+        44
+      ],
+      "geometry": "rect",
+      "text": "Payoff operasional: hotel install sekali, pairing per room, lalu menerima update dashboard, IPTV, chat, service, alarm, dan canvas tanpa reinstall APK.",
+      "textPreview": "Payoff operasional: hotel install sekali, pairing per room, lalu menerima update dashboard, IPTV, chat, service, alarm, dan canvas tanpa ...",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Payoff operasional: hotel install sekali, pairing per room, lalu menerima update dashboard, IPTV, chat, service, alarm, dan"
+          },
+          {
+            "index": 2,
+            "text": "canvas tanpa reinstall APK."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Payoff operasional: hotel install sekali, pairing per room, lalu menerima update dashboard, IPTV, chat, service, alarm, dan canvas tanpa reinstall APK.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Payoff operasional: hotel install sekali, pairing per room, lalu menerima update dashboard, IPTV, chat, service, alarm, dan canvas tanpa reinstall APK.",
+              "fontSize": 18,
+              "typeface": "Aptos",
+              "color": "#F8FAFC",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 43,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dg7adsji",
+      "id": "43",
+      "bbox": [
+        96,
+        618,
+        7,
+        7
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 44,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6hcrmhk3",
+      "id": "44",
+      "bbox": [
+        114,
+        610,
+        520,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Native layer: launch, fullscreen, D-pad bridge, boot receiver, cookie injection.",
+      "textPreview": "Native layer: launch, fullscreen, D-pad bridge, boot receiver, cookie injection.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Native layer: launch, fullscreen, D-pad bridge, boot receiver, cookie"
+          },
+          {
+            "index": 2,
+            "text": "injection."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Native layer: launch, fullscreen, D-pad bridge, boot receiver, cookie injection.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Native layer: launch, fullscreen, D-pad bridge, boot receiver, cookie injection.",
+              "fontSize": 16,
+              "typeface": "Aptos",
+              "color": "#DCE7F6"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 45,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z25kb6xk",
+      "id": "45",
+      "bbox": [
+        660,
+        618,
+        7,
+        7
+      ],
+      "geometry": "rect",
+      "fillColor": "#29D5C7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 46,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/onyd0z61",
+      "id": "46",
+      "bbox": [
+        678,
+        610,
+        470,
+        42
+      ],
+      "geometry": "rect",
+      "text": "Web layer: semua UI tamu dan operasi staff/admin.",
+      "textPreview": "Web layer: semua UI tamu dan operasi staff/admin.",
+      "resolvedFontSize": 16,
+      "resolvedTextStyle": {
+        "fontSize": 16,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Web layer: semua UI tamu dan operasi staff/admin."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Web layer: semua UI tamu dan operasi staff/admin.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Web layer: semua UI tamu dan operasi staff/admin.",
+              "fontSize": 16,
+              "typeface": "Aptos",
+              "color": "#DCE7F6"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 47,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d8v6psfi",
+      "id": "47",
+      "bbox": [
+        48,
+        674,
+        420,
+        22
+      ],
+      "geometry": "rect",
+      "text": "Demo produk Neoscreen",
+      "textPreview": "Demo produk Neoscreen",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Demo produk Neoscreen"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Demo produk Neoscreen",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Demo produk Neoscreen",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 48,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6dcbulwv",
+      "id": "48",
+      "bbox": [
+        1184,
+        668,
+        48,
+        28
+      ],
+      "geometry": "rect",
+      "text": "10",
+      "textPreview": "10",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos Mono",
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "10"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "10",
+          "runs": [
+            {
+              "index": 1,
+              "text": "10",
+              "fontSize": 14,
+              "typeface": "Aptos Mono",
+              "color": "#8FA4BF"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

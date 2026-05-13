@@ -375,6 +375,7 @@ class FrontOfficeController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'image_url' => 'nullable|string|max:2048',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
         ]);

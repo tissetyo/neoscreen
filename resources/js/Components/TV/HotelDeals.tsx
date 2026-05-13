@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRoomStore } from '@/stores/roomStore';
-import { Sparkles } from 'lucide-react';
+import { ChevronRight, Sparkles } from 'lucide-react';
 
 interface Props {
   onOpenPromos?: () => void;
@@ -35,6 +35,8 @@ export default function HotelDeals({ onOpenPromos }: Props) {
   }, [promos]);
 
   const hasPromos = promos && promos.length > 0;
+  const currentPromo = hasPromos ? promos[currentIndex] : null;
+  const currentPoster = currentPromo?.poster_url || currentPromo?.image_url || null;
 
   return (
     <div
@@ -45,19 +47,19 @@ export default function HotelDeals({ onOpenPromos }: Props) {
     >
       <div className="hotel-deals-header flex items-center justify-between mb-[clamp(8px,1.6cqh,18px)] z-10 relative">
         <div className="flex items-center gap-2">
-          <span className="hotel-deals-icon text-[clamp(14px,1.6cqw,30px)]">✨</span>
+          <Sparkles className="hotel-deals-icon h-[clamp(14px,1.6cqw,30px)] w-[clamp(14px,1.6cqw,30px)] text-white/80" />
           <span className="hotel-deals-title text-white text-[clamp(12px,1.45cqw,28px)] font-semibold">Hotel Deals</span>
         </div>
         {hasPromos && (
-          <span className="text-white/50 text-[clamp(10px,1.1cqw,20px)]">→</span>
+          <ChevronRight className="h-[clamp(12px,1.2cqw,22px)] w-[clamp(12px,1.2cqw,22px)] text-white/50" />
         )}
       </div>
       <div className="flex-1 overflow-hidden rounded-xl relative">
         <AnimatePresence mode="wait">
-          {hasPromos ? (
+          {hasPromos && currentPoster ? (
             <motion.img
               key={currentIndex}
-              src={promos[currentIndex].poster_url}
+              src={currentPoster}
               alt="Promo"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -65,6 +67,18 @@ export default function HotelDeals({ onOpenPromos }: Props) {
               transition={{ duration: 0.8 }}
               className="w-full h-full object-cover rounded-xl absolute inset-0"
             />
+          ) : hasPromos ? (
+            <motion.div
+              key={currentPromo?.id || currentIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              className="w-full h-full absolute inset-0 rounded-xl flex flex-col items-center justify-center bg-gradient-to-br from-rose-500/25 to-amber-400/20 px-[1.2cqw] text-center"
+            >
+              <Sparkles className="w-[clamp(28px,5cqw,76px)] h-[clamp(28px,5cqw,76px)] text-white/45 mb-[0.8vh]" />
+              <span className="line-clamp-2 text-white text-[clamp(11px,1.35cqw,24px)] font-semibold">{currentPromo?.title}</span>
+            </motion.div>
           ) : (
             <motion.div
               initial={{ opacity: 0 }}

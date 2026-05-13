@@ -1,7 +1,31 @@
 import StaffLayout from '@/Layouts/StaffLayout';
 import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
-import { Plus, Trash2, Utensils, Car, Shirt, Coffee, Sparkles, Scissors, ShoppingBag, Map, Briefcase, Bell, Check, X } from 'lucide-react';
+import { ChangeEvent, cloneElement, useEffect, useRef, useState } from 'react';
+import {
+    Baby,
+    Bell,
+    Bike,
+    Briefcase,
+    Car,
+    Check,
+    Coffee,
+    Dumbbell,
+    HeartPulse,
+    ImageUp,
+    Luggage,
+    Map,
+    Plane,
+    Plus,
+    Scissors,
+    Shirt,
+    ShoppingBag,
+    ShowerHead,
+    Sparkles,
+    Trash2,
+    Utensils,
+    Wine,
+    X,
+} from 'lucide-react';
 
 const ICONS: Record<string, JSX.Element> = {
     Utensils: <Utensils className="w-5 h-5" />,
@@ -14,6 +38,14 @@ const ICONS: Record<string, JSX.Element> = {
     Map: <Map className="w-5 h-5" />,
     Briefcase: <Briefcase className="w-5 h-5" />,
     Bell: <Bell className="w-5 h-5" />,
+    Plane: <Plane className="w-5 h-5" />,
+    Dumbbell: <Dumbbell className="w-5 h-5" />,
+    HeartPulse: <HeartPulse className="w-5 h-5" />,
+    Baby: <Baby className="w-5 h-5" />,
+    Bike: <Bike className="w-5 h-5" />,
+    Wine: <Wine className="w-5 h-5" />,
+    Luggage: <Luggage className="w-5 h-5" />,
+    ShowerHead: <ShowerHead className="w-5 h-5" />,
 };
 
 const COLORS = [
@@ -25,7 +57,16 @@ const COLORS = [
     { id: 'violet', class: 'bg-violet-500' },
 ];
 
-interface Service { id: string; name: string; icon: string | null; color_theme: string | null; is_active: boolean; options?: ServiceOption[]; }
+interface Service {
+    id: string;
+    name: string;
+    icon: string | null;
+    color_theme: string | null;
+    description: string | null;
+    image_url: string | null;
+    is_active: boolean;
+    options?: ServiceOption[];
+}
 interface ServiceOption { id: string; name: string; price: number; }
 interface Props { slug: string; services: Service[]; }
 
@@ -40,8 +81,32 @@ export default function Services({ slug, services: initialServices }: Props) {
     const [optionPrice, setOptionPrice] = useState('');
     const [savingCat, setSavingCat] = useState(false);
     const [savingOpt, setSavingOpt] = useState(false);
+    const [savingSelected, setSavingSelected] = useState(false);
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
+    const [editName, setEditName] = useState('');
+    const [editIcon, setEditIcon] = useState('Bell');
+    const [editColor, setEditColor] = useState('teal');
+    const [editDescription, setEditDescription] = useState('');
+    const [editImageUrl, setEditImageUrl] = useState('');
+    const [editActive, setEditActive] = useState(true);
+    const servicePhotoRef = useRef<HTMLInputElement | null>(null);
 
     const selected = services.find(s => s.id === selectedId);
+
+    useEffect(() => {
+        if (!selected) return;
+        setEditName(selected.name || '');
+        setEditIcon(selected.icon || 'Bell');
+        setEditColor(selected.color_theme || 'teal');
+        setEditDescription(selected.description || '');
+        setEditImageUrl(selected.image_url || '');
+        setEditActive(selected.is_active !== false);
+    }, [selected?.id]);
+
+    const renderIcon = (value: string | null | undefined, className = 'w-5 h-5') => {
+        if (value && ICONS[value]) return cloneElement(ICONS[value], { className });
+        return <Bell className={className} />;
+    };
 
     const createCategory = () => {
         if (!newName.trim()) return;
@@ -66,6 +131,49 @@ export default function Services({ slug, services: initialServices }: Props) {
             },
             preserveScroll: true,
         });
+    };
+
+    const updateSelected = () => {
+        if (!selected || !editName.trim()) return;
+        setSavingSelected(true);
+        const payload = {
+            name: editName.trim(),
+            icon: editIcon,
+            color_theme: editColor,
+            description: editDescription,
+            image_url: editImageUrl || null,
+            is_active: editActive,
+        };
+
+        router.patch(`/${slug}/frontoffice/services/${selected.id}`, payload, {
+            onSuccess: () => {
+                setServices(services.map(s => s.id === selected.id ? { ...s, ...payload } : s));
+                setSavingSelected(false);
+            },
+            onError: () => setSavingSelected(false),
+            preserveScroll: true,
+        });
+    };
+
+    const uploadServicePhoto = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (servicePhotoRef.current) servicePhotoRef.current.value = '';
+        if (!file) return;
+
+        setUploadingPhoto(true);
+        const form = new FormData();
+        form.append('file', file);
+
+        try {
+            const res = await fetch('/api/upload/service-photo', { method: 'POST', body: form });
+            const data = await res.json();
+            if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+            setEditImageUrl(`${data.url}?t=${Date.now()}`);
+        } catch (error: any) {
+            alert(error?.message || 'Upload failed');
+        } finally {
+            setUploadingPhoto(false);
+        }
     };
 
     const addOption = () => {
@@ -143,7 +251,7 @@ export default function Services({ slug, services: initialServices }: Props) {
                                 </div>
                             )}
                             {services.map(s => {
-                                const icon = ICONS[s.icon || ''] || <span className="text-base">{s.icon || '🛎️'}</span>;
+                                const icon = renderIcon(s.icon);
                                 const colorCls = COLORS.find(c => c.id === s.color_theme)?.class || 'bg-teal-500';
                                 const active = selectedId === s.id;
                                 return (
@@ -172,7 +280,7 @@ export default function Services({ slug, services: initialServices }: Props) {
                             <>
                                 <div className="p-5 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
                                     <span className={`p-2.5 rounded-xl text-white ${COLORS.find(c => c.id === selected.color_theme)?.class || 'bg-teal-500'}`}>
-                                        {ICONS[selected.icon || ''] || <Bell size={18} />}
+                                        {renderIcon(selected.icon)}
                                     </span>
                                     <div>
                                         <h2 className="font-medium text-slate-800 text-lg">{selected.name}</h2>
@@ -180,6 +288,70 @@ export default function Services({ slug, services: initialServices }: Props) {
                                     </div>
                                 </div>
                                 <div className="flex-1 overflow-y-auto p-5 bg-slate-50/30">
+                                    <div className="mb-6 grid grid-cols-1 xl:grid-cols-[1fr_260px] gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                                        <div className="space-y-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                <div>
+                                                    <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1">Service Name</label>
+                                                    <input value={editName} onChange={e => setEditName(e.target.value)}
+                                                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-slate-50 focus:bg-white focus:border-teal-500 outline-none" />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1">Visible on TV & mobile</label>
+                                                    <button type="button" onClick={() => setEditActive(!editActive)}
+                                                        className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold border transition-colors ${editActive ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
+                                                        {editActive ? 'Active' : 'Hidden'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1">Description</label>
+                                                <textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={3}
+                                                    placeholder="Optional text shown in service surfaces"
+                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-slate-50 focus:bg-white focus:border-teal-500 outline-none resize-none" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-2">Icon library</p>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {Object.entries(ICONS).map(([name, cmp]) => (
+                                                        <button key={name} type="button" onClick={() => setEditIcon(name)} title={name}
+                                                            className={`w-9 h-9 rounded-lg flex items-center justify-center ${editIcon === name ? 'bg-teal-500 text-white' : 'bg-white border text-slate-400 hover:bg-slate-100'}`}>
+                                                            {cmp}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-2">Color</p>
+                                                <div className="flex gap-2">
+                                                    {COLORS.map(c => (
+                                                        <button key={c.id} type="button" onClick={() => setEditColor(c.id)}
+                                                            className={`w-7 h-7 rounded-full ${c.class} ${editColor === c.id ? 'ring-2 ring-offset-2 ring-slate-800 scale-110' : 'hover:scale-105'} transition-all`} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <input ref={servicePhotoRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={uploadServicePhoto} />
+                                            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                                                {editImageUrl ? (
+                                                    <img src={editImageUrl} alt={editName || selected.name} className="h-40 w-full object-cover" />
+                                                ) : (
+                                                    <div className="flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-sky-100 text-4xl">{renderIcon(editIcon, 'w-10 h-10')}</div>
+                                                )}
+                                                <button type="button" onClick={() => servicePhotoRef.current?.click()} disabled={uploadingPhoto}
+                                                    className="flex w-full items-center justify-center gap-2 border-t border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+                                                    <ImageUp size={16} /> {uploadingPhoto ? 'Uploading...' : 'Upload service photo'}
+                                                </button>
+                                            </div>
+                                            <button onClick={updateSelected} disabled={savingSelected || !editName.trim()}
+                                                className="mt-3 w-full bg-teal-600 hover:bg-teal-700 text-white py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 disabled:opacity-50">
+                                                <Check size={15} /> {savingSelected ? 'Saving...' : 'Save service'}
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     {/* Add Package Row */}
                                     <div className="flex gap-3 mb-6 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
                                         <div className="flex-1">

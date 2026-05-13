@@ -13,6 +13,7 @@ use App\Http\Controllers\Staff\TeamController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\GuideController as AdminGuideController;
 use App\Http\Controllers\Mobile\PortalController as MobilePortalController;
+use App\Http\Controllers\DemoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ use App\Http\Controllers\Mobile\PortalController as MobilePortalController;
 Route::get('/', function () { return inertia('Welcome'); });
 Route::get('/portal', function () { return inertia('Welcome'); })->name('portal');
 Route::get('/launcher', function () { return inertia('Launcher'); })->name('launcher');
+Route::get('/demo', [DemoController::class, 'show'])->name('demo');
 
 // TV Routes — `/d/{slug}/preview` must be registered before `/d/{slug}/{code}` or "preview" is treated as a room code
 Route::get('/d/{slug}/preview', [DashboardController::class, 'preview'])->middleware('auth');
@@ -88,23 +90,26 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/promos/{promoId}/toggle', [FrontOfficeController::class, 'togglePromo'])->name('promos.toggle');
         Route::delete('/promos/{promoId}', [FrontOfficeController::class, 'deletePromo'])->name('promos.delete');
 
-        Route::middleware('role:manager')->group(function () {
-            // Services (Manager only)
-            Route::get('/services', [ServicesController::class, 'index'])->name('services');
-            Route::post('/services', [ServicesController::class, 'store'])->name('services.store');
-            Route::delete('/services/{serviceId}', [ServicesController::class, 'destroy'])->name('services.delete');
-            Route::post('/services/{serviceId}/options', [ServicesController::class, 'storeOption'])->name('services.options.store');
-            Route::delete('/services/{serviceId}/options/{optionId}', [ServicesController::class, 'destroyOption'])->name('services.options.delete');
+        // Services
+        Route::get('/services', [ServicesController::class, 'index'])->name('services');
+        Route::post('/services', [ServicesController::class, 'store'])->name('services.store');
+        Route::patch('/services/{serviceId}', [ServicesController::class, 'update'])->name('services.update');
+        Route::delete('/services/{serviceId}', [ServicesController::class, 'destroy'])->name('services.delete');
+        Route::post('/services/{serviceId}/options', [ServicesController::class, 'storeOption'])->name('services.options.store');
+        Route::delete('/services/{serviceId}/options/{optionId}', [ServicesController::class, 'destroyOption'])->name('services.options.delete');
 
-            // Settings (Manager only)
-            Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-            Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
-            Route::patch('/settings/tv', [SettingsController::class, 'updateTv'])->name('settings.tv');
-            Route::post('/settings/media', [SettingsController::class, 'storeMedia'])->name('settings.media.store');
-            Route::patch('/settings/media/{mediaId}', [SettingsController::class, 'updateMedia'])->name('settings.media.update');
-            Route::delete('/settings/media/{mediaId}', [SettingsController::class, 'deleteMedia'])->name('settings.media.delete');
-            Route::post('/settings/announcements', [SettingsController::class, 'addAnnouncement'])->name('settings.announcements.store');
-            Route::delete('/settings/announcements/{id}', [SettingsController::class, 'deleteAnnouncement'])->name('settings.announcements.delete');
+        // Settings
+        Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+        Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
+        Route::patch('/settings/tv', [SettingsController::class, 'updateTv'])->name('settings.tv');
+        Route::post('/settings/media', [SettingsController::class, 'storeMedia'])->name('settings.media.store');
+        Route::patch('/settings/media/{mediaId}', [SettingsController::class, 'updateMedia'])->name('settings.media.update');
+        Route::delete('/settings/media/{mediaId}', [SettingsController::class, 'deleteMedia'])->name('settings.media.delete');
+        Route::post('/settings/announcements', [SettingsController::class, 'addAnnouncement'])->name('settings.announcements.store');
+        Route::delete('/settings/announcements/{id}', [SettingsController::class, 'deleteAnnouncement'])->name('settings.announcements.delete');
+
+        Route::middleware('role:manager')->group(function () {
+            // Team/user management stays manager-only.
             Route::get('/team', [TeamController::class, 'index'])->name('team');
             Route::post('/team', [TeamController::class, 'store'])->name('team.store');
             Route::patch('/team/{userId}/suspend', [TeamController::class, 'toggleSuspend'])->name('team.suspend');

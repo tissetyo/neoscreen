@@ -1,9 +1,19 @@
 import StaffLayout from '@/Layouts/StaffLayout';
 import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { ChangeEvent, useRef, useState } from 'react';
+import { ImageUp, Plus, Ticket, X } from 'lucide-react';
 
-interface Promo { id: string; title: string; description: string | null; poster_url: string | null; is_active: boolean; start_date: string | null; end_date: string | null; created_at: string; }
+interface Promo {
+    id: string;
+    title: string;
+    description: string | null;
+    image_url?: string | null;
+    poster_url: string | null;
+    is_active: boolean;
+    start_date: string | null;
+    end_date: string | null;
+    created_at: string;
+}
 interface Props { slug: string; promos: Promo[]; }
 
 export default function Promos({ slug, promos: initialPromos }: Props) {
@@ -11,15 +21,47 @@ export default function Promos({ slug, promos: initialPromos }: Props) {
     const [showForm, setShowForm] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [saving, setSaving] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const fileRef = useRef<HTMLInputElement | null>(null);
+
+    const uploadPoster = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (fileRef.current) fileRef.current.value = '';
+        if (!file) return;
+
+        setUploading(true);
+        const form = new FormData();
+        form.append('file', file);
+
+        try {
+            const res = await fetch('/api/upload/promo-poster', { method: 'POST', body: form });
+            const data = await res.json();
+            if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+            setImageUrl(`${data.url}?t=${Date.now()}`);
+        } catch (error: any) {
+            alert(error?.message || 'Upload failed');
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const save = () => {
         if (!title.trim()) return;
         setSaving(true);
-        router.post(`/${slug}/frontoffice/promos`, { title, description, start_date: startDate || null, end_date: endDate || null }, {
-            onSuccess: () => { setTitle(''); setDescription(''); setStartDate(''); setEndDate(''); setShowForm(false); setSaving(false); },
+        router.post(`/${slug}/frontoffice/promos`, { title, description, image_url: imageUrl || null, start_date: startDate || null, end_date: endDate || null }, {
+            onSuccess: () => {
+                setTitle('');
+                setDescription('');
+                setImageUrl('');
+                setStartDate('');
+                setEndDate('');
+                setShowForm(false);
+                setSaving(false);
+            },
             onError: () => setSaving(false),
         });
     };
@@ -58,13 +100,39 @@ export default function Promos({ slug, promos: initialPromos }: Props) {
                 {showForm && (
                     <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
                         <h2 className="font-medium text-slate-800 mb-5">New Promotion</h2>
-                        <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5 mb-4">
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Title *</label>
-                                <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Weekend Brunch Special"
-                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-pink-400" />
+                                <div className="mb-4">
+                                    <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Title *</label>
+                                    <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Weekend Brunch Special"
+                                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-pink-400" />
+                                </div>
+                                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Description</label>
+                                <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder="Describe the promotion..."
+                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-pink-400 resize-none" />
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div>
+                                <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={uploadPoster} />
+                                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                                    {imageUrl ? (
+                                        <img src={imageUrl} alt="Promo preview" className="h-40 w-full object-cover" />
+                                    ) : (
+                                        <div className="flex h-40 items-center justify-center bg-gradient-to-br from-pink-50 to-rose-100 text-pink-500">
+                                            <Ticket size={42} />
+                                        </div>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => fileRef.current?.click()}
+                                        disabled={uploading}
+                                        className="flex w-full items-center justify-center gap-2 border-t border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                                    >
+                                        <ImageUp size={16} /> {uploading ? 'Uploading...' : 'Upload deal photo'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Valid From</label>
                                     <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
@@ -73,12 +141,6 @@ export default function Promos({ slug, promos: initialPromos }: Props) {
                                     <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Valid Until</label>
                                     <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
                                 </div>
-                            </div>
-                        </div>
-                        <div className="mb-5">
-                            <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Description</label>
-                            <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="Describe the promotion..."
-                                className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-pink-400 resize-none" />
                         </div>
                         <button onClick={save} disabled={saving || !title.trim()} className="px-6 py-2.5 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-sm font-medium disabled:opacity-50 transition-colors">
                             {saving ? 'Saving...' : 'Save Promo'}
@@ -88,19 +150,21 @@ export default function Promos({ slug, promos: initialPromos }: Props) {
 
                 {promos.length === 0 ? (
                     <div className="text-center py-16 bg-white border border-dashed border-slate-200 rounded-3xl">
-                        <p className="text-4xl mb-3">🎟️</p>
+                        <Ticket size={42} className="mx-auto mb-3 text-pink-300" />
                         <p className="text-slate-800 font-medium">No promos yet</p>
                         <p className="text-slate-500 text-sm mt-1">Create your first promotion to show it on room TVs.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {promos.map(p => (
+                        {promos.map(p => {
+                            const poster = p.poster_url || p.image_url;
+                            return (
                             <div key={p.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                {p.poster_url ? (
-                                    <img src={p.poster_url} alt={p.title} className="w-full h-40 object-cover" />
+                                {poster ? (
+                                    <img src={poster} alt={p.title} className="w-full h-40 object-cover" />
                                 ) : (
-                                    <div className="w-full h-40 bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center">
-                                        <span className="text-4xl">🎟️</span>
+                                    <div className="w-full h-40 bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center text-pink-500">
+                                        <Ticket size={42} />
                                     </div>
                                 )}
                                 <div className="p-5">
@@ -125,7 +189,8 @@ export default function Promos({ slug, promos: initialPromos }: Props) {
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>

@@ -1,0 +1,8 @@
+task mode: create
+primary deck-profile: product-platform
+secondary gates: targeted media, because the deck uses captured product screenshots and demo GIFs.
+required proof objects: product surface map, STB pairing workflow, TV remote journey, admin canvas proof, operations dashboard proof, demo media library.
+source assets: locally captured screenshots from http://127.0.0.1:8000 and generated GIF clips from those screenshots.
+brand constraints: use typed Neoscreen wordmark only; no fabricated logo marks beyond the app's existing N tile visible in captured UI.
+QA gates: screenshots must be readable, product flow must be concrete to Neoscreen, and architecture labels must connect Android STB, Laravel/Inertia web app, room session cookie, Front Office pairing, and admin canvas.
+known missing inputs: no customer metrics, commercial pricing, or live deployment footage supplied.

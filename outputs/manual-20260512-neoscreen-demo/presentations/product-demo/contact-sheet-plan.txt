@@ -1,0 +1,13 @@
+Layout rhythm:
+1. Full-bleed screenshot cover with thesis rail.
+2. Platform map diagram with screenshot strip.
+3. Large hero screenshot with callout stack.
+4. Split proof screenshot plus remote UX rules.
+5. Two-up screenshot comparison.
+6. Installer journey with setup code proof.
+7. Operations dashboard plus metrics rail.
+8. Conversation/mobile proof pair.
+9. Admin control surface with canvas proof.
+10. Architecture workflow diagram.
+11. Demo media library with GIF thumbnails.
+12. Pilot checklist and deployment close.

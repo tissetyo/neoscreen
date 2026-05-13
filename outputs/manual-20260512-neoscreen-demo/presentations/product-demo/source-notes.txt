@@ -1,0 +1,11 @@
+Sources used:
+- Local Neoscreen Laravel/Inertia app at http://127.0.0.1:8000.
+- Demo database users: superadmin, frontoffice, and demo room/mobile sessions.
+- Screenshots captured with the Codex in-app browser into assets/screenshots.
+- GIF demo clips generated from captured screenshots into assets/videos.
+- Android APK metadata verified locally for Neoscreen Launcher v2.0.0.
+
+Identity assets:
+- No external logos used.
+- Neoscreen name appears as editable text and in product screenshots.
+- Any N tile visible is from the product UI screenshot, not a recreated brand mark.

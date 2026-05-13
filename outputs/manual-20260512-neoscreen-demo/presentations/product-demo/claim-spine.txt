@@ -1,0 +1,17 @@
+Thesis: Neoscreen is no longer just a room TV screen; it is an integrated guest-facing TV platform with hotel operations, STB installation, admin control, IPTV, and mobile companion flows.
+Audience: hotel owners, operations leaders, technical stakeholders, and sales/demo viewers.
+Arc: show the connected surfaces, prove each with live product screenshots, then close with install/deployment readiness.
+
+Slides:
+1. Neoscreen now connects every guest-room surface: cover screenshot and product thesis.
+2. The product is one operating system, not separate screens: platform map.
+3. The room TV is the primary guest surface: TV dashboard screenshot.
+4. Remote-first UX makes the TV usable by non-technical guests: remote guide/settings proof.
+5. IPTV is integrated into the same TV navigation model: IPTV modal and admin controls.
+6. STB Launcher v2 turns installation into a staff pairing flow: launcher and setup code screenshots.
+7. Front Office owns live room operations and STB pairing: dashboard and pairing screenshots.
+8. Chat and mobile companion remove friction from guest service: chat and mobile screenshots.
+9. Super Admin controls tenant setup, canvas layout, IPTV policy, and STB fleet: admin proof.
+10. The installation architecture keeps native setup small and web updates centralized: workflow diagram.
+11. Demo media package contains reusable product clips: GIF thumbnails and file references.
+12. Deployment is ready for a room-by-room pilot: next-step checklist.
