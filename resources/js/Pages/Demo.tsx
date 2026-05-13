@@ -60,6 +60,12 @@ type Props = {
     facts: Facts;
 };
 
+type SlideDraftPayload = {
+    slides: DemoSlide[];
+    factsSignature: string;
+    savedAt: string;
+};
+
 const THEMES = {
     teal: {
         id: 'teal',
@@ -135,8 +141,10 @@ const THEMES = {
 
 type ThemeId = keyof typeof THEMES;
 
-const STORAGE_KEY = 'neoscreen_demo_pitch_slides_v2';
-const SETTINGS_KEY = 'neoscreen_demo_pitch_settings_v1';
+const LEGACY_STORAGE_KEY = 'neoscreen_demo_pitch_slides_v2';
+const LEGACY_SETTINGS_KEY = 'neoscreen_demo_pitch_settings_v1';
+const SESSION_STORAGE_KEY = 'neoscreen_demo_pitch_session_slides_v1';
+const SESSION_SETTINGS_KEY = 'neoscreen_demo_pitch_session_settings_v1';
 const nf = new Intl.NumberFormat('id-ID');
 
 const fmt = (value: number) => nf.format(value || 0);
@@ -314,6 +322,7 @@ function buildSlides(facts: Facts): DemoSlide[] {
 
 export default function Demo({ facts }: Props) {
     const baseSlides = useMemo(() => buildSlides(facts), [facts]);
+    const factsSignature = useMemo(() => JSON.stringify(facts), [facts]);
     const [slides, setSlides] = useState<DemoSlide[]>(baseSlides);
     const [activeIndex, setActiveIndex] = useState(0);
     const [studioOpen, setStudioOpen] = useState(false);
@@ -321,13 +330,17 @@ export default function Demo({ facts }: Props) {
     const [pin, setPin] = useState('');
     const [pinError, setPinError] = useState('');
     const [themeId, setThemeId] = useState<ThemeId>('teal');
+    const [saveNotice, setSaveNotice] = useState('');
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const activeSlide = slides[activeIndex] ?? slides[0];
     const activeTheme = THEMES[themeId] || THEMES.teal;
 
     useEffect(() => {
-        const savedSettings = window.localStorage.getItem(SETTINGS_KEY);
+        window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+        window.localStorage.removeItem(LEGACY_SETTINGS_KEY);
+
+        const savedSettings = window.sessionStorage.getItem(SESSION_SETTINGS_KEY);
         if (savedSettings) {
             try {
                 const parsed = JSON.parse(savedSettings);
@@ -337,18 +350,20 @@ export default function Demo({ facts }: Props) {
             } catch {}
         }
 
-        const savedSlides = window.localStorage.getItem(STORAGE_KEY);
+        const savedSlides = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
         if (savedSlides) {
             try {
-                const parsed = JSON.parse(savedSlides) as DemoSlide[];
-                if (Array.isArray(parsed) && parsed.length) {
-                    setSlides(parsed);
+                const parsed = JSON.parse(savedSlides) as SlideDraftPayload;
+                if (parsed.factsSignature === factsSignature && Array.isArray(parsed.slides) && parsed.slides.length) {
+                    setSlides(parsed.slides);
+                } else {
+                    window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
                 }
             } catch {
-                window.localStorage.removeItem(STORAGE_KEY);
+                window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
             }
         }
-    }, []);
+    }, [factsSignature]);
 
     useEffect(() => {
         const onKey = (event: KeyboardEvent) => {
@@ -371,14 +386,24 @@ export default function Demo({ facts }: Props) {
         return () => window.removeEventListener('keydown', onKey);
     }, [slides.length]);
 
+    const saveSessionDraft = (nextSlides: DemoSlide[]) => {
+        window.sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+            slides: nextSlides,
+            factsSignature,
+            savedAt: new Date().toISOString(),
+        } satisfies SlideDraftPayload));
+    };
+
     const persistSlides = (nextSlides: DemoSlide[]) => {
         setSlides(nextSlides);
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextSlides));
+        saveSessionDraft(nextSlides);
+        setSaveNotice('Perubahan otomatis tersimpan hanya untuk sesi browser ini.');
     };
 
     const updateTheme = (newTheme: ThemeId) => {
         setThemeId(newTheme);
-        window.localStorage.setItem(SETTINGS_KEY, JSON.stringify({ themeId: newTheme }));
+        window.sessionStorage.setItem(SESSION_SETTINGS_KEY, JSON.stringify({ themeId: newTheme }));
+        setSaveNotice('Tema diterapkan untuk sesi browser ini.');
     };
 
     const updateActiveSlide = (patch: Partial<DemoSlide>) => {
@@ -408,9 +433,16 @@ export default function Demo({ facts }: Props) {
     };
 
     const resetSlides = () => {
-        window.localStorage.removeItem(STORAGE_KEY);
+        window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
         setSlides(baseSlides);
         setActiveIndex(0);
+        setSaveNotice('Draft sesi dihapus. Konten kembali mengikuti data terbaru.');
+    };
+
+    const applySessionDraft = () => {
+        saveSessionDraft(slides);
+        setSaveNotice('Draft sesi diterapkan. Data utama tidak berubah.');
+        setStudioOpen(false);
     };
 
     const handleImageUpload = (file: File | undefined) => {
@@ -634,6 +666,9 @@ export default function Demo({ facts }: Props) {
                                     <div className="mt-10 space-y-8">
                                         <div>
                                             <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">Global Warna Tema</p>
+                                            <p className="mt-2 text-xs leading-relaxed text-zinc-500">
+                                                Perubahan demo bersifat sementara di browser ini, sehingga data pitch tetap bisa mengikuti update sistem dari waktu ke waktu.
+                                            </p>
                                             <div className="mt-4 flex flex-wrap gap-4">
                                                 {Object.values(THEMES).map((t) => (
                                                     <button
@@ -699,19 +734,25 @@ export default function Demo({ facts }: Props) {
                                         <div className="flex gap-4 pt-4 border-t border-zinc-800">
                                             <button
                                                 type="button"
-                                                onClick={() => window.localStorage.setItem(STORAGE_KEY, JSON.stringify(slides))}
+                                                onClick={applySessionDraft}
                                                 className={`flex-1 rounded-xl px-5 py-3.5 text-sm font-medium text-white transition-all ${activeTheme.bgSolid} ${activeTheme.bgSolidHover}`}
                                             >
-                                                Simpan Permanen
+                                                Terapkan Sesi Ini
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={resetSlides}
+                                                aria-label="Reset draft demo"
                                                 className="rounded-xl border border-zinc-700 bg-zinc-900 px-5 py-3.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
                                             >
                                                 <RotateCcw size={16} />
                                             </button>
                                         </div>
+                                        {saveNotice && (
+                                            <p className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-xs leading-relaxed text-zinc-400">
+                                                {saveNotice}
+                                            </p>
+                                        )}
                                     </div>
                                 </aside>
                             </div>
