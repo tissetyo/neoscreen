@@ -1,0 +1,29 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: hostinger-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Hostinger smart deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 45.130.228.148
+          username: u733480323
+          port: 65002
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          script_stop: true
+          script: |
+            cd /home/u733480323/domains/neoscreen.site/public_html
+            bash scripts/hostinger-smart-deploy.sh
