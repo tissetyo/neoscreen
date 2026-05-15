@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertTriangle, Check, ChevronDown, ChevronUp, Clock3, Globe2, List, Play, RotateCcw, Search, Tv, X } from 'lucide-react';
+import { AlertTriangle, Check, ChevronUp, Clock3, Globe2, List, Play, Search, Tv, X } from 'lucide-react';
 import Hls from 'hls.js';
 import { useRoomStore } from '@/stores/roomStore';
 import MarqueeBar from '@/Components/TV/MarqueeBar';
@@ -29,8 +29,8 @@ interface IptvModalProps {
 }
 
 const GUIDE = [
-  { key: 'OK', label: 'show channels' },
-  { key: 'Up/Down', label: 'change channel' },
+  { key: 'OK/Down', label: 'channels' },
+  { key: 'Up/Down', label: 'move list' },
   { key: 'Left', label: 'countries' },
   { key: 'Back', label: 'close' },
 ];
@@ -44,6 +44,8 @@ const normalizeCategory = (value: string) => {
   if (lower.includes('movie') || lower.includes('entertain') || lower.includes('music')) return 'Entertainment';
   return firstValue;
 };
+
+const channelDomKey = (channel: Channel) => encodeURIComponent(`${channel.countryCode}-${channel.url}`);
 
 export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
   const store = useRoomStore();
@@ -97,6 +99,28 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     setCloseConfirmVisible(false);
     setChromeVisible(true);
     if (showCountries) setCountryPanelVisible(true);
+  };
+
+  const focusIptvAction = (selector: string) => {
+    window.setTimeout(() => document.querySelector<HTMLElement>(selector)?.focus(), 0);
+  };
+
+  const focusActiveChannel = () => {
+    const key = activeChannel ? channelDomKey(activeChannel) : '';
+    focusIptvAction(key ? `[data-iptv-channel-key="${key}"]` : '[data-iptv-channel-item]');
+  };
+
+  const movePanelFocus = (step: number) => {
+    const selector = countryPanelVisible
+      ? '[data-iptv-country-item], [data-iptv-panel-action]'
+      : '[data-iptv-panel-action], [data-iptv-category-item], [data-iptv-channel-item]';
+    const focusables = Array.from(document.querySelectorAll<HTMLElement>(selector))
+      .filter(item => item.offsetParent !== null && !item.hasAttribute('disabled'));
+    if (!focusables.length) return;
+
+    const currentIndex = focusables.findIndex(item => item === document.activeElement);
+    const nextIndex = currentIndex < 0 ? 0 : (currentIndex + step + focusables.length) % focusables.length;
+    focusables[nextIndex]?.focus();
   };
 
   const revealFromPointer = () => {
@@ -384,6 +408,7 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
   const selectChannel = (channel: Channel) => {
     setActiveChannel(channel);
     revealChrome(false);
+    focusActiveChannel();
   };
 
   const moveChannel = (step: number) => {
@@ -395,22 +420,9 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
     revealChrome(false);
   };
 
-  const retryChannel = () => {
-    setCloseConfirmVisible(false);
-    setPlaybackError('');
-    setSlowBuffer(false);
-    mutate();
-    setActiveChannel(current => current ? { ...current } : current);
-  };
-
-  const focusIptvAction = (selector: string) => {
-    window.setTimeout(() => document.querySelector<HTMLElement>(selector)?.focus(), 0);
-  };
-
   const handleRemoteKey = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement | null;
     const isFormTarget = target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
-    const hasLoadingChoice = slowBuffer || !!playbackError;
 
     if ((event.key === 'Enter' || event.key === ' ') && target?.tagName === 'BUTTON') {
       event.preventDefault();
@@ -446,31 +458,49 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
       return;
     }
 
-    if (hasLoadingChoice && !isFormTarget) {
+    if (!chromeVisible && !isFormTarget) {
+      if (['ArrowDown', 'Enter', ' '].includes(event.key)) {
+        event.preventDefault();
+        revealChrome(false);
+        focusActiveChannel();
+        return;
+      }
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        revealChrome(true);
+        focusIptvAction('[data-iptv-country-item]');
+        return;
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        moveChannel(1);
+        return;
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        moveChannel(-1);
+        return;
+      }
+    }
+
+    if (chromeVisible && !isFormTarget) {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        setCountryPanelVisible(true);
+        focusIptvAction('[data-iptv-country-item]');
+        return;
+      }
+      if (event.key === 'ArrowRight' && countryPanelVisible) {
+        event.preventDefault();
+        setCountryPanelVisible(false);
+        focusActiveChannel();
+        return;
+      }
       if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         event.preventDefault();
-        const current = document.activeElement?.getAttribute('data-iptv-loading-choice');
-        focusIptvAction(current === 'retry' ? '[data-iptv-loading-choice="next"]' : '[data-iptv-loading-choice="retry"]');
+        movePanelFocus(event.key === 'ArrowDown' ? 1 : -1);
         return;
       }
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-        event.preventDefault();
-        return;
-      }
-    }
-
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(event.key) && !isFormTarget) {
-      revealChrome(event.key === 'ArrowLeft');
-    }
-
-    if (event.key === 'ArrowUp' && !isFormTarget) {
-      event.preventDefault();
-      moveChannel(-1);
-    }
-
-    if (event.key === 'ArrowDown' && !isFormTarget) {
-      event.preventDefault();
-      moveChannel(1);
     }
 
     if ((event.key === 'Enter' || event.key === ' ') && videoRef.current?.paused && !isFormTarget) {
@@ -504,22 +534,12 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
             <video ref={videoRef} key={`${activeChannel.url}-${activeChannel.name}`} controls={chromeVisible} autoPlay playsInline className="h-full w-full bg-black object-contain" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black via-black/50 to-transparent" />
             {(isBuffering || playbackError) && (
-              <div className="absolute left-1/2 top-1/2 w-[min(520px,80vw)] -translate-x-1/2 -translate-y-1/2 rounded-[28px] border border-white/10 bg-slate-950/82 px-8 py-7 text-center shadow-2xl backdrop-blur-2xl">
-                {isBuffering && !playbackError ? <div className="mx-auto mb-5 h-14 w-14 rounded-full border-4 border-white/15 border-t-cyan-300 animate-spin" /> : <AlertTriangle size={44} className="mx-auto mb-4 text-amber-300" />}
-                <p className="text-2xl font-semibold">{playbackError ? 'Stream unavailable' : 'Starting live TV'}</p>
+              <div className="pointer-events-none absolute left-1/2 top-1/2 w-[min(460px,72vw)] -translate-x-1/2 -translate-y-1/2 rounded-[28px] border border-white/10 bg-slate-950/70 px-8 py-7 text-center shadow-2xl backdrop-blur-2xl">
+                {isBuffering && !playbackError ? <div className="mx-auto mb-5 h-14 w-14 rounded-full border-4 border-white/15 border-t-cyan-300 animate-spin" /> : <AlertTriangle size={40} className="mx-auto mb-4 text-amber-300" />}
+                <p className="text-2xl font-semibold">{playbackError ? 'Reconnecting live TV' : 'Starting live TV'}</p>
                 <p className="mt-2 text-sm leading-relaxed text-white/60">
-                  {playbackError || (slowBuffer ? 'Still loading. You can wait, try again, or press Down for the next channel.' : 'Please wait while the live stream buffers.')}
+                  {playbackError || (slowBuffer ? 'Still loading. We are refreshing the stream automatically.' : 'Please wait while the live stream buffers.')}
                 </p>
-                {(slowBuffer || playbackError) && (
-                  <div className="mt-5 flex flex-col items-stretch gap-3 sm:mx-auto sm:max-w-[280px]">
-                    <button type="button" data-iptv-loading-choice="retry" onClick={retryChannel} className="iptv-focusable inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cyan-300">
-                      <RotateCcw size={16} /> Try again
-                    </button>
-                    <button type="button" data-iptv-loading-choice="next" onClick={() => moveChannel(1)} className="iptv-focusable inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-slate-950 focus:outline-none focus:ring-2 focus:ring-cyan-300" style={{ backgroundColor: focusColor }}>
-                      <ChevronDown size={16} /> Next channel
-                    </button>
-                  </div>
-                )}
               </div>
             )}
           </>
@@ -547,10 +567,10 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
         )}
 
         <div className={`absolute left-6 top-24 flex items-center gap-3 transition-opacity duration-300 ${chromeVisible ? 'opacity-100' : 'opacity-0'}`}>
-          <button type="button" onClick={() => setCountryPanelVisible(current => !current)} className="iptv-focusable flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-slate-950/70 text-white shadow-2xl backdrop-blur-xl" aria-label="Country packs">
+          <button type="button" data-iptv-panel-action onClick={() => setCountryPanelVisible(current => !current)} className="iptv-focusable flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-slate-950/70 text-white shadow-2xl backdrop-blur-xl" aria-label="Country packs">
             <Globe2 size={20} />
           </button>
-          <button type="button" onClick={() => revealChrome(false)} className="iptv-focusable flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-slate-950/70 text-white shadow-2xl backdrop-blur-xl" aria-label="Channel list">
+          <button type="button" data-iptv-panel-action onClick={() => { revealChrome(false); focusActiveChannel(); }} className="iptv-focusable flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-slate-950/70 text-white shadow-2xl backdrop-blur-xl" aria-label="Channel list">
             <List size={20} />
           </button>
         </div>
@@ -576,7 +596,7 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
               </div>
               <div className="iptv-scrollbar-hidden mb-4 flex gap-2 overflow-x-auto pb-1">
                 {categories.map(category => (
-                  <button key={category} type="button" onClick={() => setSelectedCategory(category)}
+                  <button key={category} type="button" data-iptv-category-item onClick={() => setSelectedCategory(category)}
                     className={`iptv-focusable shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium ${selectedCategory === category ? 'border-cyan-300/50 bg-cyan-300/15 text-white' : 'border-white/10 bg-white/[0.04] text-white/55'}`}>
                     {category}
                   </button>
@@ -584,7 +604,7 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
               </div>
               <div className="iptv-scrollbar-hidden space-y-2 overflow-y-auto pr-1" style={{ maxHeight: 'calc(100vh - 300px)' }}>
                 {filteredChannels.map(channel => (
-                  <button key={`${channel.countryCode}-${channel.url}`} type="button" onClick={() => selectChannel(channel)}
+                  <button key={`${channel.countryCode}-${channel.url}`} type="button" data-iptv-channel-item data-iptv-channel-key={channelDomKey(channel)} onClick={() => selectChannel(channel)}
                     className={`iptv-focusable flex w-full items-center gap-3 rounded-2xl border p-2.5 text-left transition-colors ${activeChannel?.url === channel.url ? 'border-cyan-300/50 bg-cyan-300/15' : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.08]'}`}>
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
                       {channel.logo ? <img src={channel.logo} alt="" className="max-h-8 max-w-8 object-contain" /> : <Play size={16} className="text-white/50" />}
@@ -621,7 +641,7 @@ export default function IptvModal({ isOpen, onClose }: IptvModalProps) {
                         const checked = enabledCountries.includes(country.code);
                         const locked = (data?.defaultCountryCodes || []).includes(country.code);
                         return (
-                          <button key={country.code} type="button" onClick={() => toggleCountry(country.code)}
+                          <button key={country.code} type="button" data-iptv-country-item onClick={() => toggleCountry(country.code)}
                             className={`iptv-focusable flex w-full items-center justify-between rounded-2xl border px-3 py-3 text-left transition-colors ${checked ? 'border-cyan-300/40 bg-cyan-300/15' : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.08]'}`}>
                             <span>
                               <span className="block text-sm font-medium">{country.name}</span>

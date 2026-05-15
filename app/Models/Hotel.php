@@ -10,9 +10,10 @@ class Hotel extends Model
 {
     use HasUuids;
 
-    protected $fillable = [
-        'name', 'slug', 'location', 'timezone',
-        'wifi_ssid', 'wifi_password', 'wifi_username',
+	protected $fillable = [
+		'name', 'slug', 'location', 'timezone',
+		'logo_url', 'description', 'website_url', 'phone', 'email',
+		'wifi_ssid', 'wifi_password', 'wifi_username',
         'default_background_url', 'featured_image_url', 'startup_video_url',
         'airport_iata_code', 'latitude', 'longitude',
         'clock_timezone_1', 'clock_timezone_2', 'clock_timezone_3',

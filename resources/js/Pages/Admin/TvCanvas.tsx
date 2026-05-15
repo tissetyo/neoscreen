@@ -460,10 +460,10 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                         <p className="text-[10px] font-medium uppercase tracking-widest text-slate-400 px-1 mb-2">Widgets</p>
                         <div className="space-y-2">
                             {widgets.map(key => {
-                                const layout = config.layout[key] ?? {};
-                                return (
-                                    <div key={key} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-                                        <div className="flex items-center justify-between gap-2">
+	                                    const layout = config.layout[key] ?? {};
+	                                return (
+	                                    <div key={key} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+	                                        <div className="flex items-center justify-between gap-2">
                                             <div className="min-w-0">
                                                 <p className="truncate text-sm font-medium text-slate-700">{widgetLabel(key)}</p>
                                                 <p className="text-[11px] text-slate-400">{layout.visible === false ? 'Hidden' : `${layout.colSpan ?? 1}×${layout.rowSpan ?? 1}`}</p>
@@ -471,12 +471,25 @@ export default function TvCanvas({ hotel }: { hotel: Hotel }) {
                                             <button type="button"
                                                 onClick={() => updateLayout(key, { visible: layout.visible === false })}
                                                 className={`rounded-lg px-2.5 py-1.5 text-xs font-medium ${layout.visible === false ? 'bg-slate-200 text-slate-600' : 'bg-teal-50 text-teal-700'}`}>
-                                                {layout.visible === false ? 'Add' : 'Shown'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+	                                                {layout.visible === false ? 'Add' : 'Shown'}
+	                                            </button>
+	                                        </div>
+	                                        <div className="mt-3 flex items-center gap-2">
+	                                            <span className="w-16 text-[10px] font-medium uppercase tracking-wide text-slate-400">Icon</span>
+	                                            <input
+	                                                type="range"
+	                                                min={0.6}
+	                                                max={1.8}
+	                                                step={0.05}
+	                                                value={layout.iconScale ?? 1}
+	                                                onChange={e => updateLayout(key, { iconScale: parseFloat(e.target.value) })}
+	                                                className="min-w-0 flex-1 accent-teal-500"
+	                                            />
+	                                            <span className="w-9 text-right font-mono text-[10px] text-slate-500">{Math.round((layout.iconScale ?? 1) * 100)}%</span>
+	                                        </div>
+	                                    </div>
+	                                );
+	                            })}
                         </div>
                     </div>
                     <div>

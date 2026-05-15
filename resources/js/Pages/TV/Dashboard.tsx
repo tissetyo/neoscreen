@@ -263,6 +263,13 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
   }, [hotel, room, hydrate]);
 
   const handleAction = useCallback((action: string) => { setActiveModal(action); }, []);
+  const closeModal = useCallback(() => {
+    setActiveModal(null);
+    window.setTimeout(() => {
+      (document.activeElement as HTMLElement | null)?.blur?.();
+      document.querySelector<HTMLElement>('.tv-focusable')?.focus();
+    }, 80);
+  }, []);
   const handleLaunchApp = useCallback((app: any) => {
     if (app.id === 'iptv' || app.url === 'neotiv://iptv') {
       setActiveModal('iptv');
@@ -506,11 +513,12 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
     const isSmall = !isIconOnly && !isCompact && colSpan <= 4;
     const compactFallbackWidgets = new Set(['analogClocks', 'flightSchedule', 'hotelDeals', 'notificationCard']);
     const useCompactFallback = isCompact && compactFallbackWidgets.has(widgetKey);
-    const meta = widgetIconMeta(widgetKey);
-    const Icon = meta.icon;
-    const fallbackAction = meta.onClick ?? (() => setDetailWidget(widgetKey));
+	    const meta = widgetIconMeta(widgetKey);
+	    const Icon = meta.icon;
+	    const fallbackAction = meta.onClick ?? (() => setDetailWidget(widgetKey));
+	    const iconScale = Math.max(0.6, Math.min(Number(layout.iconScale ?? 1), 1.8));
 
-    return (
+	    return (
       <div
         className={`tv-grid-widget widget-animate ${isIconOnly ? 'tv-size-icon' : ''} ${isCompact ? 'tv-size-compact' : ''} ${isSmall ? 'tv-size-small' : ''} ${useCompactFallback ? 'tv-size-fallback' : ''} ${className}`}
         style={getWidgetStyle(widgetKey, delay)}
@@ -521,19 +529,19 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
         <div className="tv-widget-content h-full min-h-0">
           {children}
         </div>
-        {(isIconOnly || useCompactFallback) && (
-          <button
+	            {(isIconOnly || useCompactFallback) && (
+	              <button
             type="button"
             className="tv-icon-fallback tv-focusable"
             tabIndex={0}
             onClick={fallbackAction}
-            aria-label={meta.label}
-          >
-            {meta.image ? (
-              <img src={meta.image} alt="" className="h-[52%] w-[52%] object-contain" />
-            ) : Icon ? (
-              <Icon className="h-[46%] w-[46%]" strokeWidth={1.8} />
-            ) : null}
+	                aria-label={meta.label}
+	              >
+	                {meta.image ? (
+	                  <img src={meta.image} alt="" className="h-[52%] w-[52%] object-contain" style={{ transform: `scale(${iconScale})` }} />
+	                ) : Icon ? (
+	                  <Icon className="h-[46%] w-[46%]" strokeWidth={1.8} style={{ transform: `scale(${iconScale})` }} />
+	                ) : null}
             <span className="tv-compact-label">{meta.label}</span>
           </button>
         )}
@@ -669,15 +677,15 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
         {renderBrandLogo(true)}
         {/* Modals — same as grid mode */}
         {launchApp && <AppLauncher app={launchApp} isOpen={!!launchApp} onClose={() => setLaunchApp(null)} />}
-        <IptvModal isOpen={activeModal === 'iptv'} onClose={() => setActiveModal(null)} />
-        <ChatModal isOpen={activeModal === 'chat'} onClose={() => setActiveModal(null)} />
-        <AlarmModal isOpen={activeModal === 'alarm'} onClose={() => setActiveModal(null)} />
-        <PromoModal isOpen={activeModal === 'promos'} onClose={() => setActiveModal(null)} />
-        <NotificationsModal isOpen={activeModal === 'notif'} onClose={() => setActiveModal(null)} />
-        <SettingsPage isOpen={activeModal === 'settings'} onClose={() => setActiveModal(null)} onOpenAlarm={() => { setActiveModal(null); setTimeout(() => setActiveModal('alarm'), 100); }} />
-        <GuestLogoutModal isOpen={activeModal === 'logout'} onClose={() => setActiveModal(null)} />
-        {isCheckoutDay && <CheckoutModal isOpen={activeModal === 'checkout-reminder'} onClose={() => setActiveModal(null)} />}
-        <ServiceRequestModal isOpen={activeModal === 'services'} onClose={() => setActiveModal(null)} onOrderComplete={() => setActiveModal('chat')} />
+        <IptvModal isOpen={activeModal === 'iptv'} onClose={closeModal} />
+        <ChatModal isOpen={activeModal === 'chat'} onClose={closeModal} />
+        <AlarmModal isOpen={activeModal === 'alarm'} onClose={closeModal} />
+        <PromoModal isOpen={activeModal === 'promos'} onClose={closeModal} />
+        <NotificationsModal isOpen={activeModal === 'notif'} onClose={closeModal} />
+        <SettingsPage isOpen={activeModal === 'settings'} onClose={closeModal} onOpenAlarm={() => { setActiveModal(null); setTimeout(() => setActiveModal('alarm'), 100); }} />
+        <GuestLogoutModal isOpen={activeModal === 'logout'} onClose={closeModal} />
+        {isCheckoutDay && <CheckoutModal isOpen={activeModal === 'checkout-reminder'} onClose={closeModal} />}
+        <ServiceRequestModal isOpen={activeModal === 'services'} onClose={closeModal} onOrderComplete={() => setActiveModal('chat')} />
         {renderWidgetDetail()}
         <ConnectionStatus />
       </div>
@@ -928,20 +936,20 @@ export default function Dashboard({ hotel, room, services }: DashboardProps) {
       </div>
 
       {/* Modals */}
-      <ChatModal isOpen={activeModal === 'chat'} onClose={() => setActiveModal(null)} />
-      <CheckoutModal isOpen={activeModal === 'checkout-reminder'} onClose={() => setActiveModal(null)} />
-      <AlarmModal isOpen={activeModal === 'alarm'} onClose={() => setActiveModal(null)} />
-      <NotificationsModal isOpen={activeModal === 'notif'} onClose={() => setActiveModal(null)} />
-      <PromoModal isOpen={activeModal === 'promos'} onClose={() => setActiveModal(null)} />
-      <GuestLogoutModal isOpen={activeModal === 'logout'} onClose={() => setActiveModal(null)} />
+      <ChatModal isOpen={activeModal === 'chat'} onClose={closeModal} />
+      <CheckoutModal isOpen={activeModal === 'checkout-reminder'} onClose={closeModal} />
+      <AlarmModal isOpen={activeModal === 'alarm'} onClose={closeModal} />
+      <NotificationsModal isOpen={activeModal === 'notif'} onClose={closeModal} />
+      <PromoModal isOpen={activeModal === 'promos'} onClose={closeModal} />
+      <GuestLogoutModal isOpen={activeModal === 'logout'} onClose={closeModal} />
       <AppLauncher app={launchApp} isOpen={!!launchApp} onClose={() => setLaunchApp(null)} />
-      <IptvModal isOpen={activeModal === 'iptv'} onClose={() => setActiveModal(null)} />
+      <IptvModal isOpen={activeModal === 'iptv'} onClose={closeModal} />
       <ServiceRequestModal
         isOpen={activeModal === 'services'}
-        onClose={() => setActiveModal(null)}
+        onClose={closeModal}
         onOrderComplete={() => setActiveModal('chat')}
       />
-      <SettingsPage isOpen={activeModal === 'settings'} onClose={() => setActiveModal(null)} onOpenAlarm={() => { setActiveModal(null); setTimeout(() => setActiveModal('alarm'), 100); }} />
+      <SettingsPage isOpen={activeModal === 'settings'} onClose={closeModal} onOpenAlarm={() => { setActiveModal(null); setTimeout(() => setActiveModal('alarm'), 100); }} />
       {renderWidgetDetail()}
       <ConnectionStatus />
     </div>

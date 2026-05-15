@@ -5,6 +5,7 @@ import { Wifi, Globe, Clock, Megaphone, Monitor, Film, Upload, Trash2, Plus, Ima
 
 interface HotelSettings {
     id: string; name: string; slug: string; location: string | null; timezone: string;
+    logo_url: string | null; description: string | null; website_url: string | null; phone: string | null; email: string | null;
     wifi_ssid: string | null; wifi_password: string | null; wifi_username: string | null;
     airport_iata_code: string | null; featured_image_url: string | null; startup_video_url: string | null;
     clock_label_1: string | null; clock_timezone_1: string | null;
@@ -43,6 +44,8 @@ export default function Settings({ slug, hotel: initialHotel, announcements: ini
     });
     const [startupVideoUrl, setStartupVideoUrl] = useState(initialHotel.startup_video_url || '');
     const [uploading, setUploading] = useState(false);
+    const [uploadingLogo, setUploadingLogo] = useState(false);
+    const logoInputRef = useRef<HTMLInputElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -114,6 +117,23 @@ export default function Settings({ slug, hotel: initialHotel, announcements: ini
         }
     };
 
+    const uploadLogoFile = async (file: File) => {
+        setUploadingLogo(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const res = await fetch('/api/upload/tv-brand-logo', { method: 'POST', body: formData });
+            const upload = await res.json();
+            if (!res.ok || !upload.url) throw new Error(upload.error || 'Logo upload failed');
+            setHotel(current => ({ ...current, logo_url: `${upload.url}?t=${Date.now()}` }));
+        } catch (error: any) {
+            alert(error?.message || 'Logo upload failed');
+        } finally {
+            setUploadingLogo(false);
+            if (logoInputRef.current) logoInputRef.current.value = '';
+        }
+    };
+
     const updateMedia = (media: MediaItem, patch: Partial<MediaItem>) => {
         router.patch(`/${slug}/frontoffice/settings/media/${media.id}`, {
             title: media.title,
@@ -170,23 +190,72 @@ export default function Settings({ slug, hotel: initialHotel, announcements: ini
                 </div>
 
                 <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-                    {tab === 'general' && (
-                        <div className="space-y-4">
-                            <h2 className="font-medium text-slate-800 mb-5 flex items-center gap-2"><Globe size={16} /> General Information</h2>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Hotel Name</label>
-                                    <input type="text" value={hotel.name} onChange={e => setHotel({...hotel, name: e.target.value})} className={inputCls} /></div>
-                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Location / City</label>
-                                    <input type="text" value={hotel.location || ''} onChange={e => setHotel({...hotel, location: e.target.value})} className={inputCls} /></div>
-                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Timezone</label>
-                                    <input type="text" value={hotel.timezone} onChange={e => setHotel({...hotel, timezone: e.target.value})} className={inputCls} /></div>
-                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Airport IATA Code</label>
-                                    <input type="text" value={hotel.airport_iata_code || ''} onChange={e => setHotel({...hotel, airport_iata_code: e.target.value})} className={inputCls} placeholder="e.g. DPS, CGK" /></div>
-                            </div>
-                            <button onClick={() => save({ name: hotel.name, location: hotel.location, timezone: hotel.timezone, airport_iata_code: hotel.airport_iata_code })}
-                                disabled={saving} className="mt-2 px-6 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-medium disabled:opacity-50 transition-colors">
-                                {saving ? 'Saving...' : 'Save Changes'}
-                            </button>
+	                    {tab === 'general' && (
+	                        <div className="space-y-4">
+	                            <h2 className="font-medium text-slate-800 mb-5 flex items-center gap-2"><Globe size={16} /> General Information</h2>
+	                            <input
+	                                ref={logoInputRef}
+	                                type="file"
+	                                className="hidden"
+	                                accept="image/png, image/jpeg, image/webp, image/svg+xml"
+	                                onChange={e => {
+	                                    const file = e.target.files?.[0];
+	                                    if (file) uploadLogoFile(file);
+	                                }}
+	                            />
+	                            <div className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+	                                <div className="flex h-20 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white p-3">
+	                                    {hotel.logo_url ? (
+	                                        <img src={hotel.logo_url} alt="" className="max-h-full max-w-full object-contain" />
+	                                    ) : (
+	                                        <ImageIcon size={28} className="text-slate-300" />
+	                                    )}
+	                                </div>
+	                                <div className="min-w-0 flex-1">
+	                                    <p className="text-sm font-semibold text-slate-800">Hotel Logo</p>
+	                                    <p className="mt-1 text-xs leading-relaxed text-slate-500">Used by TV overlays, IPTV header, and dashboard brand placement.</p>
+	                                </div>
+	                                <button
+	                                    type="button"
+	                                    disabled={uploadingLogo}
+	                                    onClick={() => logoInputRef.current?.click()}
+	                                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+	                                >
+	                                    <Upload size={15} /> {uploadingLogo ? 'Uploading...' : 'Upload'}
+	                                </button>
+	                            </div>
+	                            <div className="grid grid-cols-2 gap-4">
+	                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Hotel Name</label>
+	                                    <input type="text" value={hotel.name} onChange={e => setHotel({...hotel, name: e.target.value})} className={inputCls} /></div>
+	                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Location / City</label>
+	                                    <input type="text" value={hotel.location || ''} onChange={e => setHotel({...hotel, location: e.target.value})} className={inputCls} /></div>
+	                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Website</label>
+	                                    <input type="text" value={hotel.website_url || ''} onChange={e => setHotel({...hotel, website_url: e.target.value})} className={inputCls} placeholder="https://hotel.example" /></div>
+	                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Email</label>
+	                                    <input type="email" value={hotel.email || ''} onChange={e => setHotel({...hotel, email: e.target.value})} className={inputCls} placeholder="frontoffice@hotel.com" /></div>
+	                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Phone</label>
+	                                    <input type="text" value={hotel.phone || ''} onChange={e => setHotel({...hotel, phone: e.target.value})} className={inputCls} placeholder="+62..." /></div>
+	                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Timezone</label>
+	                                    <input type="text" value={hotel.timezone} onChange={e => setHotel({...hotel, timezone: e.target.value})} className={inputCls} /></div>
+	                                <div><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Airport IATA Code</label>
+	                                    <input type="text" value={hotel.airport_iata_code || ''} onChange={e => setHotel({...hotel, airport_iata_code: e.target.value})} className={inputCls} placeholder="e.g. DPS, CGK" /></div>
+	                                <div className="col-span-2"><label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-1.5">Description</label>
+	                                    <textarea value={hotel.description || ''} onChange={e => setHotel({...hotel, description: e.target.value})} rows={3} className={inputCls} placeholder="Short hotel description for guest-facing pages and staff reference." /></div>
+	                            </div>
+	                            <button onClick={() => save({
+	                                name: hotel.name,
+	                                logo_url: hotel.logo_url,
+	                                location: hotel.location,
+	                                description: hotel.description,
+	                                website_url: hotel.website_url,
+	                                phone: hotel.phone,
+	                                email: hotel.email,
+	                                timezone: hotel.timezone,
+	                                airport_iata_code: hotel.airport_iata_code,
+	                            })}
+	                                disabled={saving} className="mt-2 px-6 py-2.5 bg-teal-500 hover:bg-teal-600 text-white rounded-xl text-sm font-medium disabled:opacity-50 transition-colors">
+	                                {saving ? 'Saving...' : 'Save Changes'}
+	                            </button>
                         </div>
                     )}
 

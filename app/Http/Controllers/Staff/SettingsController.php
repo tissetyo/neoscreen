@@ -41,10 +41,15 @@ class SettingsController extends Controller
     public function update(Request $request, string $slug)
     {
         $hotel = $this->getHotel($slug);
-        $data = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'timezone' => 'nullable|string|max:100',
+	        $data = $request->validate([
+	            'name' => 'nullable|string|max:255',
+	            'location' => 'nullable|string|max:255',
+	            'logo_url' => 'nullable|string|max:1000',
+	            'description' => 'nullable|string|max:2000',
+	            'website_url' => 'nullable|string|max:500',
+	            'phone' => 'nullable|string|max:80',
+	            'email' => 'nullable|email|max:255',
+	            'timezone' => 'nullable|string|max:100',
             'airport_iata_code' => 'nullable|string|max:10',
             'wifi_ssid' => 'nullable|string|max:100',
             'wifi_password' => 'nullable|string|max:100',
@@ -57,9 +62,25 @@ class SettingsController extends Controller
             'clock_timezone_3' => 'nullable|string|max:100',
         ]);
 
-        $hotel->update($data);
-        return back()->with('success', 'Settings saved.');
-    }
+	        if (array_key_exists('logo_url', $data)) {
+	            $config = $hotel->tv_layout_config ?? [];
+	            $config['theme'] = array_merge($config['theme'] ?? [], [
+	                'logoUrl' => $data['logo_url'],
+	                'showLogo' => !empty($data['logo_url']),
+	            ]);
+	            $config['layout'] = array_merge($config['layout'] ?? [], [
+	                'brandLogo' => array_merge($config['layout']['brandLogo'] ?? [], [
+	                    'visible' => !empty($data['logo_url']),
+	                    'followGlobalStyle' => false,
+	                    'bgOpacity' => 0,
+	                ]),
+	            ]);
+	            $data['tv_layout_config'] = $config;
+	        }
+
+	        $hotel->update($data);
+	        return back()->with('success', 'Settings saved.');
+	    }
 
     public function updateTv(Request $request, string $slug)
     {
